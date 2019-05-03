@@ -30,28 +30,6 @@ write.csv(mamm_trait_IUCN_habitat, 'complete_IUCN_trait_mammals.csv')
 
 
 
-emails <- subset(register, by= "last_name")
 
-subset_email <-subset(register, last_name %in% attendee$last_name)
-write.csv(subset_email, "subset_email.csv")
-subset <-register[match(register$last_name, attendee$last_name), ]
-write.csv(subset, "subset_email2.csv")
-
-
-#Keeps only the species name and categorical diet type
-birds1 <- birds[,c(8, 10:21)]
-
-
-
-library(dismo)
-bassar <- gbif(genus="Ursus", species="maritimus", ext=NULL, args=NULL, geo=TRUE, sp=FALSE,
-     removeZeros=FALSE, download=TRUE, ntries=5, nrecs=300, start=1, end=Inf)
-
-ec_extent <-c(-81.07,-5.01,-75.19,1.59)
-
-
-Extract only the columns that we want
-bass<-bassar[,c("lat","lon")]
-head(bass)
 
 
