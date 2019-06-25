@@ -1,4 +1,6 @@
 #GBIF Occurrence Data Retrieval 
+#Project: Neotropical Frugivores
+#By: Beth Gerstner 6/25/19
 
 #Download data by genus 
 library(dismo)
@@ -28,6 +30,9 @@ for(i in 1:nrow(scientific_names_mammals)) {
   all.mammals= rbind(all.mammals, gbif_mammals)
   }, error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
 }
+
+# tryCatch allows the code to continue without getting stuck at errors.
+# Errors are due to species that have empty fields (for ex. no occurrence records)
 
 write.csv(all.mammals, file="/Volumes/GoogleDrive/My Drive/neotropical_frugivores/Database2019/all.mammals.csv")
 nrow(scientific_names_mammals)
