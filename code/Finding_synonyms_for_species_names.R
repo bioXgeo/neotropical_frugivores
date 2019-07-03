@@ -3,7 +3,8 @@
 ## COLLABORATORS: P. Zarnetske
 ## DATA:          IUCN species list for Central & South American frugivores
 ## PROJECT:       " "
-## DATE:          June 2019; last run: June 30, 2019
+## DATE:          June 2019; last run: June 30, 2019; only 5 species matched
+##                  Next step: follow up w taxize creators / manually match
 
 # This can be used to automate the process of finding species in other (older) existing databases where the names might not be up to date
 # R scripts related to this:
