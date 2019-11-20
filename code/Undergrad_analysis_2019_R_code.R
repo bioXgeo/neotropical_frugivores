@@ -10,11 +10,11 @@
 rm(list = ls())
 
 #install some handy packages (you will only need to run this the first time)
-install.packages('ggplot2')
+#install.packages('ggplot2')
 install.packages('tidyverse')
 
 #load the packages (you will need to do this in each R session)
-library('ggplot2')
+#library('ggplot2')
 library('tidyverse')
 library(dplyr)
 
