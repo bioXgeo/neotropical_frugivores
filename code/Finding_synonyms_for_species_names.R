@@ -4,7 +4,7 @@
 #Find all names for a given taxa
 syn <- synonyms(scientific_names, db=c('itis'))
 
-test <- synonyms("Puma yagouaroundi", db="", accepted=TRUE)
+test <- synonyms("Herpailurus yaguarondi", db="itis", accepted=TRUE)
 
 #Put into a dataframe format 
 mammal_syn <- synonyms_df(syn)

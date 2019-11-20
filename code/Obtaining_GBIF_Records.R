@@ -6,7 +6,7 @@
 library(dismo)
 
 #read in mammal database
-data1_mammals<- read.csv("/Volumes/GoogleDrive/My Drive/neotropical_frugivores/Database2019/Databases/L1/IUCN_trait_montane_mammals_IUCN_trait_montane_mammals_cleaned_6_19.csv")
+data1_mammals<- read.csv("/Volumes/GoogleDrive/My Drive/neotropical_frugivores/Database2019/Databases/L1/IUCN_trait_montane_mammals_species_list.csv")
 head(data1_mammals)
 scientific_names <- data1_mammals$scientific_name
 data_name_df <- as.data.frame(scientific_names)
@@ -26,8 +26,8 @@ for(i in 1:nrow(scientific_names_mammals)) {
   species.i <- scientific_names_mammals[i,"species"]
   gbif_mammals <- gbif(genus.i, species=species.i, args=NULL, geo=TRUE, sp=FALSE, 
                removeZeros=FALSE, download=TRUE, ntries=5, nrecs=300, start=1, end=Inf)
-  gbif_mammals <- gbif_mammals[,c("scientificName","lat","lon")]
-  all.mammals= rbind(all.mammals, gbif_mammals)
+  gbif_mammals_short <- gbif_mammals[,c("gbifID","species","country","verbatimLocality","lat","lon","year")]
+  all.mammals= rbind(all.mammals, gbif_mammals_short)
   }, error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
 }
 
@@ -38,7 +38,7 @@ write.csv(all.mammals, file="/Volumes/GoogleDrive/My Drive/neotropical_frugivore
 nrow(scientific_names_mammals)
 
 #read in bird database
-data1_bird<- read.csv("/Volumes/GoogleDrive/My Drive/neotropical_frugivores/Database2019/Databases/L1/IUCN_trait_montane_birds_IUCN_trait_montane_birds.csv")
+data1_bird<- read.csv("/Volumes/GoogleDrive/My Drive/neotropical_frugivores/Database2019/Databases/L1/IUCN_trait_montane_birds_species_list.csv")
 head(data1_bird)
 scientific_names_b <- data1_bird$scientific_name
 data_name_df_b <- as.data.frame(scientific_names_b)
@@ -59,10 +59,40 @@ for(i in 1:nrow(scientific_names_birds)) {
     species.i <- scientific_names_birds[i,"species"]
     gbif_birds <- gbif(genus.i, species=species.i, args=NULL, geo=TRUE, sp=FALSE, 
                          removeZeros=FALSE, download=TRUE, ntries=5, nrecs=300, start=1, end=Inf)
-    gbif_birds <- gbif_birds[,c("scientificName","lat","lon")]
-    all.birds= rbind(all.birds, gbif_birds)
+    gbif_birds_short <- gbif_birds[,c("gbifID","species","country","verbatimLocality","lat","lon","year")]
+    all.birds= rbind(all.birds, gbif_birds_short)
   }, error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
 }
 
 write.csv(all.birds, file="/Volumes/GoogleDrive/My Drive/neotropical_frugivores/Database2019/all.birds.csv")
 nrow(scientific_names_birds)
+#_____________________________________________________________________________________________________________________________________
+#writing unique coorindates to a file
+
+#Mammals
+# get all unique localities 
+gbif_mammals_unique <- all.mammals[row.names(unique(all.mammals[,c("species", "lat","lon")])), c("gbifID","species", "lat", "lon","year")]
+
+# Remove NA values
+gbif_mammals_unique_rmna<-na.omit(gbif_mammals_unique)
+
+#Write coordinates to a file
+write.csv(gbif_mammals_unique_rmna, file="/Volumes/GoogleDrive/My Drive/neotropical_frugivores/Database2019/Databases/L1/montane_mammal_GBIF_coords.csv")
+
+gbif_mam_year <- gbif_mammals_unique_rmna[order(gbif_mammals_unique_rmna$year),]
+write.csv(gbif_mam_year, file="/Volumes/GoogleDrive/My Drive/neotropical_frugivores/Database2019/Databases/L1/montane_mammal_GBIF_coords_year.csv")
+# Birds
+# get all unique localities 
+gbif_birds_unique <- all.birds[row.names(unique(all.birds[,c("species", "lat","lon")])), c("gbifID","species", "lat", "lon","year")]
+
+# Remove NA values
+gbif_birds_unique_rmna<-na.omit(gbif_birds_unique)
+
+#Write coordinates to a file
+write.csv(gbif_birds_unique_rmna, file="/Volumes/GoogleDrive/My Drive/neotropical_frugivores/Database2019/Databases/L1/montane_bird_GBIF_coords.csv")
+
+
+gbif_birds_year <- gbif_birds_unique_rmna[order(gbif_birds_unique_rmna$year),]
+write.csv(gbif_birds_year, file="/Volumes/GoogleDrive/My Drive/neotropical_frugivores/Database2019/Databases/L1/montane_birds_GBIF_coords_year.csv")
+#
+
