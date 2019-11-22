@@ -17,11 +17,15 @@ install.packages('tidyverse')
 
 #load the packages (you will need to do this in each R session)
 #library('ggplot2')
-library('tidyverse')
+library(tidyverse)
 library(dplyr)
+library(ggplot2)
 
 #Read in this file directly 
 #You can just download the data to your local computer and read it into R with this code
+# For Phoebe: 
+dat <- read.csv("/Volumes/GoogleDrive/My Drive/Research/neotropical_frugivores/Database2019/Databases/analysis/undergraduate_analysis/mammal_database_11_19.csv")
+# For Beth:
 dat <- read.csv("/Volumes/GoogleDrive/My Drive/neotropical_frugivores/Database2019/Databases/analysis/undergraduate_analysis/mammal_database_11_19.csv")
 
 #did it work? This lists the objects in your workspace.
@@ -34,9 +38,13 @@ ls()
 str(dat)
 #What type of object is it? Use class() to find out.
 
+#Look at the first 6 rows of the database
+head(dat)
+
 #How many columns in the data frame? 'ncol' meaning (number of columns) is what we use here. 
 
 #What are the column names? Figure out how to find the names of columns by searching google (this is an important skill!)
+names(dat)
 
 #How many rows are in the data frame? 
 
@@ -66,6 +74,8 @@ tapply(dat$P_scientific_name, dat$Diet.Cat, length)
 
 #How many species are crepuscular? 
 crepuscular <- subset(dat, dat$Activity.Crepuscular==1) #reminder that we have coded crepuscular as '1' in the database
+dim(crepuscular)
+# 32 rows, 105 columns
 nrow(crepuscular)
 
 #How many species are nocturnal?
@@ -80,14 +90,18 @@ tapply(dat$P_scientific_name, dat$Activity.Crepuscular, length)
 
 
 
-#Below is some code to look at histograms of certain traits. What's wrong with these plots? 
+######################
+# PLOTTING 
+######################
+#Below is some code to look at histograms of certain traits. What's wrong with the first plot? 
 hist(dat$Activity.Crepuscular)
+
 hist(dat$Diet.Fruit)
 hist(dat$Diet.Inv)
 hist(dat$Diet.PlantO)
 
 # If you think the labels look terrible, then you're right. Let's fix this! Ex:
-hist(dat$Activity.Crepuscular, main="Crepuscular activity", xlab="Diet Category")
+hist(dat$Diet.PlantO, main="Mammal Frugivores: Plant Diet", xlab="Plant Diet Portion")
 
 # Fix the labels for the following three lines of code. You can make this fancy if you want. Look up ?par for options.
 hist(dat$Diet.Fruit)
@@ -109,7 +123,15 @@ plot(dat$Diet.Cat, by=dat$scientific_name, col="purple") #you can try and get cr
 
 
 
+# GGPLOT2 is a great package to make plots. Here we recreate the plot above by using ggplot2
+# https://ggplot2.tidyverse.org/reference/
+p<-ggplot(dat, aes(Diet.PlantO)) +
+  geom_histogram(binwidth = 5)
+p
 
+# Note: if we wanted to do a stacked histogram for each diet type, we first need to convert the 
+# wide 'dat' into a long version of 'dat' R package reshape or dplyr can do this.
+# https://tidyr.tidyverse.org/
 
 #Look at a single species
 aotus_v <- dat %>% filter(P_scientific_name == 'Aotus vociferans')
