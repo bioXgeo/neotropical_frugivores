@@ -1,7 +1,9 @@
 # ----------------------------------------------
-# Zarnetske lab                       
+# Zarnetske Lab                       
 # Introduction to R for undergraduates
 # Nov 2019 Modified and expanded code by Beth Gerstner (parts of code by Nina Lany and Laura Twardochleb)
+# This code may be modified by anyone on the project. 
+# In the future we will probably split out 2 scripts: 1 for data cleaning, 1 for data analysis & plotting.
 # ----------------------------------------------
 
 #Let's use the montane Mammal Traits database as a vehicle to practice data exploration in R.
