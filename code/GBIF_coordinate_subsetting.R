@@ -27,8 +27,8 @@ mx_northern_lim <-readOGR(".", "CSA_frugivore_union")
 plot(mx_northern_lim)
 points(occ.sp)
 
-#There are some rat species that are extremely widely distributed and I will have to take them out of the anaylsis - didn't get filtered out of the centroid analysis--- need to check this. 
-#1) check to see what the IUCN range map for those rat species looks like... is the GBIF data very different from this map? If so, this is why it passed through the IUCN centroid test and wasn't incorporated into the shapefile. Check for the species at each step.
+#There are some rat species that are very widely distributed and I will have to take them out of the analysis - didn't get filtered out of the centroid analysis--- need to check this. 
+#1) check to see what the IUCN range map for those rat species looks like... is the GBIF data very different from this map? If so, this is why it passed through the IUCN centroid test and wasn't incorporated into the final unionized shapefile. Check for the species at each step of the process.
 
 
 
