@@ -487,11 +487,11 @@ setwd("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mam
 write.csv(mamm_trait_all_na_manual,"mam_trait_all_manual_lookups.csv")
 
 #read in lookup table for species with synonyms manually looked up
-mamm_trait_full_alt_2 <- read.csv("NEW LOOKUP FOR MAMMALS")
+mamm_trait_full_alt_2 <- read.csv("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/lookup_table/CSA_mam_trait_lookups_final_1_7.csv")
 
 #Remove species missing matches from the full trait dataset so we can remerge later
 mam_trait_alt_subset_2_full <-mam_trait_all_CSA %>%
-  filter(!scientific_name %in% mamm_trait_full_alt_2$IUCN_name)
+  filter(!scientific_name %in% mamm_trait_full_alt_2$IUCN_species_name)
 
 #Merge list of alternate names with elton_traits 
 mamm_trait_alternates_2_full <- merge.data.frame(mamm, mamm_trait_full_alt_2, by.x=c("scientific_name"), by.y=c("elton_name"), all.y = TRUE)
@@ -500,21 +500,28 @@ mamm_trait_alternates_2_full <- merge.data.frame(mamm, mamm_trait_full_alt_2, by
 colnames(mam_trait_alt_subset_2_full)[which(names(mam_trait_alt_subset_2_full) == "IUCN_name")] <- "IUCN_species_name"
 
 ##EDIT TO MAKE NAMES MATCH BETWEEN
+mamm_trait_alternates_2_full$level<- NULL 
+mamm_trait_alternates_2_full$new.species<- NULL 
+mamm_trait_alternates_2_full$ref<- NULL 
+mamm_trait_alternates_2_full$X<-NULL
 
 #bind subsetted mammal trait df with df of missing species names/IUCN info
 CSA_mam_trait_all_final <-rbind(mam_trait_alt_subset_2_full, mamm_trait_alternates_2_full)
 
-#Remove duplicates (due to using genus level data which led to repeats)
-CSA_mam_trait_all_final_distinct <- distinct(CSA_mam_trait_all_final,scientific_name, .keep_all= TRUE)
+#fill in missing values in the IUCN_species_name_final column with those matching the elton traits name
+#Gives full list of IUCN species names for dataset
+test <-with(CSA_mam_trait_all_final, ifelse(IUCN_species_name=="", as.character(scientific_name), IUCN_species_name))
+CSA_mam_trait_all_final$IUCN_species_name_all <- test
 
 #Subset by frugivorous species
-CSA_mam_frug <- CSA_mam_trait_all_final_distinct[CSA_mam_trait_all_final_distinct$Diet.Fruit>=10,] #191 mammal frugivores
-setwd("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/mx_species")
-write.csv(CSA_mam_frug, "CSA_mam_frug.csv")
+CSA_mam_frug <- CSA_mam_trait_all_final[CSA_mam_trait_all_final$Diet.Fruit>=10,] #191 mammal frugivores
 
 #Need to remove species with ranges above MExico 
 CSA_mam_frug_final <- CSA_mam_frug %>%
-  filter(!scientific_name %in% mam_sp_to_remove_distinct$binomial)
+  filter(!IUCN_species_name_all %in% mam_sp_to_remove_distinct$binomial)
+
+setwd("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/CSA_all_species")
+write.csv(CSA_mam_frug_final, "CSA_mam_frug.csv")
 
 #_____________________________________________________________________________________________
 ##Birds 
