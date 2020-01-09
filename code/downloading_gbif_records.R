@@ -1,5 +1,6 @@
 ## Code to download massive species lists from GBIF
 ## By: Beth Gerstner (Modified from https://data-blog.gbif.org/post/downloading-long-species-lists-on-gbif/)
+
 # fill in your gbif.org credentials 
 user <- "bgerstner90" # your gbif.org username 
 pwd <- "####" # your gbif.org password
@@ -12,7 +13,7 @@ library(magrittr) # for %T>% pipe
 library(rgbif) # for occ_download
 library(taxize) # for get_gbifid_
 # All frugivorous mammals in Central and South America (excluding those way Centroids above Northern Mexico)
-mammals <- "/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/CSA_all_species/CSA_mam_frug.csv"
+mammals <- "/Volumes/GoogleDrive/My Drive/neotropical_frugivores/frugivore_database/Databases/L0/CSA_mam_frug.csv"
 # match the names 
 gbif_taxon_keys <- 
   readr::read_csv(mammals) %>% 
