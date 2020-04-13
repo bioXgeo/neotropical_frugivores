@@ -5,13 +5,47 @@
 *date: 4/13/20*
 
 
-### 1. Download both 30 arc second Wordclim datasets from the website [worldclim.org](www.worldclim.org) to HPC folder *XXX* (where should we save this?)
+## Goal
+
+The object is to compare the analysis of a single species range agains 'old' and 'new' climate data from Worldclim.  Worldclim has two data sets
+
+### 1. Download both 30 arc second Wordclim datasets from the website [worldclim.org](www.worldclim.org) 
+
+Download these files and unzip into an HPCC folder using shell commands.  The exact folder will be be determined by the project later, but for these instructions we'll use your  ```$SCRATCH``` directory  which should have plent of space (note these will deleted in 45d).   Also note this could be done in R 
+
+
   - old version: link addresses to data broken into two datasets 
      - [bioclim 1-9](https://data.biogeo.ucdavis.edu/data/climate/worldclim/1_4/grid/cur/bio1-9_30s_bil.zip) 
-     - [bioclim 10-19](https://data.biogeo.ucdavis.edu/data/worldclim/v2.1/base/wc2.1_30s_bio.zip) 
+     - [bioclim 10-19](https://data.biogeo.ucdavis.edu/data/climate/worldclim/1_4/grid/cur/bio10-19_30s_bil.zip) 
   - new version: [bioclim2.1](https://data.biogeo.ucdavis.edu/data/worldclim/v2.1/base/wc2.1_30s_bio.zip)
 
-### 2. Code to clip both datasets by a given shapefile
+On the HPCC (or MacOS), we can use the 'curl' utility to download this files
+
+```sh
+cd $SCRATCH # change this to the correct data directory
+mkdir worldclim
+cd worldclim
+
+##### old wordclim
+mkdir old
+cd old
+curl -O https://data.biogeo.ucdavis.edu/data/climate/worldclim/1_4/grid/cur/bio1-9_30s_bil.zip
+unzip bio1-9_30s_bil.zip
+curl -O https://data.biogeo.ucdavis.edu/data/climate/worldclim/1_4/grid/cur/bio10-19_30s_bil.zip
+unzip bio10-19_30s_bil.zip
+# optional : delete the zip files to save room
+cd ..
+
+##### new worldclim
+mkdir new
+cd new
+curl -O https://data.biogeo.ucdavis.edu/data/worldclim/v2.1/base/wc2.1_30s_bio.zip
+unzip wc2.1_30s_bio.zip
+# optional : delete the zip file to save room
+cd ..
+```
+
+### 2. R Code to clip both datasets by a given shapefile
 
 Load necessary libraries 
 
@@ -30,15 +64,17 @@ occ.sp <- SpatialPointsDataFrame(occ[c(1,2)], as.data.frame(occ[,1])) #Makes it 
 
 **Old worldclim data**
 
-Set working directory to folder where environmental data is stored 
+Set working directory to folder where environmental data is stored.  The following uses your HPCC scratch directory to match the example above. 
 
 ```R
-setwd("WHEREVER OLD WORLDCLIM IS STORED")
+worldclimdir<-paste0(Sys.getenv('SCRATCH'), '/wordclim')
+setwd(worldclim)
 ```
 
 Making stack of all 19 bioclimatic variables (both downloads for the old version need to be in the same folder). The stack links all of the individual rasters in the folder together so that they can each be processed at the same time
 
 ```R
+setwd('old')
 worldclim_old <- list.files(pattern='bil', full.names=TRUE)
 env_old <- stack(worldclim_old)
 ```
@@ -81,12 +117,14 @@ writeRaster(env_crop_old, filename= "bioclim_old_crop.tif", format="GTiff", over
 Set working directory to folder where environmental data is stored 
 
 ```R
-setwd("WHEREVER NEW WORLDCLIM IS STORED")
+worldclimdir<-paste0(Sys.getenv('SCRATCH'), '/wordclim')
+setwd(worldclim)
 ```
 
 Making stack of all new 19 bioclimatic variables. The stack links all of the individual rasters in the folder together so that they can each be processed at the same time
 
 ```R
+setwd('new')
 worldclim_new <- list.files(pattern='bil', full.names=TRUE)
 env_new <- stack(worldclim_new)
 ```
