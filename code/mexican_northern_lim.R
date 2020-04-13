@@ -161,8 +161,12 @@ bird_trait_alt_subset <-mx_bird_trait_distinct %>%
 
 colnames(bird_trait_alt_subset)[which(names(bird_trait_alt_subset) == "IUCN_name")] <- "IUCN_species_name"
 
+bird_trait_alt_subset$IUCN_species_name <- ""
+
 # Add IUCN information back into the subset
 mx_bird_trait_alternates_IUCN_info <- merge(mx_bird_trait_alternates, mx_birds, by.x="IUCN_species_name",by.y="scientific_name")
+
+
 
 #Bind the alternate name object to the orginal edited merge
 bird_trait_all <-rbind(bird_trait_alt_subset, mx_bird_trait_alternates_IUCN_info)
@@ -580,47 +584,45 @@ bird_trait_all_na_manual <-bird_trait_all_CSA[is.na(bird_trait_all_CSA$Diet.Vunk
 write.csv(bird_trait_all_na_manual,"bird_trait_all_manual_lookups.csv")
 
 #read in lookup table for species with synonyms manually looked up
-bird_trait_alt_2 <- read.csv("NEW LOOKUP TABLE")
+bird_trait_alt_2 <- read.csv("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/lookup_table/CSA_bird_trait_lookups_final_1_14.csv")
 
 #Remove species missing matches from the full trait dataset so we can remerge later
-bird_trait_alt_subset_2 <-bird_trait_all %>%
-  filter(!scientific_name %in% mx_bird_trait_alt_2$IUCN_species_name)
+bird_trait_alt_subset_2 <-bird_trait_all_CSA %>%
+  filter(!scientific_name %in% bird_trait_alt_2$IUCN_scientific_name)
 
 #Merge list of alternate names with elton_traits. Two species didn't merge, but they are insectivores.
 bird_trait_alternates_2 <- merge.data.frame(birds, bird_trait_alt_2, by.x=c("scientific_name"), by.y=c("elton_name"))
 
 
 #remove unwanted columns that came from the lookup table 2
-bird_trait_alternates_2$X <- NULL 
+bird_trait_alternates_2$new_species <- NULL 
 bird_trait_alternates_2$level <- NULL 
+bird_trait_alternates_2$ref <- NULL
 
 #change column name to match the subsetted bird trait df
-colnames(bird_trait_alternates_2)[which(names(bird_trait_alternates_2) == "IUCN_name")] <- "IUCN_species_name"
+colnames(bird_trait_alternates_2)[which(names(bird_trait_alternates_2) == "IUCN_scientific_name")] <- "IUCN_species_name"
 
-#remove columns that don't match so we can merge
-setdiff(bird_trait_alt_subset_2, mx_bird_trait_alternates_IUCN_info_2)
-mx_bird_trait_alternates_IUCN_info_2$X.1.x <- NULL 
-mx_bird_trait_alternates_IUCN_info_2$X.1.y <- NULL 
-mx_bird_trait_alternates_IUCN_info_2$X.x <- NULL 
-mx_bird_trait_alternates_IUCN_info_2$X.y <- NULL 
-mx_bird_trait_alternates_IUCN_info_2$X <- NULL 
-bird_trait_alt_subset_2$X.1 <- NULL
-bird_trait_alt_subset_2$X <- NULL
+bird_trait_alt_subset_2 <- bird_trait_alt_subset_2[, -c(41:57)] 
 
-#bind subsetted bird trait df with df of missing species names/IUCN info
-bird_trait_all_CSA <-rbind(bird_trait_all_alt_subset_2, bird_trait_alternates_2)
 
-#Remove duplicates (due to using genus level data which led to repeats)
-bird_trait_all_final_distinct <- distinct(bird_trait_all_final,scientific_name, .keep_all= TRUE)
+#bind subsetted bird trait df with df of missing species names
+bird_trait_all_CSA_final <-rbind(bird_trait_alt_subset_2, bird_trait_alternates_2)
+
+#fill in missing values in the IUCN_species_name_final column with those matching the elton traits name
+#Gives full list of IUCN species names for dataset
+test <-with(bird_trait_all_CSA_final, ifelse(IUCN_species_name=="", as.character(scientific_name), IUCN_species_name))
+bird_trait_all_CSA_final$IUCN_species_name_all <- test
+
 
 #Subset by frugivorous species
-CSA_bird_frug <- bird_trait_all_final_distinct[bird_trait_all_final_distinct$Diet.Fruit>=10,] #xx species
-write.csv(CSA_bird_frug, "CSA_bird_frug.csv")
+setwd("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/CSA_all_species")
+CSA_bird_frug <- bird_trait_all_CSA_final[bird_trait_all_CSA_final$Diet.Fruit>=10,] #xx species
 
 #Need to remove species with ranges above MExico 
 CSA_bird_frug_final <- CSA_bird_frug %>%
   filter(!scientific_name %in% bird_sp_to_remove_distinct$SCINAME)
 
+write.csv(CSA_bird_frug_final, "CSA_bird_frug.csv")
 
 # Pull GBIF records for all of these species with an IUCN shapefile - This will likely need to be done on the HPC at least for birds. Ask for help later this week once I get to that point.
 
