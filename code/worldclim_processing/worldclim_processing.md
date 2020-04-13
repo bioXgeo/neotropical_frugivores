@@ -1,6 +1,7 @@
 # Necessary steps and code for processing WorldClim datasets #
 
 *authors: Beth Gerstner & Patrick Bills*
+
 *date: 4/13/20*
 
 
