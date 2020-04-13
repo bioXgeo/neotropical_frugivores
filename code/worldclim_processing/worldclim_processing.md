@@ -1,8 +1,8 @@
-title: "Necessary steps and code for processing WorldClim datasets"
+# Necessary steps and code for processing WorldClim datasets #
 
-author: "Beth Gerstner & Patrick Bills"
+authors: Beth Gerstner & Patrick Bills
 
-date: "4/13/20"
+date: 4/13/20
 
 
 ### 1. Download both 30 arc second Wordclim datasets from the website [worldclim.org](www.worldclim.org) to HPC folder *XXX* (where should we save this?)
