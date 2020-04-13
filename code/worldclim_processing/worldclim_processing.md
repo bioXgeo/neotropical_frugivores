@@ -82,7 +82,7 @@ Set working directory to folder where environmental data is stored
 setwd("WHEREVER NEW WORLDCLIM IS STORED")
 ```
 
-Making stack of all 19 bioclimatic variables (both downloads for the old version need to be in the same folder). The stack links all of the individual rasters in the folder together so that they can each be processed at the same time
+Making stack of all new 19 bioclimatic variables. The stack links all of the individual rasters in the folder together so that they can each be processed at the same time
 
 ```R
 worldclim_new <- list.files(pattern='bil', full.names=TRUE)
