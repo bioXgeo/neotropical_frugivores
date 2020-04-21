@@ -40,8 +40,8 @@ library(sf) #alternative to sp for building spatial data frame from occurence co
 library(future) # parallel framework
 library(future.apply) # parallel functions
 
-# --------------------------------------------------------------------------------------------------------------
-### Command Line Parameters
+# ------------------------------------------------------------------
+### Parameters and Settings
 #' This script assumes worldclim files have been downloaded and unzipped into subfolders called 'new' and 'old' 
 #' under a single folder which is probably a convenient assumption.  Parameters are the locations of those files
 
@@ -72,6 +72,10 @@ csv_occ_file   <- args[1]
 worldclim_path <- args[2]
 output_path    <- args[3]
 
+# the rasters produced are large and may fill up the /tmp folder on the local computer
+# this will not be as fast, but use the same disk as the output_path folder
+# TODO create a parameter for this.  On the HPCC use the $SCRATCH disk
+rasterOptions(tmpdir = file.path(output_path, "tmp"))
 
 #' 
 #' One thing that makes this data easier to work with is to first crop the full dataset
