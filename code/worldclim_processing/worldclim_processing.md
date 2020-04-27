@@ -19,7 +19,14 @@ Download these files and unzip into an HPCC folder using shell commands.  The ex
      - [bioclim 10-19](https://data.biogeo.ucdavis.edu/data/climate/worldclim/1_4/grid/cur/bio10-19_30s_bil.zip) 
   - new version: [bioclim2.1](https://data.biogeo.ucdavis.edu/data/worldclim/v2.1/base/wc2.1_30s_bio.zip)
 
-On the HPCC (or MacOS), we can use the 'curl' utility to download this files
+
+
+#### Worldclim Download Shell Script
+
+The following shell scripts (written for the bash shell) will work on the HPCC (and probably MacOS), we can use the 'curl' utility to download the files...
+
+Note this code uses the folder organization (with 'new' and 'old' folders) that the current version of the R code expects.  In the future the R code should be written to be more flexible. 
+
 
 ```sh
 cd $SCRATCH # change this to the correct data directory
@@ -46,6 +53,15 @@ cd ..
 ```
 
 ### 2. R Code to clip both datasets by a given shapefile
+
+
+##### NEW CODE 
+See the file [mask_worldclim.R](file://mask_worldclim.R) in this folder for current implementation of the code sketch below
+
+
+---
+
+#### CODE SKETCH OUTLINE
 
 Load necessary libraries 
 

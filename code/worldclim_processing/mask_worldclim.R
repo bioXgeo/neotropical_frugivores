@@ -171,7 +171,7 @@ writeRaster(climvars_stacked, filename = file.path(output_path,"bioclim_old_msk.
 #' 
 ## --------------------------------------------------------------------------------------------------------------
 setwd('new')
-worldclim_path_new = file.path(worldclim_path, 'new')
+worldclim_path_new <- file.path(worldclim_path, 'new')
 worldclim_new <- list.files(path=worldclim_path_new, pattern='bil', full.names=TRUE)
 env_new <- stack(worldclim_new)
 
