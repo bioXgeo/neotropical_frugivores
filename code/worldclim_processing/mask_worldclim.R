@@ -1,11 +1,13 @@
 #' mask_worldclim.R
-#' title: "Processing WorldClim datasets"
 #' author: "Beth Gerstner and Pat Bills"
 #' date: "4/21/2020"
+#' crop/mask WorldClim rasters to set of lat/long coordinates (e.g. occurence data) #
 #' 
-#' # crop/mask WorldClim rasters to set of lat/long coordinates (e.g. occurence data) #
+#' ##  NOTES raster options are set to use 20gb memory and SCRATCH disk for tmp files.  This is HPCC only code. 
+#' To make this more portable, instead of encoding options here, put in options files in this folder or in home dir
 #' 
-#' #' WORK IN PROGRESS
+#' 
+#' ## WORK IN PROGRESS
 #'  masking doesn't work; in transition from two code chunks for old/new into one function
 #'  need occurrence data CRS and wordclim crs to match (or leave as NA?)
 #' 
@@ -29,7 +31,7 @@
 #' when called by the command line
 #' 2. allow two different folders for worldclim data instead of 'old' and 'new'
 #' Load necessary libraries 
-#' 3. consider abstracting this to compare any two raster datasets that can be opened 
+#' 3. create  abstract functions to 1) mask to points 2) compare any two masked rasters
 # --------------------------------------------------------------------------------------------------------------
 
 
@@ -40,8 +42,27 @@ library(sf) #alternative to sp for building spatial data frame from occurence co
 library(future) # parallel framework
 library(future.apply) # parallel functions
 
+
 # ------------------------------------------------------------------
-### Parameters and Settings
+### Options
+# the rasters produced are large and may fill up the /tmp folder on the local computer
+# this will not be as fast, but use the same disk as the output_path folder
+# TODO create a parameter for this.  On the HPCC use the $SCRATCH disk
+
+# rasterOptions(format, overwrite, datatype, tmpdir, tmptime, progress,
+#     timer, chunksize, maxmemory, memfrac, todisk, setfileext, tolerance,
+#     standardnames, depracatedwarnings, addheader,
+#     default = FALSE)
+# see 
+#  https://discuss.ropensci.org/t/how-to-avoid-space-hogging-raster-tempfiles/864
+#  https://www.gis-blog.com/increasing-the-speed-of-raster-processing-with-r-part-23-parallelisation/
+#  https://strimas.com/post/processing-large-rasters-in-r/
+
+rasterOptions(tmpdir = file.path(Sys.getenv("SCRATCH"), "raster_tmp"), 
+              maxmemory=2e10)
+
+# ------------------------------------------------------------------
+### Parameters
 #' This script assumes worldclim files have been downloaded and unzipped into subfolders called 'new' and 'old' 
 #' under a single folder which is probably a convenient assumption.  Parameters are the locations of those files
 
@@ -57,11 +78,11 @@ args = commandArgs(trailingOnly=TRUE)
 
 if (length(args)==0) {
     stop("requires parameter : path to csv occurence files", call.=FALSE)
-} else if (length(args) < 2 ) {
+} else if(length(args) < 2){
     # only 1 arg given, use default for second arg
     # default worldclim path output file
     args[2] <- default_worldclim_path
-} else if (length(args) < 3 ) {
+} else if (length(args) < 3) {
     args[3] <- default_output_path
 }
 
@@ -72,10 +93,6 @@ csv_occ_file   <- args[1]
 worldclim_path <- args[2]
 output_path    <- args[3]
 
-# the rasters produced are large and may fill up the /tmp folder on the local computer
-# this will not be as fast, but use the same disk as the output_path folder
-# TODO create a parameter for this.  On the HPCC use the $SCRATCH disk
-rasterOptions(tmpdir = file.path(output_path, "tmp"))
 
 #' 
 #' One thing that makes this data easier to work with is to first crop the full dataset
