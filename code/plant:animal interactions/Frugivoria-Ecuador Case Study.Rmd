@@ -26,7 +26,7 @@ c1 <- ecuador_species$result[1]
 ```
 
 # Break down by species group for the world (will subset to Ecuadorian species)
-```{r, eval=FALSE, echo=FALSE}
+```{r}
 
 # Get codes for the birds
 all_birds <-rl_comp_groups(group = c('birds'), key = token)
@@ -37,7 +37,7 @@ all_mammals <-rl_comp_groups(group = c('mammals'), key = token)
 ```
 
 # Mammals and birds occurring in Ecuador
-```{r, eval=FALSE, echo=FALSE}
+```{r}
 
 #Mammals
 
@@ -46,3 +46,8 @@ ec_mammals <- merge(all_mammals$result, c1, by="taxonid")
 #Birds
 ec_birds <- merge(all_birds$result, c1, by="taxonid")
 ```
+
+
+
+#____________________________________________________________________________________________
+#### Hazel start your code here! I'll continue adding above
