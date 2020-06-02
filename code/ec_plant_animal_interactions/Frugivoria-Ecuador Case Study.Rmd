@@ -74,7 +74,7 @@ get_habitat <- function(ID) {
 }
 ```
 
-# Apply get_habitat to each row of latin_american_mammals
+# Apply get_habitat to each row of ec_mammals
 ```{r}
 
 all_habitat_mammals <- ec_mammals %>%
