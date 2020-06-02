@@ -77,13 +77,24 @@ get_habitat <- function(ID) {
 # Apply get_habitat to each row of ec_mammals
 ```{r}
 
-all_habitat_mammals <- ec_mammals %>%
+ec_habitat_mammals <- ec_mammals %>%
+  rowwise %>%
+  do(get_habitat(.$taxonid))
+
+# Apply get_habitat to each row of_birds
+ec_habitat_birds <- ec_birds %>%
   rowwise %>%
   do(get_habitat(.$taxonid))
 
 
+```
 
+# Pull in Elton Traits data to begin subsetting to frugivores
 
+```{r}
+#Read in Elton Traits dataset 
+birds <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L0/Elton_traits/BirdFuncDat.csv")
+mamm <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L0/Elton_traits/MamFuncDat.csv")
 ```
 #____________________________________________________________________________________________
 #### Hazel start your code here! I'll continue adding above
