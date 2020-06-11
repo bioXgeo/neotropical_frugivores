@@ -1,0 +1,30 @@
+---
+title: "Plant Trait L0 to L1"
+author: "Hazel Anderson"
+date: "6/11/2020"
+output: html_document
+---
+
+# Load packages
+```{r}
+library(BIEN)
+library(ape)
+library(maps)
+library(sp)
+```
+# Pull Ecuador plant species list from BIEN
+```{r}
+Ecuador <- BIEN_occurrence_country("Ecuador")
+```
+
+#List of all avaliable traits in BIEN
+```{r}
+BIEN_trait_list()
+```
+
+# Trait lists
+```{r}
+fruit_type <- BIEN_trait_trait(trait = "fruit type")
+minimum_fruit_length <- BIEN_trait_trait(trait = "minimum fruit length")
+maximum_fruit_lenth <- BIEN_trait_trait(trait = "maximum fruit length")
+plant_fruiting_duration <- BIEN_trait_trait(trait = "plant fruiting duration")
