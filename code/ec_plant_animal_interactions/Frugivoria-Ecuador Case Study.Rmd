@@ -13,7 +13,6 @@ library(jsonlite)
 library(dplyr)
 library(rredlist) 
 
-api_url <- 'https://apiv3.iucnredlist.org/api/v3/'
 token <- '3b3db1c753a7cad0616e16146363ec88eead97d185cb3304070d7343123516fd'
 ```
 
@@ -64,13 +63,12 @@ ec_birds <-all_birds_df %>%
 # Include error-checking code in the function so that it will return NA for everything if there's no data.
 
 get_habitat <- function(ID) {
-  habitat_by_sp <- GET(url = paste0(api_url, '/habitats/species/id/', ID,'?token=', token))
-  habitat_by_sp <- fromJSON(content(habitat_by_sp, as = 'text'), simplifyDataFrame = TRUE, flatten = TRUE)$result
-  if (class(habitat_by_sp) == 'data.frame') {
-    data.frame(taxonid=ID, habitat_by_sp)
-  } else {
-    data.frame(taxonid=ID)
-  }
+    habitat_by_sp<- rl_habitats(id=ID)$result
+    if (class(habitat_by_sp) == 'data.frame') {
+        data.frame(taxonid=ID, habitat_by_sp)
+    } else {
+        data.frame(taxonid=ID)
+    }
 }
 ```
 
