@@ -91,6 +91,16 @@ ec_habitat_birds <- ec_birds %>%
 
 ```
 
+# Merge the habitat data with the IUCN list so that we have the statuses and habitats combined
+```{r}
+
+mammal_IUCN_full<- merge.data.frame(ec_mammals, ec_habitat_mammals, by= "taxonid", all=TRUE)
+
+bird_IUCN_full<- merge.data.frame(ec_birds, ec_habitat_birds, by= "taxonid", all=TRUE)
+
+
+```
+
 # Pull in Elton Traits data to begin subsetting to frugivores
 
 ```{r}
@@ -99,7 +109,30 @@ birds <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L0/El
 mamm <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L0/Elton_traits/MamFuncDat.csv")
 ```
 
-#
+# Combine bird elton traits dataset (full) and IUCN bird dataset for Ecuador together
+```{r}
+
+#Combine mammal elton traits dataset and IUCN mammal data together
+colnames(mamm)[which(names(mamm) == "Scientific")] <- "scientific_name"
+mamm_trait_IUCN <- merge.data.frame(mamm, mammal_IUCN_full, by= "scientific_name", all.y=TRUE)
+
+#Combine bird elton traits dataset and IUCN bird data together
+colnames(birds)[which(names(birds) == "Scientific")] <- "scientific_name"
+bird_trait_IUCN<- merge.data.frame(birds, bird_IUCN_full, by= "scientific_name", all.y=TRUE)
+
+```
+
+# Go through the merges that did not work correctly (kept all IUCN species that were not found in the Elton Traits database) and compare against synonym lists
+
+```{r}
+
+
+
+
+```
+
+
+
 #____________________________________________________________________________________________
 #### Hazel start your code here! I'll continue adding above
 
