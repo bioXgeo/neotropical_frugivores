@@ -144,7 +144,7 @@ colnames(dat)[which(names(dat) == "P_scientific_name")] <- "scientific_name"
 names(dat)
 
 # I've decided that I don't want the first few columns so lets remove those (columns 1:3)... 
-aotus_v_feeding<- aotus_v_feeding[,-c(1:3)] remember that it goes rows,columns #this is why the 1:3 is after the comma, because we're saying get rid of COLUMNS 1:3
+aotus_v_feeding<- aotus_v_feeding[,-c(1:3)] # remember that it goes rows,columns #this is why the 1:3 is after the comma, because we're saying get rid of COLUMNS 1:3
 
 #Lets format this to go into a barplot, should be a matrix
 aotus_v_feeding_mat <-as.matrix(aotus_v_feeding, mode='numeric')
