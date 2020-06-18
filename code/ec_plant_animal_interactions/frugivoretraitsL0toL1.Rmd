@@ -2,7 +2,7 @@
 title: 'Frugivoria: Ecuadorian Birds & Mammals (L0 to L1)'
 author: "Beth Gerstner"
 date: "6/17/2020"
-description: This script is part of the overarching Frugivoria project, which aims to build a comprehensive database of functional traits for birds and mammals (frugivores) in Central and South America. This smaller project focuses on birds and mammals in Ecuador and will eventually be used to understand plant/animal interactions. 
+description: This script is part of the overarching Frugivoria project, which aims to build a comprehensive database of functional traits for birds and mammals (frugivores) in Central and South American tropical forests. This smaller project focuses on birds and mammals in Ecuador and will eventually be used to understand plant/animal interactions. 
 output:
   pdf_document: default
   html_document: default
