@@ -22,7 +22,7 @@ Ecuador <- BIEN_occurrence_country("Ecuador")
 BIEN_trait_list()
 ```
 
-# Create a vectpr of all the Trait Names.  The BIEN functions will take a vector of traits instead of just one
+# Create a vector of all the Trait Names.  The BIEN functions will take a vector of traits instead of just one
 
 
 ```{r}
@@ -159,7 +159,6 @@ Traits for `r species` :
 traits <- BIEN_trait_traitbyspecies(species, trait_vector)
 ```
 
-```
 
 
 ## Traits for species in Ecuador
@@ -170,4 +169,11 @@ working on this...
 # for (i in Ecuador_species_list) {
 #   BIEN_trait_species(species = "i")
 # }
+```
+
+#Unique list of fruit types
+```{r}
+fruit_type <- BIEN_trait_trait(trait = "fruit type")
+fruit_type_list <- unique(fruit_type$trait_value)
+print(fruit_type_list)
 ```
