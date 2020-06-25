@@ -126,8 +126,44 @@ bird_trait_IUCN<- merge.data.frame(birds, bird_IUCN_full, by= "scientific_name",
 # Go through the merges that did not work correctly (kept all IUCN species that were not found in the Elton Traits database) and compare against synonym lists
 
 ```{r}
+# Correcting issues with species not merging correctly between databases
+#find species that did not match correctly
+mamm_trait_na <-mamm_trait_IUCN[is.na(mamm_trait_IUCN$Diet.Vunk),] #205 IUCN mammal species didn't merge
+```
 
+#Find species that match alternate names. Lookup table for species is found in code 'scientific_name_lookup_table'
+```{r}
+#read in lookup table made previously
+mam_lookup_final <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L1/working_databases/lookup_tables/CSA_mam_trait_lookups_final_1_7.csv")
 
+# Find species that didn't merge correctly in the lookup table
+alternate_match <-unique(as.data.frame(mamm_trait_na$scientific_name[mamm_trait_na$scientific_name %in% mam_lookup_final$IUCN_species_name]))
 
+colnames(alternate_match)[which(names(alternate_match) == "mamm_trait_na$scientific_name[mamm_trait_na$scientific_name %in% mam_lookup_final$IUCN_species_name]")] <- "IUCN_name_with_alternate"
+
+#choose row in lookup table with the alternate match and get the IUCN name
+mamm_lookup_subset <-mam_lookup_final %>%
+  filter(IUCN_species_name %in% alternate_match$IUCN_name_with_alternate)
+
+#add column to the first merge so that we can keep track of IUCN names vs. alternate names 
+mamm_trait_IUCN$IUCN_name <- ""
+
+#Merge list of alternate names with elton_traits and append them to the orginal merge 
+mamm_trait_alternates <- merge.data.frame(mamm, mamm_lookup_subset, by.x=c("scientific_name"), by.y=c("elton_name"))
+
+## Remove duplicates with NAs
+
+#transform the alternate names so I can subset the merged dataset and remove those names (will re-attach edited names)
+alternates_matrix <-rbind(as.matrix(mx_mamm_trait_alternates$scientific_name), as.matrix(mx_mamm_trait_alternates$IUCN_species_name))
+
+alternates_df <- as.data.frame(alternates_matrix)
+
+#Remove the duplicate species names (wrong names and correct names) because we'll be merging them back in
+
+mam_trait_alt_subset <-mx_mamm_trait %>%
+  filter(!scientific_name %in% alternates_df$V1)
+
+# Add IUCN information back into the subset
+mx_mamm_trait_alternates_IUCN_info <- merge(mx_mamm_trait_alternates, mx_mammals, by.x="IUCN_species_name",by.y="scientific_name")
 
 ```
