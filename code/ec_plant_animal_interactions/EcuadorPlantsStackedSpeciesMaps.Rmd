@@ -1,0 +1,33 @@
+---
+title: "EcuadorPlantStackedSpeciesMaps"
+author: "Hazel Anderson"
+date: "6/30/2020"
+output: html_document
+---
+
+# Load required packages
+```{r}
+library(BIEN)
+library(ape)
+library(maps)
+library(sp)
+```
+
+#List of Ecuador Species
+```{r}
+Ecuador <- BIEN_occurrence_country("Ecuador")
+Ecuador_species_list <- unique(Ecuador$scrubbed_species_binomial)
+print(length(Ecuador_species_list))
+```
+
+#Species Maps for All Ecuador Species
+```{r}
+Ecuador_plant_range_maps <- BIEN_ranges_species_bulk(Ecuador_species_list, "C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps")
+```
+
+#Mapping
+```{r}
+map(regions = "Ecuador" ,fill = T , col= "grey")
+
+
+```
