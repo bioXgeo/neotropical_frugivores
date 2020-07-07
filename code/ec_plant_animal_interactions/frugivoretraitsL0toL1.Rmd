@@ -213,11 +213,39 @@ mamm_trait_na_manual <-mam_trait_all[is.na(mam_trait_all$Diet.Vunk),]
 mamm_trait_na_manual_unique <- unique(mamm_trait_na_manual$scientific_name) # 23 still missing. There's some overlap with what's in the lookup table, so I'm unsure why those aren't being matched correctly. 
 setwd("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L1/working_databases/lookup_tables/mammal_lookup_2")
 write.csv(mamm_trait_na_manual_unique,"mam_trait_manual_lookups.csv")
-```
-# All synonyms fixing. Pull out all bird and mammal forest species and then pull those from the IUCN shapefile. Look up code to make a map of stacked ranges. Turn the polygons to a grid and add them up
+
+# manually looked up remaining species names. Pull in the edited file.
+mam_trait_alt_2 <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L1/working_databases/lookup_tables/mammal_lookup_2/mam_trait_manual_lookups.csv")
+
+#Remove species missing matches from the full trait dataset so we can remerge later
+mam_trait_alt_subset_2 <-mam_trait_all %>%
+  filter(!scientific_name %in% mam_trait_alt_2$IUCN_name)
+
+#Merge list of alternate names with elton_traits. Two species didn't merge, but they are insectivores.
+mam_trait_alternates_2 <- merge.data.frame(mamm, mam_trait_alt_2, by.x=c("scientific_name"), by.y=c("elton_name"))
+
+#Bind the alternate name object to the orginal edited merge
+colnames(mam_trait_alt_subset_2)[which(names(mam_trait_alt_subset_2) == "IUCN_name")] <- "IUCN_species_name"
+
+#remaining species with IUCN information
+mam_trait_alternates_IUCN_info_2 <- merge(mam_trait_alternates_2, mammal_IUCN_ec, by.x="IUCN_name",by.y="scientific_name")
+
+#change column name to match the subsetted bird trait df
+colnames(mam_trait_alternates_IUCN_info_2)[which(names(mam_trait_alternates_IUCN_info_2) == "IUCN_name")] <- "IUCN_species_name"
+
+#bind subsetted mammal trait df with df of missing species names/IUCN info
+mam_trait_all_final <-rbind(mam_trait_alt_subset_2, mam_trait_alternates_IUCN_info_2)
+
+#Remove duplicates (due to using genus level data which led to repeats)
+mam_trait_all_final_distinct <- distinct(mam_trait_all_final,scientific_name, .keep_all= TRUE)
+
+#Subset by frugivorous species
+mam_frug_ec <- mam_trait_all_final_distinct[mam_trait_all_final_distinct$Diet.Fruit>=10,] #209 species
+
+# Same process, but with birds
+
+
+Pull out all bird and mammal forest species and then pull those from the IUCN shapefile. Look up code to make a map of stacked ranges. Turn the polygons to a grid and add them up
 ```
 
-# Add IUCN information back into the subset
-mx_mamm_trait_alternates_IUCN_info <- merge(mx_mamm_trait_alternates, mx_mammals, by.x="IUCN_species_name",by.y="scientific_name")
 
-```
