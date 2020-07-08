@@ -242,6 +242,17 @@ mam_trait_all_final_distinct <- distinct(mam_trait_all_final,scientific_name, .k
 #Subset by frugivorous species
 mam_frug_ec <- mam_trait_all_final_distinct[mam_trait_all_final_distinct$Diet.Fruit>=10,] #209 species
 
+#fill in missing values in the IUCN_species_name_final column with those matching the elton traits name
+#Gives full list of IUCN species names for dataset
+test <-with(mam_frug_ec, ifelse(IUCN_species_name=="", as.character(scientific_name), IUCN_species_name))
+mam_frug_ec$IUCN_species_name <- test
+```
+
+# Write Ecuadorian frugivorous mammal dataset to file
+```{r}
+setwd("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/Ecuador_species")
+write.csv(mam_frug_ec, "mam_frug_ec.csv")
+```
 # Same process, but with birds
 
 
