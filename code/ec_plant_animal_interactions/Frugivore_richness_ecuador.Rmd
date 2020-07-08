@@ -2,9 +2,6 @@
 title: 'Frugivoria: Ecuadorian Birds & Mammals richness'
 author: "Beth E. Gerstner"
 date: "7/7/2020"
-output:
-  pdf_document: default
-  html_document: default
 description: This script is part of the overarching Frugivoria project, which aims
   to build a comprehensive database of functional traits for birds and mammals (frugivores)
   in Central and South American tropical forests. This smaller project focuses on
@@ -12,6 +9,10 @@ description: This script is part of the overarching Frugivoria project, which ai
   interactions. Specifically, this script takes IUCN range maps and stacks them, allowing
   us to summarize taxonomic richness based on ranges. (Currently only works with mammals,
   but will have birds done shortly.)
+  output:
+  pdf_document: default
+  html_document: default
+
 ---
 ```{r}
 library(sf)
