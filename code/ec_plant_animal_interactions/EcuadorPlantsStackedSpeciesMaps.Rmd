@@ -18,67 +18,159 @@ library(rnaturalearth)
 library(purrr)
 library(smoothr)
 library(rgbif)
+library(lwgeom)
+library(rgeos)
+library(rgdal)
+
 ```
 
-#List of Ecuador Species
+# List of Ecuador Species
 ```{r}
 Ecuador <- BIEN_occurrence_country("Ecuador")
 Ecuador_species_list <- unique(Ecuador$scrubbed_species_binomial)
 print(length(Ecuador_species_list))
 ```
 
-#Species Maps for All Ecuador Species
+# Species Maps for All Ecuador Species
 ```{r}
-Ecuador_plant_range_maps <- BIEN_ranges_species_bulk(Ecuador_species_list, "C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps")
+#Ecuador_plant_range_maps <- BIEN_ranges_species_bulk(Ecuador_species_list, "C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps")
+Ecuador_plant_range_maps_list <- BIEN_ranges_species_bulk(Ecuador_species_list)
 ```
 
-#Setting up Map
+# Merge Ecuador plant species list with range map list
 ```{r}
-# world map
+checked_list <- merge(Ecuador_species_list, Ecuador_plant_range_maps_list)
+print(checked_list)
+```
+
+# Pull shapefiles for Ecuador plants
+```{r}
+setwd("C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps")
+Ecuador_plants <- read_sf("C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps")
+```
+
+
+# Load in world map
+```{r}
 worldMap <- ne_countries(scale = "medium", type = "countries", returnclass = "sf")
 
-# country subset
+# country subset. In this case we are removing the Galapagos by defining the bounding box around the Ecuador polygon.
 CRpoly <- worldMap %>% filter(sovereignt == "Ecuador")
+ecuador_shp <-st_crop(CRpoly, c(xmin=-84, xmax=-75.24961, ymin=-4.990625, ymax=1.455371))
 
-# random points tables as a named list
-sp_occ <- rerun(12, st_sample(CRpoly, sample(3:20, 1)))
-names(sp_occ) <- paste0("sp_", letters[1:length(sp_occ)])
+# trim the map to appropriate study area. This zooms out of Ecuador, which will be easier for visualization down the line.
+limsCR <- st_buffer(ecuador_shp, dist = 9) %>% st_bbox()
 
-# to sf object
-sflisss <-
-  purrr::map(sp_occ, st_sf) %>%
-  map2(., names(.), ~ mutate(.x, id = .y))
-
-sp_occ_sf <- sflisss %>% reduce(rbind)
-
-# to multipoint
-sp_occ_sf <- sp_occ_sf %>%
-  group_by(id) %>%
-  summarise()
-
-# trim to study area
-limsCR <- st_buffer(CRpoly, dist = 0.7) %>% st_bbox()
-# neighboring countries
-adjacentPolys <- st_touches(CRpoly, worldMap)
+# neighboring countries (will include Colombia as well)
+adjacentPolys <- st_touches(ecuador_shp, worldMap)
 neighbours <- worldMap %>% slice(pluck(adjacentPolys, 1))
 
 # countries
 divpolPlot <-
-  ggplot() +
-  geom_sf(data = neighbours, color = "white") +
-  geom_sf(data = CRpoly) +
-  coord_sf(
-    xlim = c(limsCR["xmin"], limsCR["xmax"]),
-    ylim = c(limsCR["ymin"], limsCR["ymax"])
-  ) +
-  scale_x_continuous(breaks = c(-84)) +
-  theme(
-    plot.background = element_rect(fill = "#f1f2f3"),
-    panel.background = element_rect(fill = "#2F4051"),
-    panel.grid = element_blank(),
-    line = element_blank(),
-    rect = element_blank()
-  )
+ggplot() +
+geom_sf(data = neighbours, color = "white") +
+geom_sf(data = ecuador_shp) +
+coord_sf(
+xlim = c(limsCR["xmin"], limsCR["xmax"]),
+ylim = c(limsCR["ymin"], limsCR["ymax"])
+) +
+scale_x_continuous(breaks = c(-84)) +
+theme(
+plot.background = element_rect(fill = "#f1f2f3"),
+panel.background = element_rect(fill = "#2F4051"),
+panel.grid = element_blank(),
+line = element_blank(),
+rect = element_blank()
+)
 divpolPlot
+```
+
+# Plot hulls
+```{r}
+hullsPlot <-
+ggplot() +
+geom_sf(data = neighbours, color = "white") +
+geom_sf(data = ecuador_shp) +
+geom_sf(data = Ecuador_plants, aes(fill = binomial), alpha = 0.7) +
+scale_fill_scico_d(palette = "davos", direction = -1, end = 0.9, guide = FALSE) +
+coord_sf(
+xlim = c(limsCR["xmin"], limsCR["xmax"]),
+ylim = c(limsCR["ymin"], limsCR["ymax"])
+) +
+scale_x_continuous(breaks = c(-84)) +
+theme(
+plot.background = element_rect(fill = "#f1f2f3"),
+panel.background = element_rect(fill = "#2F4051"),
+panel.grid = element_blank(),
+line = element_blank(),
+rect = element_blank()
+)
+hullsPlot
 
 ```
+
+# Define a grid
+```{r}
+CRGrid <- ecuador_shp %>%
+st_make_grid(cellsize = 0.2) %>%
+st_intersection(ecuador_shp) %>%
+st_cast("MULTIPOLYGON") %>%
+st_sf() %>%
+mutate(cellid = row_number())
+```
+
+# Richness for convex hulls
+```{r}
+richness_gridEOO <- CRGrid %>%
+st_join(Ecuador_plants) %>%
+mutate(overlap = ifelse(!is.na(id), 1, 0)) %>%
+group_by(cellid) %>%
+summarize(num_species = sum(overlap))
+```
+
+# Empty grid, more detailed in nature
+```{r}
+gridPlot <-
+ggplot() +
+geom_sf(data = neighbours, color = "white") +
+geom_sf(data =ecuador_shp) +
+geom_sf(data = CRGrid) +
+coord_sf(
+xlim = c(limsCR["xmin"], limsCR["xmax"]),
+ylim = c(limsCR["ymin"], limsCR["ymax"])
+) +
+scale_x_continuous(breaks = c(-84)) +
+theme(
+plot.background = element_rect(fill = "#f1f2f3"),
+panel.background = element_rect(fill = "#2F4051"),
+panel.grid = element_blank(),
+line = element_blank(),
+rect = element_blank()
+)
+gridPlot
+```
+
+# Richness for convex hulls, more detailed
+```{r}
+gridRichCR_eoo <-
+ggplot(richness_gridEOO) +
+geom_sf(data = neighbours, color = "white") +
+geom_sf(data = ecuador_shp, fill = "grey", size = 0.1) +
+geom_sf(aes(fill = num_species), color = NA) +
+scale_fill_scico(palette = "davos", direction = -1, end = 0.9) +
+coord_sf(
+xlim = c(limsCR["xmin"], limsCR["xmax"]),
+ylim = c(limsCR["ymin"], limsCR["ymax"])
+) +
+scale_x_continuous(breaks = c(-84)) +
+theme(
+plot.background = element_rect(fill = "#f1f2f3"),
+panel.background = element_rect(fill = "#2F4051"),
+panel.grid = element_blank(),
+line = element_blank(),
+rect = element_blank()
+) + labs(fill = "richness")
+gridRichCR_eoo
+
+```
+
