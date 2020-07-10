@@ -47,7 +47,7 @@ if (file.exists("Ecuador_plant_range_maps")){
 } else {
     Ecuador_plant_species_list_vector <- pull(Ecuador_species_list, x)
     Ecuador_plant_range_maps <- BIEN_ranges_load_species(species = Ecuador_plant_species_list_vector)
-    save(Ecuador_plant_range_maps, "Ecuador_plant_range_maps.rdata")
+    save(Ecuador_plant_range_maps, file = "Ecuador_plant_range_maps.RData")
 }
 ```
 
