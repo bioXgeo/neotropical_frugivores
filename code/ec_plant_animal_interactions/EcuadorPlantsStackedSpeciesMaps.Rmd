@@ -38,18 +38,22 @@ library(rgdal)
         write.csv(Ecuador_species_list, "Ecuador_species_list.csv")
     }
     
-    return(Ecuador_species_list)
 ```
 
 # Species Maps for All Ecuador Species
 ```{r}
-Ecuador_plant_range_maps <- BIEN_ranges_species_bulk(Ecuador_species_list, "C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps")
-Ecuador_plant_range_maps_list <- BIEN_ranges_species_bulk(Ecuador_species_list)
+if (file.exists("Ecuador_plant_range_maps")){
+    load(Ecuador_plant_range_maps)
+} else {
+    Ecuador_plant_species_list_vector <- pull(Ecuador_species_list, x)
+    Ecuador_plant_range_maps <- BIEN_ranges_load_species(species = Ecuador_plant_species_list_vector)
+    save(Ecuador_plant_range_maps, "Ecuador_plant_range_maps.rdata")
+}
 ```
 
 # Merge Ecuador plant species list with range map list
 ```{r}
-checked_list <- merge(Ecuador_species_list, Ecuador_plant_range_maps_list)
+checked_list <- merge(Ecuador_species_list, Ecuador_plant_range_maps)
 print(checked_list)
 ```
 
