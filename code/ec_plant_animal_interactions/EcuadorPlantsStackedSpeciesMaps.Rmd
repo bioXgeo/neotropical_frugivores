@@ -26,14 +26,24 @@ library(rgdal)
 
 # List of Ecuador Species
 ```{r}
-Ecuador <- BIEN_occurrence_country("Ecuador")
-Ecuador_species_list <- unique(Ecuador$scrubbed_species_binomial)
-print(length(Ecuador_species_list))
+
+# IF the save file is here, read that, otherwise pull plant species list from BIEN
+    # and save that
+    if(file.exists("Ecuador_species_list.csv")){
+        Ecuador_species_list <- read.csv("Ecuador_species_list.csv")
+    } else {
+        Ecuador <- BIEN_occurrence_country("Ecuador")
+        Ecuador_species_list <- unique(Ecuador$scrubbed_species_binomial)
+        # save these data now
+        write.csv(Ecuador_species_list, "Ecuador_species_list.csv")
+    }
+    
+    return(Ecuador_species_list)
 ```
 
 # Species Maps for All Ecuador Species
 ```{r}
-#Ecuador_plant_range_maps <- BIEN_ranges_species_bulk(Ecuador_species_list, "C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps")
+Ecuador_plant_range_maps <- BIEN_ranges_species_bulk(Ecuador_species_list, "C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps")
 Ecuador_plant_range_maps_list <- BIEN_ranges_species_bulk(Ecuador_species_list)
 ```
 
@@ -46,9 +56,8 @@ print(checked_list)
 # Pull shapefiles for Ecuador plants
 ```{r}
 setwd("C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps")
-Ecuador_plants <- read_sf("C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps")
+Ecuador_plants <- read_sf("C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps/Aa_argyrolepis.shp")
 ```
-
 
 # Load in world map
 ```{r}
