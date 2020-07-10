@@ -1,4 +1,4 @@
-# title: "fruiting_Plant_traits_by_country.R"
+# title: "fruiting_Plant_traits_by_country.R    "
 # author: "Hazel Anderson, Pat Bills"
 # date: "6/16/2020"
 # function : functions to pulls trait data from BIEN for all fruiting species for a country 
@@ -14,9 +14,23 @@ library(sp)
 library(dplyr)
 
 
+library(rgeos)
+library(rgdal)
+library(sf)
+library(dplyr)
+library(ggplot2)
+# library(scico)
+library(rnaturalearth)
+# library(purrr)
+# library(smoothr)
+# library(rgbif)
+# library(lwgeom)
+
+
 #' Read ocurrences from BIEN for a country into a dataframe using BIEN::BIEN_occurrence_country
-#'
-#' This will take a while to download from BIEN it it's not be downloaded before.  
+#' 
+#' Note that the occurrence data is not necessary to get a list of species for a country.  Use BIEN_list_country()
+#' This will take a while to download from BIEN if it's not be downloaded before.  
 
 #' @param country Country name matching BIEN database.  Case-sensitive. Default 'Ecuador'
 #' @return a data frame in BIEN format.   
@@ -44,6 +58,7 @@ get_species_occurrence_data <- function(country = "Ecuador", cache_folder= getOp
     
     return(occurrence_data)
 }
+
 
 # full list of BIEN traits
 # this is not currently used, but if we only want a subset of traits, then edit this vector and edit the 
@@ -108,6 +123,7 @@ trait_vector <- function(){
 
 
 # given a set of species, output only those that bear fruit (as a new vector of species)
+
 fruiting_species <- function(species){
     proxy_trait_to_identify_fruiting <- "fruit type"
     # get a list of all species that have this trait, starting with species from our occurrence data
@@ -118,11 +134,13 @@ fruiting_species <- function(species){
     return( s )
 }
 
-# get all traits for those species that have fruit
-fruiting_species_traits <- function(occurrence_data){
-    # get just the species from occurrence data 
-    species <- as.vector(unique(occurrence_data$scrubbed_species_binomial))
-    # filter using BIEN functions to get just fruiting species
+# give all traits for those species that have fruit
+# this is a little redundant because fruiting_species downloads and then throws away the fruit_type trait 
+# and then downloads all the trait info for every trait
+
+fruiting_species_traits <- function(species){
+
+        # filter using BIEN functions to get just fruiting species
     species <- fruiting_species(species)
     
     # get all traits for those species
@@ -131,12 +149,46 @@ fruiting_species_traits <- function(occurrence_data){
     return(all_fruiting_traits)
 }
 
-
-# test function looking at just the first 100 occurrence records
-test_fruiting_species <- function(occurrence_data){
-    return(fruiting_species_traits(occurrence_data[1:100,]) )
+# given some occurence, pull out the unique species present
+# note this shouldn't be necessary as BIEN has several functions to pull species by country, trait, etc
+# e.g.  BIEN_list_country --> a list of species
+species_in_occurrence <- function(occurence_data){
+    return(as.vector(unique(occurrence_data$scrubbed_species_binomial)))
 }
 
 
+# test function looking at just the first 100 occurrence records
+country_fruiting_species <- function(country="Ecuador"){
+    s <- fruiting_species(BIEN_list_country(country)$scrubbed_species_binomial)
+    return(s)
+}
+
+# given a country name and a country shape, pull the fruiting plant species, 
+# get the ranges and crop those ranges to the country shape file
+# Country shape could be from a custom function (see ecuador_shp() function) 
+country_fruiting_rangemaps <-function(country_name="Ecuador", country_shape){
+    species_list <- country_fruiting_species(country_name)
+    ranges.sf <- BIEN_ranges_load_species(species_list)
+    
+    cropped_ranges <- sf::st_intersection(ranges.sf, country_shape)
+    return(cropped_ranges)
+
+}
 
 
+ecuador_shp <- function(){
+    worldMap <- rnaturalearth::ne_countries(scale = "medium", type = "countries", returnclass = "sf")
+    
+    # country subset. In this case we are removing the Galapagos by defining the bounding box around the Ecuador polygon.
+    CRpoly <- worldMap %>% filter(sovereignt == "Ecuador")
+    return(st_crop(CRpoly, c(xmin=-84, xmax=-75.24961, ymin=-4.990625, ymax=1.455371)))
+}
+
+ecuador_maps <- function() {
+    country_name <- "Ecuador"
+    country_shape <- ecuador_shp()
+    
+    ecuador_fruit_maps <- country_fruiting_rangemaps(country_name,country_shape)
+    plot(ecuador_fruit_maps)
+    return(ecuador_fruit_maps)
+}
