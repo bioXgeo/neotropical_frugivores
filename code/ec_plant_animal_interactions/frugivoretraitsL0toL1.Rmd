@@ -255,8 +255,110 @@ write.csv(mam_frug_ec, "mam_frug_ec.csv")
 ```
 # Same process, but with birds
 
+# Correcting issues with species not merging correctly between databases
+#find species that did not match correctly
+```{r}
 
-Pull out all bird and mammal forest species and then pull those from the IUCN shapefile. Look up code to make a map of stacked ranges. Turn the polygons to a grid and add them up
+bird_trait_na <-bird_trait_IUCN[is.na(bird_trait_IUCN$Diet.Vunk),]
+
+#remove duplicates
+bird_trait_na <- bird_trait_na[!duplicated(bird_trait_na[,c('scientific_name')]),] #319 NAs
+
+#Find species that match alternate names. Lookup table for species is found in code 'scientific_name_lookup_table'
+#FIND THE FINAL LOOKUP TABLE
+bird_lookup_final <- read.csv("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/lookup_table/complete_bird_lookup_7_15.csv")
+
+# Change column name in alternate_match
+colnames(bird_lookup_final)[which(names(bird_lookup_final) == "IUCN_scientific_name")] <- "IUCN_species_name"
+
+ # Find species that are in the lookup table
+alternate_match_b <-unique(as.data.frame(bird_trait_na$scientific_name[bird_trait_na$scientific_name %in% bird_lookup_final$IUCN_species_name])) #249 species names found 
+
+# Change column name in alternate_match
+colnames(alternate_match_b)[which(names(alternate_match_b) == "bird_trait_na$scientific_name[bird_trait_na$scientific_name %in% bird_lookup_final$IUCN_species_name]")] <- "IUCN_name_with_alternate"
+
+#choose row in lookup table with the alternate match and get the IUCN name
+bird_lookup_subset <-bird_lookup_final %>%
+  filter(IUCN_species_name %in% alternate_match_b$IUCN_name_with_alternate)
+
+#add column to the first merge so that we can keep track of IUCN names vs. alternate names 
+bird_trait_IUCN$IUCN_species_name <- ""
+
+#Merge list of alternate names with elton_traits and append them to the orginal merge 
+bird_trait_alternates <- merge.data.frame(birds, bird_lookup_subset, by.x=c("scientific_name"), by.y=c("elton_name"))
+
+## Remove duplicates with NAs
+
+#transform the alternate names so I can subset the merged dataset and remove those names (will re-attach edited names)
+bird_alternates_matrix <-rbind(as.matrix(bird_trait_alternates$scientific_name), as.matrix(bird_trait_alternates$IUCN_species_name))
+
+alternates_df_b <- as.data.frame(bird_alternates_matrix)
+
+#Remove the duplicate species names (wrong names and correct names) because we'll be merging them back in
+
+bird_trait_alt_subset <-bird_trait_IUCN %>%
+  filter(!scientific_name %in% alternates_df_b$V1)
+
+# Add IUCN information back into the subset
+bird_trait_alternates_IUCN_info <- merge(bird_trait_alternates, bird_IUCN_ec, by.x="IUCN_species_name",by.y="scientific_name")
+
+colnames(bird_trait_alt_subset)[which(names(bird_trait_alt_subset) == "IUCN_name")] <- "IUCN_species_name"
+
+bird_trait_alt_subset <- bird_trait_alt_subset[ -c(41,42)]
+bird_trait_alt_subset$IUCN_name <- ""
+#Bind the alternate name object to the orginal edited merge
+bird_trait_all <-rbind(bird_trait_alt_subset, bird_trait_alternates_IUCN_info)
 ```
 
+#Find species that still haven't merged correctly and fix by hand
+```{r}
+bird_trait_na_manual <-bird_trait_all[is.na(bird_trait_all$Diet.Vunk),] 
+bird_trait_na_manual_unique <- unique(bird_trait_na_manual$scientific_name) # 73 still missing. 
+```
+
+```{r}
+write.csv(bird_trait_na_manual_unique,"/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L1/working_databases/lookup_tables/lookup_2/bird_trait_manual_lookups.csv")
+```
+
+
+```{r}
+# manually looked up remaining species names. Pull in the edited file.
+bird_trait_alt_2 <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L1/working_databases/lookup_tables/lookup_2/bird_trait_manual_lookups.csv")
+
+#Remove species missing matches from the full trait dataset so we can remerge later
+bird_trait_alt_subset_2 <-bird_trait_all %>%
+  filter(!scientific_name %in% bird_trait_alt_2$IUCN_species_name)
+
+#Merge list of alternate names with elton_traits. 
+bird_trait_alternates_2 <- merge.data.frame(birds, bird_trait_alt_2, by.x=c("scientific_name"), by.y=c("elton_name"))
+
+#remaining species with IUCN information
+bird_trait_alternates_IUCN_info_2 <- merge(bird_trait_alternates_2, bird_IUCN_ec, by.x="IUCN_scientific_names",by.y="scientific_name")
+
+#change column name to match the subsetted bird trait df
+colnames(bird_trait_alt_subset_2)[which(names(bird_trait_alt_subset_2) == "IUCN_scientific_name")] <- "IUCN_scientific_names"
+
+bird_trait_alternates_IUCN_info_2 <- bird_trait_alternates_IUCN_info_2[ -c(42,43,44)]
+#bind subsetted mammal trait df with df of missing species names/IUCN info
+bird_trait_all_final <-rbind(bird_trait_alt_subset_2, bird_trait_alternates_IUCN_info_2)
+
+#Remove duplicates (due to using genus level data which led to repeats)
+bird_trait_all_final_distinct <- distinct(bird_trait_all_final,scientific_name, .keep_all= TRUE)
+
+#Subset by frugivorous species
+bird_frug_ec <- bird_trait_all_final_distinct[bird_trait_all_final_distinct$Diet.Fruit>=10,] #664 species
+
+#fill in missing values in the IUCN_species_name_final column with those matching the elton traits name
+#Gives full list of IUCN species names for dataset
+test_bird <-with(bird_frug_ec, ifelse(IUCN_scientific_names=="", as.character(scientific_name), IUCN_scientific_names))
+bird_frug_ec$IUCN_species_name <- test_bird
+```
+
+# Write Ecuadorian frugivorous mammal dataset to file
+```{r}
+
+write.csv(bird_frug_ec, "/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/Ecuador_species/bird_frug_ec.csv")
+```
+#____________________________________________________________________________________
+```
 

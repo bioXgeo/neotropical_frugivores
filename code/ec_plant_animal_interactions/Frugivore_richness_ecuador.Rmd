@@ -37,7 +37,10 @@ library(rgdal)
 ```{r}
 setwd("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/IUCN_Data/TERRESTRIAL_MAMMALS/TERRESTRIAL_MAMMALS_1")
 IUCN_mam <-read_sf("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/IUCN_Data/TERRESTRIAL_MAMMALS_2/TERRESTRIAL_MAMMALS.shp")
+IUCN_bird <-read_sf("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/IUCN_Data/BOTW/BOTW_shapefile/All_Species.shp")
 mam_frug_ec <- read.csv("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/Ecuador_species/mam_frug_ec.csv")
+bird_frug_ec <- read.csv("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/Ecuador_species/bird_frug_ec.csv")
+
 ```
 
 # Subset IUCN mammal shapefile by: creating new column in the shapefile so that each shapefile has a unique identifier 
@@ -53,6 +56,44 @@ shapes  = IUCN_mam$new_id[IUCN_mam$binomial %in% mam_frug_sn] # shapes = ID numb
 
 # Subsets the IUCN shapefiles to those with IDs matching the frugivorous subset
 IUCN_mam_df = IUCN_mam[IUCN_mam$new_id %in% shapes,] #268 shapefiles for species list (209 species)
+
+#write the shapefile to a file
+#setwd("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/mx_species")
+#st_write(IUCN_mam_df, "ec_mammals.shp")
+```
+
+#Same as above for birds
+# Subset IUCN mammal shapefile by: creating new column in the shapefile so that each shapefile has a unique identifier 
+```{r}
+IUCN_bird$new_id = 1:nrow(IUCN_bird)
+
+# list of unique species names for frugivorous mammals in Ecuador made above
+
+bird_frug_sn <-as.vector(unique(bird_frug_ec$IUCN_species_name))
+
+# Subset the new IDs made above by those that have species names matching the frugivorous subset
+shapes  = IUCN_bird$new_id[IUCN_bird$SCINAME %in% bird_frug_sn] # shapes = ID numbers for subset
+
+# Subsets the IUCN shapefiles to those with IDs matching the frugivorous subset
+IUCN_bird_df = IUCN_bird[IUCN_bird$new_id %in% shapes,] #770 shapefiles for species list (463 species)
+
+testing <- st_join(IUCN_bird_df, IUCN_mam_df)
+#combine both bird and mammal shapefile 
+
+IUCN_bird_df_short <- IUCN_bird_df[,c(2,16:19)]
+
+#fix column names
+colnames(IUCN_bird_df_short)[which(names(IUCN_bird_df_short) == "SCINAME")] <- "IUCN_scientific_name"
+IUCN_bird_df_short$new_id <- NULL
+
+IUCN_mam_df_short <- IUCN_mam_df[,c(2,26:29)]
+colnames(IUCN_mam_df_short)[which(names(IUCN_mam_df_short) == "binomial")] <- "IUCN_scientific_name"
+colnames(IUCN_mam_df_short)[which(names(IUCN_mam_df_short) == "SHAPE_Leng")] <- "Shape_Leng"
+colnames(IUCN_mam_df_short)[which(names(IUCN_mam_df_short) == "SHAPE_Area")] <- "Shape_Area"
+IUCN_mam_df_short$new_id <- NULL
+
+all_frug_shp <- rbind(IUCN_mam_df_short, IUCN_bird_df_short)
+all_frug_shp_test <- st_join(IUCN_mam_df_short, IUCN_bird_df_short)
 
 #write the shapefile to a file
 #setwd("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/mx_species")
@@ -101,7 +142,7 @@ hullsPlot <-
   ggplot() +
   geom_sf(data = neighbours, color = "white") +
   geom_sf(data = ecuador_shp) +
-  geom_sf(data = IUCN_mam_df, aes(fill = binomial), alpha = 0.7) +
+  geom_sf(data = all_frug_shp, aes(fill = IUCN_scientific_name), alpha = 0.7) +
   scale_fill_scico_d(palette = "davos", direction = -1, end = 0.9, guide = FALSE) +
   coord_sf(
     xlim = c(limsCR["xmin"], limsCR["xmax"]),
@@ -118,7 +159,7 @@ hullsPlot <-
 hullsPlot
 ```
 
-# define a grid
+# define a grid. Should I change the projection to utm so we can have a grid size in meters/km?
 ```{r}
 CRGrid <- ecuador_shp %>%
   st_make_grid(cellsize = 0.2) %>%
@@ -131,7 +172,7 @@ CRGrid <- ecuador_shp %>%
 # richness for convex hulls
 ```{r}
 richness_gridEOO <- CRGrid %>%
-  st_join(IUCN_mam_df) %>%
+  st_join(all_frug_shp) %>%
   mutate(overlap = ifelse(!is.na(id), 1, 0)) %>%
   group_by(cellid) %>%
   summarize(num_species = sum(overlap))
