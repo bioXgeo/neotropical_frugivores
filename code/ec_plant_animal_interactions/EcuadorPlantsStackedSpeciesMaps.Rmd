@@ -1,7 +1,11 @@
+---
 title: "EcuadorPlantStackedSpeciesMaps"
 author: "Hazel Anderson"
 date: "6/30/2020"
-output: html_document
+describtion: This script takes BIEN species range maps and uses them to create a map of species richness of Ecuador plant species.
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 # Load required packages
@@ -17,37 +21,32 @@ library(scico)
 library(rnaturalearth)
 library(purrr)
 library(smoothr)
-library(rgbif)
+library(maptools)
 library(lwgeom)
 library(rgeos)
 library(rgdal)
 
 ```
 
-# List of Ecuador Species
-```{r}
-
-# IF the save file is here, read that, otherwise pull plant species list from BIEN
-    # and save that
-    if(file.exists("Ecuador_species_list.csv")){
-        Ecuador_species_list <- read.csv("Ecuador_species_list.csv")
-    } else {
-        Ecuador <- BIEN_occurrence_country("Ecuador")
-        Ecuador_species_list <- unique(Ecuador$scrubbed_species_binomial)
-        # save these data now
-        write.csv(Ecuador_species_list, "Ecuador_species_list.csv")
-    }
-    
-```
 
 # Species Maps for All Ecuador Species
 ```{r}
-if (file.exists("Ecuador_plant_range_maps")){
-    load(Ecuador_plant_range_maps)
-} else {
+setwd("C:/Users/hj152/Documents/R/SpatialMap")
+
+if (file.exists("Ecuador_plant_range_maps_workspace.RData")){
+    load("~/R/SpatialMap/Ecuador_plant_range_maps_workspace.RData")
+}else {
+    #List of Ecuador Species
+    Ecuador <- BIEN_occurrence_country("Ecuador")
+    Ecuador_species_list <- unique(Ecuador$scrubbed_species_binomial)
+    write.csv(Ecuador_species_list, "Ecuador_species_list.csv")
+    
+    #Species Maps for all plant species in Ecuador
     Ecuador_plant_species_list_vector <- pull(Ecuador_species_list, x)
     Ecuador_plant_range_maps <- BIEN_ranges_load_species(species = Ecuador_plant_species_list_vector)
-    save(Ecuador_plant_range_maps, file = "Ecuador_plant_range_maps.RData")
+    
+    #Save workspace
+    save.image("~/R/SpatialMap/Ecuador_plant_range_maps_workspace.RData")
 }
 ```
 
@@ -59,8 +58,7 @@ print(checked_list)
 
 # Pull shapefiles for Ecuador plants
 ```{r}
-setwd("C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps")
-Ecuador_plants <- read_sf("C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps/Aa_argyrolepis.shp")
+Ecuador_plants <- st_as_sf(Ecuador_plant_range_maps)
 ```
 
 # Load in world map
@@ -104,7 +102,7 @@ hullsPlot <-
 ggplot() +
 geom_sf(data = neighbours, color = "white") +
 geom_sf(data = ecuador_shp) +
-geom_sf(data = Ecuador_plants, aes(fill = binomial), alpha = 0.7) +
+geom_sf(data = Ecuador_plants, aes(fill = species), alpha = 0.7) +
 scale_fill_scico_d(palette = "davos", direction = -1, end = 0.9, guide = FALSE) +
 coord_sf(
 xlim = c(limsCR["xmin"], limsCR["xmax"]),
