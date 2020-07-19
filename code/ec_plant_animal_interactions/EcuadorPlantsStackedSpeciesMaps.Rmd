@@ -1,7 +1,7 @@
 ---
-title: "EcuadorPlantStackedSpeciesMaps"
+title: "Frugivoria: Ecuadorian Plant richness "
 author: "Hazel Anderson"
-date: "6/30/2020"
+date: "7/18/2020"
 describtion: This script takes BIEN species range maps and uses them to create a map of species richness of Ecuador plant species.
 output:
   pdf_document: default
