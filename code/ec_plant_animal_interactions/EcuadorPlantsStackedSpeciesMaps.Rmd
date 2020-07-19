@@ -31,7 +31,8 @@ library(rgdal)
 
 # Species Maps for All Ecuador Species
 ```{r}
-setwd("C:/Users/hj152/Documents/R/SpatialMap")
+# set file paths WOP
+#data_path <- 
 
 if (file.exists("Ecuador_plant_range_maps_workspace.RData")){
     load("~/R/SpatialMap/Ecuador_plant_range_maps_workspace.RData")
@@ -42,8 +43,11 @@ if (file.exists("Ecuador_plant_range_maps_workspace.RData")){
     write.csv(Ecuador_species_list, "Ecuador_species_list.csv")
     
     #Species Maps for all plant species in Ecuador
-    Ecuador_plant_species_list_vector <- pull(Ecuador_species_list, x)
+    Ecuador_plant_species_list_vector <- unlist(Ecuador_species_list)
     Ecuador_plant_range_maps <- BIEN_ranges_load_species(species = Ecuador_plant_species_list_vector)
+    
+    # Converting the SpatialPolygonsdataframe to shapefiles
+    Ecuador_plants <- st_as_sf(Ecuador_plant_range_maps)
     
     #Save workspace
     save.image("~/R/SpatialMap/Ecuador_plant_range_maps_workspace.RData")
@@ -52,13 +56,9 @@ if (file.exists("Ecuador_plant_range_maps_workspace.RData")){
 
 # Merge Ecuador plant species list with range map list
 ```{r}
-checked_list <- merge(Ecuador_species_list, Ecuador_plant_range_maps)
-print(checked_list)
-```
-
-# Pull shapefiles for Ecuador plants
-```{r}
-Ecuador_plants <- st_as_sf(Ecuador_plant_range_maps)
+#needs to be fixed
+#checked_list <- merge(Ecuador_species_list, Ecuador_plants)
+#print(checked_list)
 ```
 
 # Load in world map
