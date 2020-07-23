@@ -4,8 +4,8 @@ author: "Hazel Anderson"
 date: "7/18/2020"
 describtion: This script takes BIEN species range maps and uses them to create a map of species richness of Ecuador plant species.
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 # Load required packages
@@ -33,6 +33,7 @@ library(rgdal)
 ```{r}
 # set file paths WOP
 #data_path <- 
+setwd("C:/Users/hj152/Documents/R/SpatialMap")
 
 if (file.exists("Ecuador_plant_range_maps_workspace.RData")){
     load("~/R/SpatialMap/Ecuador_plant_range_maps_workspace.RData")
@@ -57,8 +58,8 @@ if (file.exists("Ecuador_plant_range_maps_workspace.RData")){
 # Merge Ecuador plant species list with range map list
 ```{r}
 #needs to be fixed
-#checked_list <- merge(Ecuador_species_list, Ecuador_plants)
-#print(checked_list)
+checked_list <- merge(Ecuador$scrubbed_species_binomial, Ecuador_plant_range_maps$species)
+print(checked_list)
 ```
 
 # Load in world map
@@ -183,5 +184,10 @@ rect = element_blank()
 ) + labs(fill = "richness")
 gridRichCR_eoo
 
+```
+
+# Saving richness map
+```{r}
+ggsave(filename = "Plant richness map Ecuador.png", device="png")
 ```
 
