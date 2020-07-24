@@ -4,15 +4,13 @@ author: "Hazel Anderson"
 date: "7/18/2020"
 describtion: This script takes BIEN species range maps and uses them to create a map of species richness of Ecuador plant species.
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 # Load required packages
 ```{r}
 library(BIEN)
-library(ape)
-library(maps)
 library(sp)
 library(sf)
 library(dplyr)
@@ -20,11 +18,6 @@ library(ggplot2)
 library(scico)
 library(rnaturalearth)
 library(purrr)
-library(smoothr)
-library(maptools)
-library(lwgeom)
-library(rgeos)
-library(rgdal)
 
 ```
 
