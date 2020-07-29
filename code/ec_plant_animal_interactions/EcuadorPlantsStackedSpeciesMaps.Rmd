@@ -1,7 +1,11 @@
 ---
 title: "Frugivoria: Ecuadorian Plant richness "
 author: "Hazel Anderson"
-date: "7/18/2020"
+collaborators: "Phoebe Zarnestke, Beth Gernster, Pat Bills"
+data input: "List of plant species in Ecuador in .csv, Range maps of those plant species in SpatialPolygonDataFrame, all forementioned data in RData"
+data output: "Range maps in sf, final plot as png"
+project: "Frugivoria"
+date: "7/27/2020"
 describtion: This script takes BIEN species range maps and uses them to create a map of species richness of Ecuador plant species.
 output:
   pdf_document: default
@@ -21,15 +25,16 @@ library(purrr)
 
 ```
 
+# Set File Path
+```{r}
+data_path <- 'G:/Shared drives/SpaCE_Lab_FRUGIVORIA/r_code'
+```
+
 
 # Species Maps for All Ecuador Species
 ```{r}
-# set file paths WOP
-#data_path <- 
-setwd("C:/Users/hj152/Documents/R/SpatialMap")
-
-if (file.exists("Ecuador_plant_range_maps_workspace.RData")){
-    load("~/R/SpatialMap/Ecuador_plant_range_maps_workspace.RData")
+if (file.exists("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/r_code/Ecuador_plant_range_maps_workspace.RData")){
+    load("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/r_code/Ecuador_plant_range_maps_workspace.RData")
 }else {
     #List of Ecuador Species
     Ecuador <- BIEN_occurrence_country("Ecuador")
@@ -44,15 +49,16 @@ if (file.exists("Ecuador_plant_range_maps_workspace.RData")){
     Ecuador_plants <- st_as_sf(Ecuador_plant_range_maps)
     
     #Save workspace
-    save.image("~/R/SpatialMap/Ecuador_plant_range_maps_workspace.RData")
+    save.image("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/r_code/Ecuador_plant_range_maps_workspace.RData")
 }
 ```
 
 # Merge Ecuador plant species list with range map list
 ```{r}
 #needs to be fixed
-checked_list <- merge(Ecuador$scrubbed_species_binomial, Ecuador_plant_range_maps$species)
-print(checked_list)
+mapped_list <- unlist(Ecuador_plant_range_maps$species)
+missing_maps <- setdiff(mapped_list, Ecuador_species_list)
+
 ```
 
 # Load in world map
