@@ -55,10 +55,17 @@ if (file.exists("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/r_code/Ecuador_plant_rang
 
 # Merge Ecuador plant species list with range map list
 ```{r}
-#needs to be fixed
 mapped_list <- unlist(Ecuador_plant_range_maps$species)
-missing_maps <- setdiff(mapped_list, Ecuador_species_list)
+#removing underscore from species names to match Ecuador_plant_species_list
+mapped_list <- gsub("_", " ", mapped_list)
 
+#making sure both lists are in the same form
+mapped_list <- as_tibble(mapped_list)
+Ecuador_species_list <- as_tibble(Ecuador_species_list)
+
+#determining which species have not been mapped and saving list to csv
+missing_maps <- setdiff(Ecuador_species_list, mapped_list)
+write.csv(missing_maps, "plant_missing_maps.csv")
 ```
 
 # Load in world map
