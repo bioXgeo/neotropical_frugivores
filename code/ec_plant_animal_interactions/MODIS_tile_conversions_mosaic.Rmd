@@ -71,4 +71,3 @@ myMosaic = "MODIS_per_forest_2019" # the name of the final mosaicked GeoTIFF
 # execute
 mosaicGTiffs(proj.loc = proj.loc, gtiffs = gtiffs2, mosaicName = myMosaic, overwrite = T)
 rm(proj.loc,gtiffs2,myMosaic) # remove variables to save memory
-And viola! Below is our final mosaicked image. This particular one is composed of four GeoTIFFs covering the upper left, upper right, lower left and lower right sections of the image.
