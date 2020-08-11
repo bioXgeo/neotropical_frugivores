@@ -44,8 +44,10 @@ to.srs = "+proj=longlat +datum=WGS84 +no_defs" # desired GeoTIFF SRS
 # lyr is the HDF layer you want to extract. In this example it is "1" to 
 # signify the first layer in the HDF file i.e. NDVI
 # execute the function
+# 
+get_subdatasets("/Users/bethgerstner/Desktop/MODIS_2019/MOD44B.A2019065.h10v09.006.2020098203755.hdf") #to figure out what file you need to specify for lyr. Percent tree cover is layer 1.
 projHDF2GTiff(loc = myloc, hdfs = hdfs1, gtiffs = gtiffs1, lyr = 1, fromSRS = frm.srs, toSRS = to.srs)
-rm(myloc,hdfs1,gtiffs1,frm.srs,to.srs,s.nodata,d.nodata) # remove variables to save memory
+#rm(myloc,hdfs1,gtiffs1,frm.srs,to.srs,s.nodata,d.nodata) # remove variables to save memory
 ```
 
 # Stitch tiles together to create mosaic
