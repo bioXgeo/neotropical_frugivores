@@ -13,14 +13,21 @@ source('code/ec_plant_animal_interactions/fruiting_plant_traits_by_country.R')
 options("cache_folder" = 'data/L0')
 country = "Ecuador"
 
-occurrence_data <- get_species_occurrence_data(country)
-print(paste("There are ",  nrow(occurrence_data),  "occurrence records"))
-      
-# FOR TESTING get just the first 10000 lines of occurrence data
-# REMOVE THIS LINE WHEN RUNNING ON THE FULL DATASET
-occurrence_data <- occurrence_data[1:1000,]
+# get just the species data (not the occurrence data yet)
+species_list <- BIEN_list_country(country)
 
-trait_data <- fruiting_species_traits(occurrence_data) 
+# filter using BIEN functions to get just fruiting species
+species <- fruiting_species(species)
+
+# FOR TESTING get just the first 100 sp
+# REMOVE THIS LINE WHEN RUNNING ON THE FULL DATASET
+species_list[1:100,]
+
+all_fruiting_traits <- BIEN_trait_species(species_list)
+
+
+# filter out fruiting species and get traits for those
+trait_data <- fruiting_species_traits() 
 
 L1_folder <- 'data/L1'
 L1_filename <- "ecuador_plant_traits.csv"

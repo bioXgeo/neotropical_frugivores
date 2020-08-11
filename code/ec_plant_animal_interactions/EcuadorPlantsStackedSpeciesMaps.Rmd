@@ -1,14 +1,20 @@
-title: "EcuadorPlantStackedSpeciesMaps"
+---
+title: "Frugivoria: Ecuadorian Plant richness "
 author: "Hazel Anderson"
-date: "6/30/2020"
-output: html_document
+collaborators: "Phoebe Zarnestke, Beth Gernster, Pat Bills"
+data input: "List of plant species in Ecuador in .csv, Range maps of those plant species in SpatialPolygonDataFrame, all forementioned data in RData"
+data output: "Range maps in sf, final plot as png"
+project: "Frugivoria"
+date: "7/27/2020"
+describtion: This script takes BIEN species range maps and uses them to create a map of species richness of Ecuador plant species.
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 # Load required packages
 ```{r}
 library(BIEN)
-library(ape)
-library(maps)
 library(sp)
 library(sf)
 library(dplyr)
@@ -16,51 +22,50 @@ library(ggplot2)
 library(scico)
 library(rnaturalearth)
 library(purrr)
-library(smoothr)
-library(rgbif)
-library(lwgeom)
-library(rgeos)
-library(rgdal)
 
 ```
 
-# List of Ecuador Species
+# Set File Path
 ```{r}
-
-# IF the save file is here, read that, otherwise pull plant species list from BIEN
-    # and save that
-    if(file.exists("Ecuador_species_list.csv")){
-        Ecuador_species_list <- read.csv("Ecuador_species_list.csv")
-    } else {
-        Ecuador <- BIEN_occurrence_country("Ecuador")
-        Ecuador_species_list <- unique(Ecuador$scrubbed_species_binomial)
-        # save these data now
-        write.csv(Ecuador_species_list, "Ecuador_species_list.csv")
-    }
-    
+data_path <- 'G:/Shared drives/SpaCE_Lab_FRUGIVORIA/r_code'
 ```
+
 
 # Species Maps for All Ecuador Species
 ```{r}
-if (file.exists("Ecuador_plant_range_maps")){
-    load(Ecuador_plant_range_maps)
-} else {
-    Ecuador_plant_species_list_vector <- pull(Ecuador_species_list, x)
+if (file.exists("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/r_code/Ecuador_plant_range_maps_workspace.RData")){
+    load("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/r_code/Ecuador_plant_range_maps_workspace.RData")
+}else {
+    #List of Ecuador Species
+    Ecuador <- BIEN_occurrence_country("Ecuador")
+    Ecuador_species_list <- unique(Ecuador$scrubbed_species_binomial)
+    write.csv(Ecuador_species_list, "Ecuador_species_list.csv")
+    
+    #Species Maps for all plant species in Ecuador
+    Ecuador_plant_species_list_vector <- unlist(Ecuador_species_list)
     Ecuador_plant_range_maps <- BIEN_ranges_load_species(species = Ecuador_plant_species_list_vector)
-    save(Ecuador_plant_range_maps, file = "Ecuador_plant_range_maps.RData")
+    
+    # Converting the SpatialPolygonsdataframe to shapefiles
+    Ecuador_plants <- st_as_sf(Ecuador_plant_range_maps)
+    
+    #Save workspace
+    save.image("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/r_code/Ecuador_plant_range_maps_workspace.RData")
 }
 ```
 
 # Merge Ecuador plant species list with range map list
 ```{r}
-checked_list <- merge(Ecuador_species_list, Ecuador_plant_range_maps)
-print(checked_list)
-```
+mapped_list <- unlist(Ecuador_plant_range_maps$species)
+#removing underscore from species names to match Ecuador_plant_species_list
+mapped_list <- gsub("_", " ", mapped_list)
 
-# Pull shapefiles for Ecuador plants
-```{r}
-setwd("C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps")
-Ecuador_plants <- read_sf("C:/Users/hj152/Documents/R/EcuadorPlantSpeciesMaps/Aa_argyrolepis.shp")
+#making sure both lists are in the same form
+mapped_list <- as_tibble(mapped_list)
+Ecuador_species_list <- as_tibble(Ecuador_species_list)
+
+#determining which species have not been mapped and saving list to csv
+missing_maps <- setdiff(Ecuador_species_list, mapped_list)
+write.csv(missing_maps, "plant_missing_maps.csv")
 ```
 
 # Load in world map
@@ -104,7 +109,7 @@ hullsPlot <-
 ggplot() +
 geom_sf(data = neighbours, color = "white") +
 geom_sf(data = ecuador_shp) +
-geom_sf(data = Ecuador_plants, aes(fill = binomial), alpha = 0.7) +
+geom_sf(data = Ecuador_plants, aes(fill = species), alpha = 0.7) +
 scale_fill_scico_d(palette = "davos", direction = -1, end = 0.9, guide = FALSE) +
 coord_sf(
 xlim = c(limsCR["xmin"], limsCR["xmax"]),
@@ -185,5 +190,10 @@ rect = element_blank()
 ) + labs(fill = "richness")
 gridRichCR_eoo
 
+```
+
+# Saving richness map
+```{r}
+ggsave(filename = "Plant richness map Ecuador.png", device="png")
 ```
 
