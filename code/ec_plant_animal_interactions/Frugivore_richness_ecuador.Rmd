@@ -244,7 +244,7 @@ raster_grid <- fasterize(
 #writeRaster(raster_grid, filename="/Users/bethgerstner/Desktop/MODIS_2019/frugivore_ric.tif", format="GTiff")
 
 #read in raster
-#raster_grid <- raster("/Users/bethgerstner/Desktop/MODIS_2019/frugivore_ric.tif")
+raster_grid <- raster("/Users/bethgerstner/Desktop/MODIS_2019/frugivore_ric.tif")
 
 ```
 
@@ -279,12 +279,15 @@ rich_less_50 <-  mask(raster_rich_fin_res,fc_less_50)
 rich_great_50 <- mask(raster_rich_fin_res, fc_great_50)
   
 #Plots of taxonomic richness in forest/non-forest
-plot(limsCR)
+
 plot(rich_less_50, main="taxonomic richness in areas of <=50% forest cover", add=T)
 plot(rich_great_50, main="taxonomic richness in areas > 50% forest cover")
 
 #Summary of richness over those two forest thresholds
-
+summary(values(rich_less_50))
+summary(values(rich_great_50))
+hist((values(rich_less_50)), xlab="taxonomic richness", ylab="frequency", main= "Taxonomic richness in regions <= 50% forest cover")
+hist((values(rich_great_50)), xlab="taxonomic richness", ylab="frequency", main= "Taxonomic richness in regions > 50% forest cover")
 ```
 
 
