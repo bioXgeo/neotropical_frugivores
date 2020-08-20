@@ -1,0 +1,73 @@
+---
+title: "Processing MODIS Data"
+author: "Beth E. Gerstner"
+description: This script is part of the overarching Frugivoria project, which aims
+  to build a comprehensive database of functional traits for birds and mammals (frugivores)
+  in Central and South American tropical forests. This smaller project focuses on
+  birds and mammals in Ecuador and will eventually be used to understand plant/animal
+  interactions. Specifically, this script takes MODIS % forest cover data for four different tiles containing Ecuador and converts them from HDF files to a tif. It then stitches each tile together to create a single mosaicked tif for easy analyzing. This code is based off of https://www.hakimabdi.com/blog/working-with-hdf-eos-files-in-r-convert-project-and-mosaic. To choose appropriate tiles for study region, consult the MODIS instructions I wrote here
+  :https://docs.google.com/document/d/1sDgXI9k5Dgo0rNtyRFj2HKhwwOq1B9Rc_jXo8qQr8PI/edit
+date: "8/11/2020"
+output: html_document
+---
+
+```{r}
+
+library(gdalUtils)
+
+# Function to make the conversion from HDF to Tiff
+projHDF2GTiff = function(loc, hdfs, gtiffs, lyr, fromSRS, toSRS){ 
+  if("gdalUtils" %in% rownames(installed.packages()) == FALSE){
+    install.packages("gdalUtils", repos="http://r-forge.r-project.org")
+    require(gdalUtils)
+  } # install and load the gdalUtils package. 
+  setwd(loc) # set the working directory to where the data is
+  suppressWarnings(dir.create(paste(loc,"Projected",sep="/"))) # create a directory to store projected files
+  for (i in 1:length(hdfs)){ 
+    gdal_translate(hdfs[i],gtiffs[i],sd_index=lyr) # extract the specified HDF layer and save it as a Geotiff
+    gdalwarp(gtiffs[i],paste(loc,"Projected",gtiffs[i],sep="/"),s_srs=fromSRS,t_srs=toSRS,srcnodata=-3000,dstnodata=-3000,overwrite = T) # project geotiffs
+    unlink(gtiffs[i]) # delete unprojected geotiffs to save space
+  }
+}
+
+```
+
+# Use function to make the conversion with the data
+
+```{r}
+setwd("/Users/bethgerstner/Desktop/MODIS_2019") # where the individual MODIS tiles of interest are saved
+myloc = "/Users/bethgerstner/Desktop/MODIS_2019/" # working directory
+hdfs1 = list.files(getwd(), pattern="hdf$") # HDF file list
+gtiffs1 = gsub("hdf","tif",hdfs1) # out out GeoTIFF file list
+frm.srs = "+proj=sinu +lon_0=0 +x_0=0 +y_0=0 +a=6371007.181 +b=6371007.181 +units=m +no_defs" # original HDF SRS
+to.srs = "+proj=longlat +datum=WGS84 +no_defs" # desired GeoTIFF SRS
+# lyr is the HDF layer you want to extract. In this example it is "1" to 
+# signify the first layer in the HDF file i.e. NDVI
+# execute the function
+# 
+get_subdatasets("/Users/bethgerstner/Desktop/MODIS_2019/MOD44B.A2019065.h10v09.006.2020098203755.hdf") #to figure out what file you need to specify for lyr. Percent tree cover is layer 1.
+projHDF2GTiff(loc = myloc, hdfs = hdfs1, gtiffs = gtiffs1, lyr = 1, fromSRS = frm.srs, toSRS = to.srs)
+#rm(myloc,hdfs1,gtiffs1,frm.srs,to.srs,s.nodata,d.nodata) # remove variables to save memory
+```
+
+# Stitch tiles together to create mosaic
+
+```{r}
+mosaicGTiffs = function(proj.loc, gtiffs, mosaicName, overwrite){ 
+  if("gdalUtils" %in% rownames(installed.packages()) == FALSE){ # checks if gdalutils is installed 
+    install.packages("gdalUtils", repos="http://r-forge.r-project.org")
+    require(gdalUtils)
+  }
+  suppressWarnings(dir.create(paste(proj.loc,"Mosaicked",sep="/"))) # creates a directory to store mosaicked file
+  gdalwarp(gtiffs, paste(proj.loc,"/","Mosaicked","/",mosaicName,".tif",sep=""),overwrite = overwrite)
+}
+```
+
+# Uses MOSAIC function above to stitch together the individual converted tif files.
+```{r}
+proj.loc = "/Users/bethgerstner/Desktop/MODIS_2019/Projected" # set the location of your GeoTIFFS
+gtiffs2 = list.files("/Users/bethgerstner/Desktop/MODIS_2019/Projected",pattern = ".tif", full.names = T) # list the files
+myMosaic = "MODIS_per_forest_2019" # the name of the final mosaicked GeoTIFF
+# execute
+mosaicGTiffs(proj.loc = proj.loc, gtiffs = gtiffs2, mosaicName = myMosaic, overwrite = T)
+rm(proj.loc,gtiffs2,myMosaic) # remove variables to save memory

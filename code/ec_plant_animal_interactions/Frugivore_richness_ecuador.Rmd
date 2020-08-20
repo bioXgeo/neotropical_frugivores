@@ -2,6 +2,9 @@
 title: 'Frugivoria: Ecuadorian Birds & Mammals richness'
 author: "Beth E. Gerstner"
 date: "7/16/2020"
+output:
+  html_document: default
+  pdf_document: default
 description: This script is part of the overarching Frugivoria project, which aims
   to build a comprehensive database of functional traits for birds and mammals (frugivores)
   in Central and South American tropical forests. This smaller project focuses on
@@ -9,12 +12,8 @@ description: This script is part of the overarching Frugivoria project, which ai
   interactions. Specifically, this script takes IUCN range maps and stacks them, allowing
   us to summarize taxonomic richness based on ranges. (Currently only works with mammals,
   but will have birds done shortly.)
-output:
-  pdf_document: default
-  html_document: default
-
 ---
-```{r}
+```{r, warning=FALSE, echo=FALSE}
 library(sf)
 library(dplyr)
 library(ggplot2)
@@ -24,6 +23,7 @@ library(purrr)
 library(smoothr)
 library(rgbif)
 library(lwgeom)
+library(raster)
 ```
 
 # Load packages
@@ -164,7 +164,7 @@ hullsPlot
 # define a grid. Should I change the projection to utm so we can have a grid size in meters/km?
 ```{r, warning=FALSE, message=FALSE}
 CRGrid <- ecuador_shp %>%
-  st_make_grid(cellsize = 0.2) %>%
+  st_make_grid(cellsize = 0.1) %>%
   st_intersection(ecuador_shp) %>%
   st_cast("MULTIPOLYGON") %>%
   st_sf() %>%
@@ -224,3 +224,70 @@ gridRichCR_eoo <-
   ) + labs(fill = "richness")
 gridRichCR_eoo
 ```
+
+#Investigate the overlap of species ranges with forest cover
+```{r}
+library(fasterize)
+#Load in forest cover data for 2019
+for_cov<- raster("/Users/bethgerstner/Desktop/MODIS_2019/Projected/Mosaicked/MODIS_per_forest_2019.tif")
+
+# Run fasterize to turn the richness map into a raster 
+raster_grid <- fasterize(
+  richness_gridEOO,
+  for_cov,
+  field = "num_species",
+  fun = "sum",
+  background = NA,
+)
+
+#Write the richness raster to a file 
+#writeRaster(raster_grid, filename="/Users/bethgerstner/Desktop/MODIS_2019/frugivore_ric.tif", format="GTiff")
+
+#read in raster
+raster_grid <- raster("/Users/bethgerstner/Desktop/MODIS_2019/frugivore_ric.tif")
+
+```
+
+#To look at trends in forest cover over the species richness surface, they have to have the same resolution so we must resample the richness raster to make it match forest cover (finer res)
+```{r, figures-side, fig.show="hold", out.width="50%"}
+#Resample the diversity raster
+raster_rich_fin_res<-resample(raster_grid, for_cov, method="bilinear")
+
+#make sure extents match
+fc_mask <- mask(for_cov, raster_rich_fin_res)
+
+#remove water (value 200)
+fc_mask[fc_mask==200] <-NA
+
+
+#Subset the forest cover raster to areas <50 and >50% forest cover 
+fc_less_50 <- fc_mask <= 50
+
+#remove 0s to allow a mask where just the values of 1 are being used 
+fc_less_50[fc_less_50 == 0] <- NA
+
+fc_great_50 <-fc_mask > 50
+#remove 0s to allow a mask where just the values of 1 are being used 
+fc_great_50[fc_great_50 == 0] <- NA
+
+plot(fc_less_50, main="forest cover <= 50%")
+plot(fc_great_50, main="forest cover > 50%")
+
+# Take richness layer and mask by these forest cover cover subsets to have richness found above and below these thresholds
+
+rich_less_50 <-  mask(raster_rich_fin_res,fc_less_50)
+rich_great_50 <- mask(raster_rich_fin_res, fc_great_50)
+  
+#Plots of taxonomic richness in forest/non-forest
+
+plot(rich_less_50, main="taxonomic richness in areas of <=50% forest cover", add=T)
+plot(rich_great_50, main="taxonomic richness in areas > 50% forest cover")
+
+#Summary of richness over those two forest thresholds
+summary(values(rich_less_50))
+summary(values(rich_great_50))
+hist((values(rich_less_50)), xlab="taxonomic richness", ylab="frequency", main= "Taxonomic richness in regions <= 50% forest cover")
+hist((values(rich_great_50)), xlab="taxonomic richness", ylab="frequency", main= "Taxonomic richness in regions > 50% forest cover")
+```
+
+
