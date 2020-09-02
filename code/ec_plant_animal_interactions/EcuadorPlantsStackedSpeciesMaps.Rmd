@@ -22,6 +22,7 @@ library(ggplot2)
 library(scico)
 library(rnaturalearth)
 library(purrr)
+library(ggsn)
 
 ```
 
@@ -178,15 +179,21 @@ plot.background = element_rect(fill = "#FFFFFF"),
 panel.background = element_rect(fill = "#FFFFFF"),
 panel.grid = element_blank(),
 line = element_blank(),
-rect = element_blank()
-) + labs(fill = "richness")
+rect = element_blank(),
+axis.title.x = element_blank(),
+axis.title.y = element_blank()
+) + 
+scalebar(ecuador_shp, dist = 200, st.dist=.05, st.size=4, height=0.02, transform = TRUE, dist_unit = "km", model = 'WGS84') +
+north(ecuador_shp, location="topright", scale=0.15, symbol=3) +
+labs(fill = "richness") 
+
 gridRichCR_eoo
 
 ```
 
 # Saving richness map
 ```{r}
-ggsave(filename = "Plant richness map Ecuador.png", device="png")
+ggsave(filename = "Plant richness map Ecuador.png", dpi = 300, device="png")
 ```
 
 #Investigate the overlap of species ranges with forest cover
