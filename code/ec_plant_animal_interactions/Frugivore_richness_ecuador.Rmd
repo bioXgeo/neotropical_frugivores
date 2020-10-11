@@ -24,6 +24,7 @@ library(smoothr)
 library(rgbif)
 library(lwgeom)
 library(raster)
+library(ggsn)
 ```
 
 # Load packages
@@ -122,6 +123,8 @@ neighbours <- worldMap %>% slice(pluck(adjacentPolys, 1))
 # countries
 divpolPlot <-
   ggplot() +
+  scalebar(neighbours, location= "bottomright",dist = 200, st.dist=.1, st.size=2, height=0.1, transform = TRUE, dist_unit = "km", model = 'WGS84') +
+  north(ecuador_shp, location="topleft", scale=0.5, symbol=1) +
   geom_sf(data = neighbours, color = "white") +
   geom_sf(data = ecuador_shp) +
   coord_sf(
