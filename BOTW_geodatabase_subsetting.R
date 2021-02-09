@@ -32,14 +32,6 @@ ogr2ogr -f 'ESRI SHAPEFILE' BOTW BOTW.gdb
 #set working directory to wherever the newly converted spatial dataset is
 setwd("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/IUCN_Data/BOTW_11_20/BOTW")
 
-# Pull in bird dataset (Pat, I can't remember if I renamed the file all_species or not so you may have to replace that with 'BOTW')
-IUCN_bird <-readOGR(".", "All_Species")
-
-# Write attributes of the dataset to a file so we can do some subsetting
-write.table(IUCN_bird@data,"IUCN_birds_attributes_CSA_pre_frug.csv",quote=F,row.names=F,sep=";")
-
-setwd("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/IUCN_Data/BOTW_11_20/BOTW")
-
 # Pull in newly converted bird dataset using sf package (way faster than using OGR function)
 BOTW_bird <-read_sf("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/IUCN_Data/BOTW_11_20/BOTW.shp")
 
@@ -52,6 +44,7 @@ BOTW_spatial<- as(BOTW_bird,"Spatial")
 montane_birds_old <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L1/working_databases/database_csv_2_9_21/original_montane_birds.csv")
 montane_birds_new <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L1/working_databases/database_csv_2_9_21/newly_added_montane_birds.csv")
 
+#Pull out the scientific name column 
 birds_1 <- as.data.frame(montane_birds_old$IUCN_species_name)
 birds_2 <- as.data.frame(montane_birds_new$IUCN_species_name)
 
