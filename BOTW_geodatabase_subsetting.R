@@ -1,4 +1,4 @@
-#Project: Frugivoria - Extracting Birds of the World shapfiles of interest and calculating range size categories for both birds and mammals
+#Project: Frugivoria - Extracting Birds of the World shapfiles of interest for calculating range size categories of both birds and mammals
 
 #Purpose: This script converts from Geodatabase to shapefiles for the BOTW dataset and calculates range size for both BOTW (bird) and IUCN (mammal) datasets. It then places the range size for each species into designated size categories. These categories are based on range size quantiles for the whole range map dataset.
 
