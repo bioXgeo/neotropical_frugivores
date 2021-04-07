@@ -37,7 +37,7 @@ library(rgdal)
 # Pull shapefiles for frugivorous species (mammals and birds)
 ```{r,warning=FALSE, message=FALSE}
 
-IUCN_mam <-read_sf("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/IUCN_Data/TERRESTRIAL_MAMMALS_2/TERRESTRIAL_MAMMALS.shp")
+IUCN_mam <-read_sf("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/IUCN_Data/MAMMALS_TERRESTRIAL_Nov/MAMMALS_TERRESTRIAL_ONLY.shp")
 IUCN_bird <-read_sf("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/IUCN_Data/BOTW/BOTW_shapefile/All_Species.shp")
 
 # Pull in species/trait lists for Ecuador
@@ -167,7 +167,7 @@ hullsPlot
 # define a grid. Should I change the projection to utm so we can have a grid size in meters/km?
 ```{r, warning=FALSE, message=FALSE}
 CRGrid <- ecuador_shp %>%
-  st_make_grid(cellsize = 0.1) %>%
+  st_make_grid(cellsize = 0.2) %>%
   st_intersection(ecuador_shp) %>%
   st_cast("MULTIPOLYGON") %>%
   st_sf() %>%
@@ -232,7 +232,7 @@ gridRichCR_eoo
 ```{r}
 library(fasterize)
 #Load in forest cover data for 2019
-for_cov<- raster("/Users/bethgerstner/Desktop/MODIS_2019/Projected/Mosaicked/MODIS_per_forest_2019.tif")
+
 
 # Run fasterize to turn the richness map into a raster 
 raster_grid <- fasterize(
@@ -254,6 +254,8 @@ raster_grid <- raster("/Users/bethgerstner/Desktop/MODIS_2019/frugivore_ric.tif"
 #To look at trends in forest cover over the species richness surface, they have to have the same resolution so we must resample the richness raster to make it match forest cover (finer res)
 ```{r, figures-side, fig.show="hold", out.width="50%"}
 #Resample the diversity raster
+
+for_cov <- raster("/Users/bethgerstner/Desktop/MODIS_2019/MODIS_per_forest_2019.tif")
 raster_rich_fin_res<-resample(raster_grid, for_cov, method="bilinear")
 
 #make sure extents match
@@ -280,6 +282,7 @@ plot(fc_great_50, main="forest cover > 50%")
 
 rich_less_50 <-  mask(raster_rich_fin_res,fc_less_50)
 rich_great_50 <- mask(raster_rich_fin_res, fc_great_50)
+writeRaster(rich_great_50, "/Users/bethgerstner/Desktop/MODIS_2019/rich_great_50.tif" )
   
 #Plots of taxonomic richness in forest/non-forest
 
