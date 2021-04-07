@@ -53,9 +53,11 @@ forestfruiting_rich.data <- extract(forestfruiting_rich, forestfruiting_rich.pts
 ```
 
 ```{r}
-elevation <-raster("C:/Users/hj152/Downloads/srtm_1km.tif")
+elevation <-raster("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/analysis/MODIS_data_2019/srtm_1km.tif")
 elevation@crs
-ecuador_elevation <-crop(elevation, c(xmin=-84, xmax=-75.24961, ymin=-4.990625, ymax=1.455371))
+#THE LINE BELOW DOESN"T WORK
+ecuador_elevation <-crop(elevation, c(xmin=-91.3884, xmax=-70.00002, ymin=--10.0014, ymax=10))
+#suggestion--intersect elevation with richness points; check to make sure they are the same resolution
 ```
 ```{r}
 #Plotting fruiting species richness vs elevation
