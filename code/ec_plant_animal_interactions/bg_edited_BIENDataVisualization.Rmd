@@ -57,11 +57,10 @@ rich_points <- rasterToPoints(allplant_rich)
 rich_points_xy <- rich_points[, -c(3)]
 
 #extract elevation at species richness cell coordinates
-all_rich <- extract(elevation_resample_crop, rich_points_xy, cellnumbers = T)
+elevation_extract <- extract(elevation_resample_crop, rich_points_xy, cellnumbers = T)
 
 #add elevation column to richness dataframe 
 richness_pt_df <-as.data.frame(rich_points)
-elevation_extract <- extract(elevation_resample_crop, rich_points_xy, cellnumbers = T)
 #for some reason it's a list so change it back to a dataframe
 unlist<- unlist(elevation_extract)
 elevation_edited <-as.data.frame(unlist)
