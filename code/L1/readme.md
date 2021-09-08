@@ -1,1 +1,1 @@
-Folder for L0 (raw) and downloaded data from databases prior to filtering/changing
+Folder for L1 code to analyze database
