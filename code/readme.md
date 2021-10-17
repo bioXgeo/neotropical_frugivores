@@ -22,11 +22,11 @@ The L0 subfolder contains scripts for Level-0 analysis, mainly pulling and compi
 
 - 4_mammal_merge_pantheria: merge final dataset for mammals with PanTHERIA dataset
 
-- 5_database_final_edits: final additions to the database. Merge in range size calculations an add column for presence of taxonomic disparities
+- 5_database_final_edits: final additions to the database. Merge in range size calculations and add column for presence of taxonomic disparities
 
 ## L1
 The L1 subfolder contains scripts for Level-1 analysis, mainly calculating database statistics. Specifically:
-- database_analyses - statistical anaylses of database for birds and mammals
+- database_analyses: statistical anaylses of database for birds and mammals
 
 ## L2
 The L2 subfolder contains scripts for Level-2 analysis, mainly visualization of the database. Specifically:
