@@ -1,16 +1,17 @@
 #Project: Montane Frugivoria 
 
-#Purpose: Merge in IUCN range calculations and add column showing taxonomic disparities
+#Purpose: Merge in IUCN range calculations and add column showing taxonomic disparities. Takes datebase output of scripts "montane_frugivore_subset" for birds and "mammal_merge_PanTHERIA" for mammals.
+
+#Code reference: database_final_edits
 
 #Date: Oct 11th, 2021
 
 #By: Beth E. Gerstner
 
 #read in mammal database
-mam <- read.csv("INSERT DATAB
-")
+mam <- read.csv("INSERT DATABASE PATH")
 #read in bird database
-bird<- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L1/montane_bird_database_10_5_21.csv")
+bird<- read.csv("INSERT DATABASE PATH")
 
 #read in mammal range data
 mam_range <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L0/frugivore_range_data/montane_mammal_ranges.csv")
