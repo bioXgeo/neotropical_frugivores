@@ -1,12 +1,21 @@
+#Title: Study region map fig
+
 #Project: Montane Frugivoria
 
-#Purpose: Creating study area/occurrence map for birds and mammals. Uses final outputs of script "downloading_gbif_records"
+#Author: Beth E. Gerstner
 
-#Code reference: study_region_map_gif
+#Collaborators: Phoebe L. Zarnetske, Patrick Bills
+
+#Overview: Creates a study area/occurrence map for birds and mammals within the Frugivoria database. The occurrence data was obtained from GBIF for all species within the database. The occurrence records for birds and mammals is overlaid on top of probability of cloud forest.
+
+#Data input: GBIF dataset, cloud forest probability layer (MODCF_CloudForestPrediction.tif) from  Wilson & Jetz 2016.
+
+#Data outputs: ggplot maps of study region and occurrence records available for bird and mammal species in the database. 
+
+#Requires: Uses final outputs of script "downloading_gbif_records.R". To retrieve the GBIF data obtained through that script, it must first be downloaded from the GBIF website.
 
 #Date: Oct 11th, 2021
 
-#By: Beth E. Gerstner
 
 
 library(dplyr)
@@ -20,6 +29,7 @@ library(ggsn)
 library(rgeos)
 library(cowplot)
 library(BAMMtools)
+
 
 # Read in GBIF data for birds
 birds <- read.csv("INSERT PATH")
@@ -161,15 +171,6 @@ final_mam_occs
 
 # Create multipanel plot
 grid.arrange(final_bird_occs_inset, final_mam_occs, nrow = 1)
-
-
-
-
-
-
-
-
-
 
 
 

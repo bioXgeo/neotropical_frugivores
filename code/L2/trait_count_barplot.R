@@ -1,16 +1,23 @@
+#Title: Trait count barplot
+
 #Project: Montane Frugivoria
 
-#Purpose: To analyze trait composition of the database. This script creates barplot of counts for trait for birds and mammals. Uses database completed in "database_final_edits"
+#Author: Beth E. Gerstner
 
-#Code reference: trait_count_barplot
+#Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
-#Date: Oct 11th, 2021
+#Data input: Frugivoria_montane_bird_database.csv, Frugivoria_montane_mammal_database.csv
 
-#By: Beth E. Gerstner
+#Data output: trait_count_barplot.pdf
+
+#Overview: This script analyzes the trait composition of the database for newly added traits and creates a barplot. 
+
 
 library(dplyr)
 library(tidyr)
 library (ggplot2)
+
+pdf("trait_count_barplot.pdf") 
 
 #read in completed mammal database
 mam <- read.csv("INSERT PATH HERE")
@@ -76,3 +83,7 @@ all_new_traits <-ggplot(full_long_trait_db, aes(x=trait, y=species, fill=taxa)) 
 
 #add trait labels
 all_new_traits + scale_x_discrete(labels = c("body size", "gen time", "habitat special","home range","longevity", "range size", "sexual dim"))
+
+
+setwd("/Users/bethgerstner/Desktop/test")
+dev.off()

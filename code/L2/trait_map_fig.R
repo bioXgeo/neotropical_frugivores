@@ -1,13 +1,20 @@
+#Title: Trait map
+
 #Project: Montane Frugivoria
 
-#Purpose: Trait maps (mass and generation time) for birds and mammals. Uses final outputs of scripts final_database_edits" and "downloading_gbif_records". The final maps have a study region inset map and also a density plot showing the distribution of the trait in the dataset. 
+#Author: Beth E. Gerstner
 
-#Code reference: trait_map
+#Collaborators: Phoebe L. Zarnetske, Patrick Bills
+
+#Data Input: gbif data for birds and mammals, Frugivoria_montane_bird_database.csv, Frugivoria_montane_mammal_database.csv
+
+#Data Output: density plots for two traits, trait distribution maps for those traits made in ggplot, final multipanel plot combining this information.
+
+#Overview: Trait maps (mass and generation time) for birds and mammals. The final maps have a study region inset map and also a density plot showing the distribution of the trait in the dataset. 
+
+#Requires: Uses final outputs of script "downloading_gbif_records.R". To retrieve the GBIF data obtained through that script, it must first be downloaded from the GBIF website.
 
 #Date: Oct 11th, 2021
-
-#By: Beth E. Gerstner
-
 
 library(dplyr)
 library(maps)
@@ -120,7 +127,7 @@ inset_map_box <-
 
 #density plot to understand the distribution of traits
 # Use semi-transparent fill
-m_birds <-ggplot(bird_trait_data, aes(x=Body_mass_value), alpha=.4) + geom_density(fill="lightcoral", alpha=.7) +
+m_birds <-ggplot(bird_trait_data, aes(x=Body_mass_value_e), alpha=.4) + geom_density(fill="lightcoral", alpha=.7) +
   scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),labels = trans_format("log10", math_format(10^.x))) + xlab("Body mass (g)") +  geom_vline(aes(xintercept = median(Body_mass_value, na.rm = T)), colour = "red", linetype ="longdash", size = .8)
 
 # Calculate mean and median to put on graph
@@ -199,7 +206,7 @@ mam_dataset$body_mass_value_g_elton <-as.numeric(mam_dataset$body_mass_value_g_e
 mam_test_new <- ggplot() + geom_sf(data = study_region_crop) + theme_bw() + geom_point(data = mam_dataset, aes(x = decimalLongitude, y = decimalLatitude, color=body_mass_value_g_e), size=.01)
 
 #where should the breaks be so we can see color differences
-mam_jenks <-mam_dataset$body_mass_value_g_elton
+mam_jenks <-mam_dataset$body_mass_value_g_e
 getJenksBreaks(mam_jenks, 10, subset = NULL)
 
 #bins_mam <- c( 5.60,   1339.99,   3249.97,   5000.00,   7274.95,   9599.97,  12500.0,  21266.69,  32233.69, 140000.63)
@@ -365,20 +372,3 @@ mass_plot <-plot_grid(final_bird_mass_inset_density_f, NULL, final_mam_mass_inse
 gen_time_plot <- plot_grid(final_bird_gen_inset, NULL, final_mam_gen_inset_density, rel_widths = c(1, -0.1, 1), align = "hv",  nrow = 1)
 
 full_trait_plot <- plot_grid(mass_plot, gen_time_plot)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

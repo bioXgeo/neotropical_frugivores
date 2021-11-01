@@ -1,8 +1,16 @@
-#Project: Montane Frugivoria - analyzing the montane database 
+#Title: Frugivoria montane analysis demo
 
-#Purpose: To analyze and assess what is in the montane frugivore database for the data paper. Uses final outputs of script "final_database_edits"
+#Project: Montane Frugivoria
 
-#Code reference: database_analyses
+#Author: Beth E. Gerstner
+
+#Collaborators: Phoebe L. Zarnetske, Patrick Bills
+
+#Overview: To demonstrate ways to analyze and assess what is contained within the montane frugivore database. Uses final trait datasets that include those entered through exhaustive search of the literature and online sources. 
+
+#Data Input: Frugivoria_montane_bird_database.csv, Frugivoria_montane_mammal_database.csv
+
+#Data Output: trait counts, imputation counts, taxonomic stats, IUCN data deficient counts
 
 #Date: Oct 11th, 2021
 
@@ -12,7 +20,6 @@
 mam <- read.csv("INSERT PATH HERE")
 #read in completed bird database
 bird<- read.csv("INSERT PATH HERE")
-
 
 ## Assessing composition of database (Elton Traits, newly added traits, PanTHERIA)
 ##Birds
@@ -216,11 +223,41 @@ total_bird_impute/new_bird_traits # .32% imputed to family and genus
 # All database imputations
 full_impute_b_m <- impute_bird_fam_new + impute_bird_genus_new + impute_mam_fam_new + impute_mam_genus_new
 
+#Total genus impute for new traits
+genus_impute <- impute_bird_genus_new + impute_mam_genus_new 
+
+#total family impute for new traits 
+family_impute <- impute_mam_fam_new + impute_bird_fam_new
+
+#impute for EltonTraits - they include phylogenetically imputed data with a value of 2.
+bird_phylo_level_impute <- bird%>%
+  gather(x, value)%>%
+  group_by(x)%>%
+  tally(value==2)
+
+mam_phylo_level_impute <- mam%>%
+  gather(x, value)%>%
+  group_by(x)%>%
+  tally(value==2)
+
+##Total family impute for Elton Traits. They do not distinguish between genus and family level imputations
+##birds
+#body mass: 37 genus or fam
+#for strat: 29 genus or fam
+##mam
+#body mass: 59 genus or fam
+#           4 phylogenetic imputations
+
+all_elton_impute <-37 + 29 + 59 + 4
+
 # All new traits for birds and mammals
 all_new_traits_b_m <-new_mam_traits + new_bird_traits
 
 # Percent imputed in total for new traits (birds and mammals)
 full_impute_b_m/all_new_traits_b_m #= 7.16% imputed for newly added traits
+
+# Total # of imputations in database 
+total_impute <- all_elton_impute + full_impute_b_m #567
 
 
 # Species in the database that are data deficient (DD) in IUCN

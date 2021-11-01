@@ -1,14 +1,24 @@
+#Title: External trait database merge
+
 #Project: Montane Frugivoria
 
-#Code reference: external_trait_database_merge
+#Author: Beth E. Gerstner
 
-#Purpose: Merge IUCN species list subset with two external trait databases, Elton Traits (feeding and activity traits for birds and mammals) and PanTHERIA (morphological, life history and geographic traits for mammals only). To do this, trait databases had to be harmonized, meaning that differences in nomenclature had to be corrected for there to be successful merging. This is both a manual and automated process and will be time consuming for any set of taxa. This process allowed us to create "lookup tables" for the dataset where we list the correct names as assigned in each database. 
+#Collaborators: Phoebe L. Zarnetske, Patrick Bills
+
+#Data input: EltonTraits dataset (Wilman et al. 2014); IUCN species lists from code "1_IUCN_species_list_subset": mam_IUCN.csv, bird_IUCN.csv, manually generated lookup table
+
+#Data output: fully-harmonized merge with EltonTraits - bird_trait_all_final.csv, mamm_trait_all_final.csv
+
+#Overview: Merge IUCN species list subset with two external trait databases, Elton Traits (feeding and activity traits for birds and mammals) and PanTHERIA (morphological, life history and geographic traits for mammals only). To do this, trait databases had to be harmonized, meaning that differences in nomenclature had to be corrected for there to be successful merging. This is both a manual and automated process and will be time consuming for any set of taxa. This process allowed us to create "lookup tables" for the dataset where we list the correct names as assigned in each database. 
+
+#Requires: "1_IUCN_species_list_subset" to be run first
+
+#Notes: Harmonization process was done manually and is noted in the code.
 
 #Date: Oct 10th, 2020
 
 #Modified: Oct 15th, 2021
-
-#By: Beth E. Gerstner
 
 
 #Trait Information
@@ -20,7 +30,7 @@
 birds <- read.csv("INSERT BIRD ELTON PATH HERE")
 mamm<- read.csv("INSERT MAMMAL ELTON PATH HERE")
 
-#read in final outputs from previous code "IUCN_species_list_subset"
+#read in final outputs from previous code "1_IUCN_species_list_subset"
 bird_IUCN <- read.csv("insert path to output here")
 mammal_IUCN <- read.csv("insert path to output here")
 
@@ -134,7 +144,7 @@ bird_trait_alt_subset <-bird_trait_IUCN %>%
 #Merge IUCN information back into the mamm_trait_alternates object
 bird_trait_alternates_IUCN_info <- merge(bird_trait_alternates, bird_IUCN, by.x="IUCN_species_name",by.y="scientific_name")
 
-#Bind the alternate name object to the orginal edited merge. The scientific name column is the elton_trait names.
+#Bind the alternate name object to the original edited merge. The scientific name column is the elton_trait names.
 bird_trait_all_final <-rbind(bird_trait_alternates_IUCN_info, bird_trait_alt_subset)
 
 #write to a file

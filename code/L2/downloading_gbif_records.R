@@ -1,14 +1,21 @@
+#Title: Download GBIF records
+
 #Project: Montane Frugivoria
 
-#Purpose: Downloading occurrence records for species in a small spatial subset (Colombia and Ecuador). Requires output of "final_database_edits". WKT boundaries were extract from roughly drawn polygons around Colombia and Ecuador through the GBIF website "location" tab for searching occurrence records.
+#Author: Beth E. Gerstner
 
-#Code reference: download_gbif_records
+#Collaborators: Phoebe L. Zarnetske, Patrick Bills
+
+#Data inputs: bird_frug_montane.csv, mam_frug_montane.csv
+
+#Data outputs: GBIF occurrence record download on the GBIF website
+
+#Overview: Downloading occurrence records for species in a small spatial subset (Colombia and Ecuador). WKT boundaries were extract from roughly drawn polygons around Colombia and Ecuador through the GBIF website "location" tab for searching occurrence records.  This code is modified from that provided by the GBIF blog, which overcomes the issue of pulling large numbers of records through GBIF for multiple species at once (Waller & Grosjean, 2019)
 
 #Code modified from: John Waller and Marie Grosjean's blog post: https://data-blog.gbif.org/post/downloading-long-species-lists-on-gbif/
 
-#Date: Oct 11th, 2021
+#Requires: Uses output of "3_montane_frugivore_subset", which must be run first to obtain species subset.
 
-#By: Beth E. Gerstner
 
 # fill in your gbif.org credentials 
 user <- " " # your gbif.org username 

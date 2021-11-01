@@ -9,9 +9,9 @@ pantheria <- read.csv("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Mammals_Bir
 colnames(pantheria)[which(names(pantheria) == "MSW05_Binomial")] <- "IUCN_species_name"
 
 #remerge pantheria and original montane database so we have all of the columns (deleted old merge)
-original_mam <- read.csv("/Users/bethgerstner/Desktop/mam_GBIF/montane_mammal_database_checks.csv")
+original_mam <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L1/montane_mam_database_10_11_21_range_tax.csv")
 
-original_mam <- original_mam[,1:86]
+original_mam <- original_mam[,1:77]
 
 mamm_pantheria_original <- merge.data.frame(original_mam, pantheria, by= "IUCN_species_name", all.x=TRUE)
 
@@ -27,13 +27,14 @@ mamm_pantheria_original_no_NA <-mamm_pantheria_original[!is.na(mamm_pantheria_or
 
 #Find alternate names (Elton Names [scientific_name]) present in PanTHERIA database
 mamm_pantheria_alt_names_original <- pantheria %>%
-  filter(IUCN_species_name %in% mamm_pantheria_na_original$scientific_name)
+  filter(!IUCN_species_name %in% mamm_pantheria_na_original_t$elton_species_name) #81 found
 
 #remove Pantheria columns from the NA dataset so we don't get repeats
 pantheria_rm_na_original <-mamm_pantheria_na_original[,-c(77:130)]
 
 #change the species name to "scientific_name"
 colnames(mamm_pantheria_alt_names_original)[which(names(mamm_pantheria_alt_names_original) == "IUCN_species_name")] <- "scientific_name"
+colnames(pantheria_rm_na_original)[which(names(pantheria_rm_na_original) == "IUCN_species_name")] <- "scientific_name"
 
 #merge the original dataset (pantheria removed) that failed to pair with PanTHERIA with the alternate/Elton names PanTHERIA dataset
 full_subset_NA_original <- merge.data.frame(pantheria_rm_na_original, mamm_pantheria_alt_names_original, by="scientific_name", all=TRUE)
@@ -91,4 +92,7 @@ full_montane_bird_dataset <- rbind(bird_1,bird_2)
 
 #Write full montane bird dataset to a file
 write.csv(full_montane_bird_dataset, "/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L1/working_databases/database_csv_2_9_21/pantheria_added_mammals/final_datasets_tofix/complete_montane_bird_database_4_13_21.csv")
+
+no_match_1 <- mamm_pantheria_na_original_t %>%
+  filter(elton_species_name %in% pantheria$IUCN_species_name) #81 found
 

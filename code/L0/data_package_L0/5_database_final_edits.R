@@ -1,12 +1,21 @@
+#Title: Database final edits
+
 #Project: Montane Frugivoria 
 
-#Purpose: Merge in IUCN range calculations and add column showing taxonomic disparities. Takes datebase output of scripts "montane_frugivore_subset" for birds and "mammal_merge_PanTHERIA" for mammals.
+#Author: Beth E. Gerstner
 
-#Code reference: database_final_edits
+#Collaborators: Phoebe L. Zarnetske, Patrick Bills
+
+#Overview: Merge in IUCN range calculations and add column showing taxonomic disparities. Takes datebase output of scripts "montane_frugivore_subset" for birds and "mammal_merge_PanTHERIA" for mammals.
+
+#Data Input: bird_frug_montane.csv, final_mammal_dataset.csv
+
+#Data Output: final_mammal_database.csv, final_bird_database.csv
+
+#Requires: "3_montane_frugivore_subset.R" and "4_mammal_merge_pantheria.R" should be run first.
 
 #Date: Oct 11th, 2021
 
-#By: Beth E. Gerstner
 
 #read in mammal database
 mam <- read.csv("INSERT DATABASE PATH")
@@ -43,11 +52,10 @@ length(mam_db_ranges$taxonomic_disparity[mam_db_ranges$taxonomic_disparity==1]) 
 bird_db_ranges$taxonomic_disparity <- ifelse(bird_db_ranges$IUCN_species_name == bird_db_ranges$elton_species_name, '0',
                                    ifelse(bird_db_ranges$IUCN_species_name != bird_db_ranges$elton_species_name, '1','NA'))
 
-
 #save as new database
 setwd("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L1")
-write.csv(mam_db_ranges, "montane_mam_database_10_11_21_range_tax.csv")
-write.csv(bird_db_ranges, "montane_bird_database_10_11_21_range_tax.csv")
+write.csv(mam_db_ranges, "final_mammal_database.csv")
+write.csv(bird_db_ranges, "final_bird_database.csv")
 
 
 
