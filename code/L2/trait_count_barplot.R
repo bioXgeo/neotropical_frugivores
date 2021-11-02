@@ -79,11 +79,11 @@ full_long_trait_db$trait <-as.factor(full_long_trait_db$trait)
 
 #plot traits
 all_new_traits <-ggplot(full_long_trait_db, aes(x=trait, y=species, fill=taxa)) + labs(x = "New Frugivoria traits", y = "# species with trait") +
-  geom_bar(stat="identity", position=position_dodge()) +geom_hline(yintercept=313, color="lightseagreen") + geom_hline(yintercept=682, color="lightcoral")
+  geom_bar(stat="identity", position=position_dodge()) +geom_hline(yintercept=313, color="lightseagreen") + geom_hline(yintercept=682, color="lightcoral") + theme(panel.background = element_rect(fill = "white"))
 
 #add trait labels
-all_new_traits + scale_x_discrete(labels = c("body size", "gen time", "habitat special","home range","longevity", "range size", "sexual dim"))
+all_new_traits + scale_x_discrete(labels = c("body size", "gen time", "habitat special","home range","longevity", "range size", "sexual dim")) + theme(axis.line = element_line(color="black", size = .2))
 
 
-setwd("/Users/bethgerstner/Desktop/test")
+setwd("INSERT PATH TO SAVE")
 dev.off()
