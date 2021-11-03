@@ -1,4 +1,4 @@
-#Project: Montane Frugivoria - analyzing the montane database 
+#Project: Montane Frugivoria - analyzing the montane database
 
 #Purpose: To analyze and assess what is in the montane frugivore database for the data paper.
 
@@ -29,7 +29,7 @@ bird[bird==""] <-NA
 
 #These are from previous databases (need to add Pantheria in here)
 body_mass_b<- length(which(!is.na(bird$Body_mass_value)))
-diet_categ_b <- length(which(!is.na(bird$Diet_cat))) 
+diet_categ_b <- length(which(!is.na(bird$Diet_cat)))
 nocturnal_b <- length(which(!is.na(bird$Activity_nocturnal)))
 
 
@@ -64,11 +64,11 @@ body_size_m<- length(which(!is.na(mam$body_size_cm)))
 new_mam_traits <- diet_categ_m + longevity_m +home_range_m +range_size_m + habitat_special_m +gen_time_m +body_size_m  #1134
 
 #Total number of traits in the database thus far (will change)
-2414+6623
-  
-#2) # of genera
-  a) birds 
-  b) mammals
+# 2414+6623
+#
+# #2) # of genera
+#   a) birds
+#   b) mammals
 #Unique genera
 #71 genera for mammals
 
@@ -83,10 +83,10 @@ scientific_names_birds <-separate(bird, IUCN_species_name, into = c("genus", "sp
 
 length(unique(scientific_names_birds$genus)) #295 genera
 
-#Unique mammal species 
+#Unique mammal species
 length(unique(mam$IUCN_species_name)) #316
 
-#Unique Bird species 
+#Unique Bird species
 length(unique(bird$IUCN_species_name)) #850
 
 #3) #New species/name changes
@@ -107,7 +107,7 @@ bird$new <- ifelse(bird$IUCN_species_name == bird$scientific_name, '0',
 #how many species names are mismatched?
 length(bird$new[bird$new==1]) #307
 
-  
+
 #5) How many traits were imputed to family? (not including EltonTraits, will have to add this later on)
 library (tidyr)
 mam_genus_level_impute<-mam%>%
@@ -174,16 +174,16 @@ body_mass_lb <- length(which(!is.na(mam$body_mass_spec_level))) #299
 
 #Imputed in total (will change)
 #197+38 = 235 (total imputed)
-#235/3021 (imputed/total new trait) = 7.8% 
+#235/3021 (imputed/total new trait) = 7.8%
 
 
 #imputed Pantheria and Elton Traits?
-  
+
 #Results (all of these will be mock ups for now (IBS figures):
 #1) #stacked barplot of newly added traits (those on top of Elton Traits/PanTheria)
 #2) #show a single mapped trait as an example of something you can do
-  
-  
+
+
 #How many species in the database are data deficient
 length(mam[mam$IUCN_category=="DD",]) #104
 length(bird[bird$IUCN_category=="DD",]) #71
@@ -195,18 +195,18 @@ length(bird[bird$IUCN_category=="DD",]) #71
 71/850 #8.4%
 
 #_____________________________________________________________________
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
 # Mammals
 # Read in old database
 old_df_m <- read.csv("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Mammals_Birds_all_data/Trait_Database_2019/IUCN_trait_montane_mammals_original.csv")
-# check the length of each trait of interest for mammals 
+# check the length of each trait of interest for mammals
 #old database
 #diurnal_m <-length(which(!is.na(old_df_m$Activity.Diurnal)))
 #crepuscular_m <-length(which(!is.na(old_df_m$Activity.Crepuscular)))
@@ -242,7 +242,7 @@ difference <- traits_m_recent - traits_m_old
 
 old_df_b <- read.csv("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Mammals_Birds_all_data/Trait_Database_2019/IUCN_trait_montane_birds_final.csv")
 new_df_b <- read.csv("/Volumes/GoogleDrive/My Drive/neotropical_frugivores/Database2019/Databases/L1/IUCN_trait_montane_birds_species_list.csv")
-# check the length of each treat of interest for mammals 
+# check the length of each treat of interest for mammals
 #old database
 diurnal_b <-length(which(!is.na(new_df_b$Activity.Diurnal)))
 crepuscular_b <-length(which(!is.na(new_df_b$Activity.Crepuscular)))
@@ -333,11 +333,11 @@ barplot(df$`tapply(dat_1$scientific_name, dat_1$Diet.Cat, length)`, main="Number
 
 category<- c("Mammals","Mammals","Mammals","Birds","Birds","Birds")
 condition<-c("Pantheria","Elton Traits","New traits","Pantheria","Elton Traits","New traits")
-percent <- c(.151,.443,.406,0,.599,.401) # change these to the new values 
+percent <- c(.151,.443,.406,0,.599,.401) # change these to the new values
 data <- data.frame(category,condition,percent)
 
 # Stacked + percent
-ggplot(data, aes(fill=condition, y=percent, x=Category)) + 
-  geom_bar(position="fill", stat="identity") + geom_text(aes(label = percent*100),size = 4, hjust = 0.6, vjust = 3, position =  "stack")  + scale_fill_manual(values=c("#999999", "#99CC00", "#56B4E9"), 
+ggplot(data, aes(fill=condition, y=percent, x=Category)) +
+  geom_bar(position="fill", stat="identity") + geom_text(aes(label = percent*100),size = 4, hjust = 0.6, vjust = 3, position =  "stack")  + scale_fill_manual(values=c("#999999", "#99CC00", "#56B4E9"),
                        name="Data Source",
                        breaks=c("Elton Traits","New traits", "Pantheria"), labels=c("New traits","Elton Traits","Pantheria"))+ labs(x="Taxa")  + labs(y="Percent contribution")
