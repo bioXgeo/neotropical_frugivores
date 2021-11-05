@@ -7,9 +7,9 @@
 #By: Beth E. Gerstner
 
 #read in mammal database
-mam <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L1/montane_mam_database_10_11_21_range_tax.csv")
+mam <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L1/complete_database/Frugivoria_montane_mammal_database.csv")
 #read in bird database
-bird<- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L1/montane_bird_database_10_11_21_range_tax.csv")
+bird<- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L1/complete_database/Frugivoria_montane_bird_database.csv")
 
 
 #Needed stats
