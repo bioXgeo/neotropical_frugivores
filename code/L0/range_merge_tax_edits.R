@@ -7,10 +7,9 @@
 #By: Beth E. Gerstner
 
 #read in mammal database
-mam <- read.csv("INSERT DATAB
-")
+mam <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L1/complete_database/Frugivoria_montane_mammal_database.csv")
 #read in bird database
-bird<- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L1/montane_bird_database_10_5_21.csv")
+bird<- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L1/complete_database/Frugivoria_montane_bird_database.csv")
 
 #read in mammal range data
 mam_range <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L0/frugivore_range_data/montane_mammal_ranges.csv")
@@ -45,7 +44,7 @@ bird_db_ranges$taxonomic_disparity <- ifelse(bird_db_ranges$IUCN_species_name ==
 
 #save as new database
 setwd("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L1")
-write.csv(mam_db_ranges, "montane_mam_database_10_11_21_range_tax.csv")
+write.csv(mam_db_ranges, "montane_mam_database_11_10_21_range_tax.csv")
 write.csv(bird_db_ranges, "montane_bird_database_10_11_21_range_tax.csv")
 
 

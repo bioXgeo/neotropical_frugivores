@@ -125,6 +125,13 @@ length(unique(bird$IUCN_species_name))
 #New species/name changes
 #These are species that have either been reclassified or recently discovered. These species can be new species that we've then imputed to a close relative, species that have been reclassified, species with misspellings that we've standardized to the IUCN name. This was assessed manually.
 
+#23 new mammal species
+#67 mammal species reclassified
+
+# 2 new bird species
+# 126 birds reclassified
+# 6 Spelling errors
+
 # Quantify mismatches between the elton_species_name and IUCN_species_name.
 # Mammals
 
@@ -144,18 +151,18 @@ mam_genus_level_impute<-mam%>%
 
 #imputed to genus: new traits
 #home_range 27
-#longevity 41
+#longevity 40
 #generation_time 45
-#body_size 40
-#sexual dimorphism 62
-#diet_cat #24 new species. 
+#body_size 39
+#sexual dimorphism 61
+#diet_cat #23 new species. need to know how many were reclassified to figure out what's imputed to genus
 
 # Total imputed for newly added traits
-impute_mam_genus_new <-27+41+45+40+62+24 # 239 
+impute_mam_genus_new <-27+40+45+39+61+23 # 235
 
 
 # Percent imputed in total for genus
-genus_impute_m <-impute_mam_genus_new/new_mam_traits #11.63% to genus for mammals
+genus_impute_m <-impute_mam_genus_new/new_mam_traits #11.49% to genus for mammals
 
 ##imputed to family: new traits
 
@@ -163,19 +170,20 @@ genus_impute_m <-impute_mam_genus_new/new_mam_traits #11.63% to genus for mammal
 #generation_time 91
 #body_size 3
 #sexual dimorphism 31
+#home range 1
 
 mam_fam_level_impute<-mam%>%
   gather(x, value)%>%
   group_by(x)%>%
   tally(value==-1)
 
-impute_mam_fam_new <-50+91+3+31 # 175
+impute_mam_fam_new <-50+91+3+31+1 # 176 
 
 #total traits imputed
-total_mam_impute <-impute_mam_genus_new+impute_mam_fam_new #414
+total_mam_impute <-impute_mam_genus_new+impute_mam_fam_new #411
 
 #%imputed for mammals
-total_mam_impute/new_mam_traits # 20.15% new traits imputed to family or genus
+total_mam_impute/new_mam_traits # 20.10% new traits imputed to family or genus
 
 
 #Bird imputation
@@ -245,27 +253,27 @@ mam_phylo_level_impute <- mam%>%
 #body mass: 37 genus or fam
 #for strat: 29 genus or fam
 ##mam
-#body mass: 59 genus or fam
+#body mass: 58 genus or fam
 #           4 phylogenetic imputations
 
-all_elton_impute <-37 + 29 + 59 + 4
+all_elton_impute <-37 + 29 + 58 + 4
 
 # All new traits for birds and mammals
 all_new_traits_b_m <-new_mam_traits + new_bird_traits
 
 # Percent imputed in total for new traits (birds and mammals)
-full_impute_b_m/all_new_traits_b_m #= 7.16% imputed for newly added traits
+full_impute_b_m/all_new_traits_b_m #= 7.17% imputed for newly added traits
 
 # Total # of imputations in database 
-total_impute <- all_elton_impute + full_impute_b_m #567
+total_impute <- all_elton_impute + full_impute_b_m #563
 
 
 # Species in the database that are data deficient (DD) in IUCN
-length(mam[mam$IUCN_category=="DD",]) #131
+length(mam[mam$IUCN_category=="DD",]) #129
 length(bird[bird$IUCN_category=="DD",]) #75
 
 #mammals with data deficiency
-131/313 #41.85%
+129/312 #41.35%
 
 #birds with data deficiency
 75/682 #11%
@@ -273,11 +281,11 @@ length(bird[bird$IUCN_category=="DD",]) #75
 #Total % makeup of trait database
 #Mammals
 #pantheria %
-pantheria_traits/all_mam_traits #60.7
+pantheria_traits/all_mam_traits #60.92
 #elton %
-elton_traits_m/all_mam_traits #18.76
+elton_traits_m/all_mam_traits #18.68
 #new %
-new_mam_traits/all_mam_traits #20.53
+new_mam_traits/all_mam_traits #20.40
 
 #birds
 #elton

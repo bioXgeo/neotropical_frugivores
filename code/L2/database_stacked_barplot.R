@@ -2,7 +2,7 @@
 
 #Project: Montane Frugivoria
 
-#Overviwe: To analyze trait composition of the database. This script creates a stacked barplot of each database component. 
+#Overview: To analyze trait composition of the database. This script creates a stacked barplot of each database component. 
 
 #Data Input: % makeup of trait database
 
@@ -15,13 +15,13 @@
 
 ## Mammal % makeup
 #pantheria %
-#60.7
+#60.92
 
 #elton %
-#18.76
+#18.68
 
 #newly added traits%
-#20.53
+#20.4
 
 #birds
 #elton
@@ -36,7 +36,7 @@ pdf("percent_comp.pdf")
 #create parameters for the stacked barplot
 category<- c("Mammals","Mammals","Mammals","Birds","Birds","Birds")
 condition<-c("PanTHERIA","EltonTraits","New Traits in Frugivoria","PanTHERIA","EltonTraits","New Traits in Frugivoria")
-percent <- c(60.7,18.76,20.53,0,45.89,54.11) #% composition
+percent <- c(60.92,18.68,20.4,0,45.89,54.11) #% composition
 data <- data.frame(category,condition,percent) #dataframe of composition
 
 # Stacked barplot + percent
