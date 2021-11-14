@@ -3,12 +3,12 @@ Frugivoria is a trait database containing dietary, life-history, morphological t
 
 
 ## Funding
-NASA FINESST
+NASA FINESST Grant #80NSSC19K1332
 
 ## Collaborators
-Beth E. Gerstner (MSU)
-Patrick Bills (MSU)
-Phoebe L. Zarnetske (MSU)
+- Beth E. Gerstner (MSU)
+- Patrick Bills (MSU)
+- Phoebe L. Zarnetske (MSU)
 
 ## L0
 
@@ -26,20 +26,20 @@ The L0 subfolder contains scripts for Level-0 analysis, mainly pulling and compi
 
 ## L1
 The L1 subfolder contains scripts for Level-1 analysis, mainly calculating database statistics. Specifically:
-- database_analyses: statistical anaylses of database for birds and mammals
+- frugivoria_database_analyses_demo: statistical anaylses of database for birds and mammals
 
 ## L2
 The L2 subfolder contains scripts for Level-2 analysis, mainly visualization of the database. Specifically:
 
-- 1_database_stacked_barplot: stacked barplot showing contribution of external databases to Frugivoria
+- database_stacked_barplot: stacked barplot showing contribution of external databases to Frugivoria
 
-- 2_trait_count_barplot: relative counts of newly added traits to dataset for birds and mammals
+- trait_count_barplot: relative counts of newly added traits to dataset for birds and mammals
 
-- 3_downloading_gbif_records: code demonstrating how to obtain GBIF records using the database
+- downloading_gbif_records: code demonstrating how to obtain GBIF records using the database
 
-- 4_study_region_map_fig: map of study region
+- study_region_map_fig: map of study region for birds and mammals overlaid on probability of cloud forest
 
-- 5_trait_mapping: map of two traits, mass and generation time for birds and mammals
+- trait_mapping: map of two traits, mass and generation time for birds and mammals
 
 
 
