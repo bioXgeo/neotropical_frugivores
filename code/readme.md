@@ -24,6 +24,8 @@ The L0 subfolder contains scripts for Level-0 analysis, mainly pulling and compi
 
 - 5_database_final_edits: final additions to the database. Merge in range size calculations and add column for presence of taxonomic disparities
 
+- workflow_diagram: diagram demonstrating all steps of building the Frugivoria database
+
 ## L1
 The L1 subfolder contains scripts for Level-1 analysis, mainly calculating database statistics. Specifically:
 - frugivoria_database_analyses_demo: statistical anaylses of database for birds and mammals
