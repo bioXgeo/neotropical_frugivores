@@ -21,9 +21,8 @@ pdf("trait_count_barplot.pdf")
 
 #read in completed mammal database
 mam <- read.csv("INSERT PATH HERE")
-#read in completed bird database
+#read in bird database
 bird<- read.csv("INSERT PATH HERE")
-
 
 # New bird traits
 longevity_b <- length(which(!is.na(bird$longevity)))
@@ -44,8 +43,21 @@ home_range_m <- length(which(!is.na(mam$home_range_size)))
 habitat_special_m <- length(which(!is.na(mam$habitat_specialization)))
 gen_time_m <- length(which(!is.na(mam$generation_time)))
 body_size_m<- length(which(!is.na(mam$body_size_cm)))
+sexual_dim_m <- length(which(!is.na(mam$sexual_dimorphism)))
 range_1_m <- length(which(!is.na(mam$observed_range_sqkm)))
 range_2_m <-  length(which(!is.na(mam$inferred_range_sqkm)))
+
+# PanTHERIA traits
+diet_categ_m_p <- length(which(!is.na(mam$diet_cat_p)))
+longevity_m_p <- length(which(!is.na(mam$max_longevity_m_p)))
+home_range_m_p <- length(which(!is.na(mam$home_range_km2_p)))
+habitat_special_m_p <- length(which(!is.na(mam$habitat_specialization_p)))
+gen_time_m_p <- length(which(!is.na(mam$generation_time_p)))
+body_size_m_p<- length(which(!is.na(mam$body_size_cm_p)))
+sexual_dim_m_p <- length(which(!is.na(mam$sexual_dimorphism_p)))
+range_1_m_p <- length(which(!is.na(mam$GR_area_km2_p)))
+range_2_m_p <-  length(which(!is.na(mam$inferred_range_sqkm_p)))
+
 
 #Bird Traits 
 
@@ -65,20 +77,28 @@ mam_df <- data.frame(longevity_m,home_range_m,range_1_m, habitat_special_m, gen_
 oldnames.m = c("longevity_m", "home_range_m","range_1_m","habitat_special_m", "gen_time_m", "body_size_m", "sexual_dim_m")
 newnames.m = c("longevity", "home_range","range_size","habitat_special", "gen_time", "body_size", "sexual_dim")
 
-mam_df_wide <-mam_df %>% rename_at(vars(oldnames.m), ~ newnames.m)
+# Pantheria change names of traits
+#Mammals change names of traits
+mam_df_p <- data.frame(longevity_m_p,home_range_m_p,range_1_m_p,habitat_special_m_p, gen_time_m_p, body_size_m_p, sexual_dim_m_p)
+
+#change names of traits
+oldnames.m.p = c("longevity_m_p", "home_range_m_p","range_1_m_p","habitat_special_m_p", "gen_time_m_p", "body_size_m_p", "sexual_dim_m_p")
+newnames.m.p = c("longevity", "home_range","range_size", "habitat_special", "gen_time", "body_size", "sexual_dim")
+
+mam_df_wide.p <-mam_df_p %>% rename_at(vars(oldnames.m.p), ~ newnames.m.p)
 
 #joining bird and mammal data
-full_wide_trait_db <- rbind(mam_df_wide, bird_df_wide)
+full_wide_trait_db <- rbind(mam_df_wide, bird_df_wide, mam_df_wide.p)
 
 #convert this from wide to long format so we can put into ggplot2
 full_long_trait_db <-gather(full_wide_trait_db,trait, species)
-full_long_trait_db$taxa <-c("mammals", "birds", "mammals", "birds","mammals", "birds","mammals", "birds","mammals", "birds","mammals", "birds","mammals", "birds")
+full_long_trait_db$taxa <-c("mammals", "birds", "PanTHERIA", "mammals", "birds","PanTHERIA", "mammals", "birds", "PanTHERIA","mammals", "birds","PanTHERIA","mammals", "birds", "PanTHERIA","mammals","birds","PanTHERIA","mammals", "birds","PanTHERIA")
 
 #need the traits to be a factor
 full_long_trait_db$trait <-as.factor(full_long_trait_db$trait)
 
 #plot traits
-all_new_traits <-ggplot(full_long_trait_db, aes(x=trait, y=species, fill=taxa)) + labs(x = "New Frugivoria traits", y = "# species with trait") +
+all_new_traits <-ggplot(full_long_trait_db, aes(x=trait, y=species, fill=taxa, color)) + scale_fill_manual(values = c("birds" = "lightcoral", "mammals" = "lightseagreen","PanTHERIA" = "grey51"))+ labs(x = "New Frugivoria traits", y = "# species with trait") +
   geom_bar(stat="identity", position=position_dodge()) +geom_hline(yintercept=313, color="lightseagreen") + geom_hline(yintercept=682, color="lightcoral") + theme(panel.background = element_rect(fill = "white"))
 
 #add trait labels
