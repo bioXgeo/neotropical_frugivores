@@ -130,6 +130,9 @@ length(mam$taxonomic_disparity[mam$taxonomic_disparity==1]) #90
 #how many bird species names are mismatched?
 length(bird$taxonomic_disparity[bird$taxonomic_disparity==1]) #134
 
+#names mismatched
+134+90 # 224 - 
+
 
 #5) How many traits were imputed to family? (not including EltonTraits, will have to add this later on)
 library (tidyr)
