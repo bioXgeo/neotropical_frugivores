@@ -1,0 +1,249 @@
+---
+title: "Frugivoria: Ecuadorian Plant richness "
+author: "Hazel Anderson"
+collaborators: "Phoebe Zarnestke, Beth Gernster, Pat Bills"
+data input: "List of plant species in Ecuador in .csv, Range maps of those plant species in SpatialPolygonDataFrame, all forementioned data in RData"
+data output: "Range maps in sf, final plot as png"
+project: "Frugivoria"
+date: "7/27/2020"
+describtion: This script takes BIEN species range maps and uses them to create a map of species richness of Ecuador plant species.
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Load required packages
+```{r}
+library(BIEN)
+library(sp)
+library(sf)
+library(dplyr)
+library(ggplot2)
+library(scico)
+library(rnaturalearth)
+library(purrr)
+library(ggsn)
+
+```
+
+# Set File Path
+```{r}
+data_path <- 'G:/Shared drives/SpaCE_Lab_FRUGIVORIA/r_code'
+```
+
+
+# Species Maps for All Ecuador Species
+```{r}
+if (file.exists("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/r_code/Ecuador_plant_range_maps_workspace.RData")){
+    load("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/r_code/Ecuador_plant_range_maps_workspace.RData")
+}else {
+    #List of Ecuador Species
+    Ecuador <- BIEN_occurrence_country("Ecuador")
+    Ecuador_species_list <- unique(Ecuador$scrubbed_species_binomial)
+    write.csv(Ecuador_species_list, "Ecuador_species_list.csv")
+    
+    #Species Maps for all plant species in Ecuador
+    Ecuador_plant_species_list_vector <- unlist(Ecuador_species_list)
+    Ecuador_plant_range_maps <- BIEN_ranges_load_species(species = Ecuador_plant_species_list_vector)
+    
+    # Converting the SpatialPolygonsdataframe to shapefiles
+    Ecuador_plants <- st_as_sf(Ecuador_plant_range_maps)
+    
+    #Save workspace
+    save.image("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/r_code/Ecuador_plant_range_maps_workspace.RData")
+}
+```
+
+# Merge Ecuador plant species list with range map list
+```{r}
+mapped_list <- unlist(Ecuador_plant_range_maps$species)
+#removing underscore from species names to match Ecuador_plant_species_list
+mapped_list <- gsub("_", " ", mapped_list)
+
+#making sure both lists are in the same form
+mapped_list <- as_tibble(mapped_list)
+Ecuador_species_list <- as_tibble(Ecuador_species_list)
+
+#determining which species have not been mapped and saving list to csv
+missing_maps <- setdiff(Ecuador_species_list, mapped_list)
+write.csv(missing_maps, "plant_missing_maps.csv")
+```
+
+# Load in world map
+```{r}
+worldMap <- ne_countries(scale = "medium", type = "countries", returnclass = "sf")
+
+# country subset. In this case we are removing the Galapagos by defining the bounding box around the Ecuador polygon.
+CRpoly <- worldMap %>% filter(sovereignt == "Ecuador")
+ecuador_shp <-st_crop(CRpoly, c(xmin=-84, xmax=-75.24961, ymin=-4.990625, ymax=1.455371))
+
+# trim the map to appropriate study area. This zooms out of Ecuador, which will be easier for visualization down the line.
+limsCR <- st_buffer(ecuador_shp, dist = 1) %>% st_bbox()
+
+# countries
+divpolPlot <-
+ggplot() +
+geom_sf(data = ecuador_shp) +
+coord_sf(
+xlim = c(limsCR["xmin"], limsCR["xmax"]),
+ylim = c(limsCR["ymin"], limsCR["ymax"])
+) +
+scale_x_continuous(breaks = c(-84)) +
+theme(
+plot.background = element_rect(fill = "#ffffff"),
+panel.background = element_rect(fill = "#ffffff"),
+panel.grid = element_blank(),
+line = element_blank(),
+rect = element_blank()
+)
+divpolPlot
+```
+
+# Plot hulls
+```{r}
+hullsPlot <-
+ggplot() +
+geom_sf(data = ecuador_shp) +
+geom_sf(data = Ecuador_plants, aes(fill = species), alpha = 0.7) +
+scale_fill_scico_d(palette = "davos", direction = -1, end = 0.9, guide = FALSE) +
+coord_sf(
+xlim = c(limsCR["xmin"], limsCR["xmax"]),
+ylim = c(limsCR["ymin"], limsCR["ymax"])
+) +
+scale_x_continuous(breaks = c(-84)) +
+theme(
+plot.background = element_rect(fill = "#FFFFFF"),
+panel.background = element_rect(fill = "#FFFFFF"),
+panel.grid = element_blank(),
+line = element_blank(),
+rect = element_blank()
+)
+hullsPlot
+
+```
+
+# Define a grid
+```{r}
+CRGrid <- ecuador_shp %>%
+st_make_grid(cellsize = 0.2) %>%
+st_intersection(ecuador_shp) %>%
+st_cast("MULTIPOLYGON") %>%
+st_sf() %>%
+mutate(cellid = row_number())
+```
+
+# Richness for convex hulls
+```{r}
+richness_gridEOO <- CRGrid %>%
+st_join(Ecuador_plants) %>%
+mutate(overlap = ifelse(!is.na(id), 1, 0)) %>%
+group_by(cellid) %>%
+summarize(num_species = sum(overlap))
+```
+
+# Empty grid, more detailed in nature
+```{r}
+gridPlot <-
+ggplot() +
+geom_sf(data =ecuador_shp) +
+geom_sf(data = CRGrid) +
+coord_sf(
+xlim = c(limsCR["xmin"], limsCR["xmax"]),
+ylim = c(limsCR["ymin"], limsCR["ymax"])
+) +
+scale_x_continuous(breaks = c(-84)) +
+theme(
+plot.background = element_rect(fill = "#FFFFFF"),
+panel.background = element_rect(fill = "#FFFFFF"),
+panel.grid = element_blank(),
+line = element_blank(),
+rect = element_blank()
+)
+gridPlot
+```
+
+# Richness for convex hulls, more detailed
+```{r}
+gridRichCR_eoo <-
+ggplot(richness_gridEOO) +
+geom_sf(data = ecuador_shp, fill = "grey", size = 0.1) +
+geom_sf(aes(fill = num_species), color = NA) +
+scale_fill_scico(palette = "davos", direction = -1, end = 0.9) +
+coord_sf(
+xlim = c(limsCR["xmin"], limsCR["xmax"]),
+ylim = c(limsCR["ymin"], limsCR["ymax"])
+) +
+scale_x_continuous(breaks = c(-84)) +
+theme(
+plot.background = element_rect(fill = "#FFFFFF"),
+panel.background = element_rect(fill = "#FFFFFF"),
+panel.grid = element_blank(),
+line = element_blank(),
+rect = element_blank(),
+axis.title.x = element_blank(),
+axis.title.y = element_blank()
+) + 
+scalebar(ecuador_shp, dist = 200, st.dist=.05, st.size=4, height=0.02, transform = TRUE, dist_unit = "km", model = 'WGS84') +
+north(ecuador_shp, location="topright", scale=0.15, symbol=3) +
+labs(fill = "richness") 
+
+gridRichCR_eoo
+
+```
+
+# Saving richness map
+```{r}
+ggsave(filename = "Plant richness map Ecuador.png", dpi = 300, device="png")
+```
+
+#Investigate the overlap of species ranges with forest cover
+```{r}
+library(fasterize)
+library(raster)
+#Load in forest cover data for 2019
+for_cov<- raster("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/analysis/MODIS_data_2019/MODIS_per_forest_2019.tif")
+# Run fasterize to turn the richness map into a raster 
+raster_grid <- fasterize(
+  richness_gridEOO,
+  for_cov,
+  field = "num_species",
+  fun = "sum",
+  background = NA,
+)
+#Write the richness raster to a file 
+writeRaster(raster_grid, filename="G:/Shared drives/SpaCE_Lab_FRUGIVORIA/analysis/MODIS_data_2019/plant_ric.tif", format="GTiff")
+#read in raster
+raster_grid <- raster("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/analysis/MODIS_data_2019/plant_ric.tif")
+```
+
+#To look at trends in forest cover over the species richness surface, they have to have the same resolution so we must resample the richness raster to make it match forest cover (finer res)
+```{r, figures-side, fig.show="hold", out.width="50%"}
+#Resample the diversity raster
+raster_rich_fin_res<-resample(raster_grid, for_cov, method="bilinear")
+#make sure extents match
+fc_mask <- mask(for_cov, raster_rich_fin_res)
+#remove water (value 200)
+fc_mask[fc_mask==200] <-NA
+#Subset the forest cover raster to areas <50 and >50% forest cover 
+fc_less_50 <- fc_mask <= 50
+#remove 0s to allow a mask where just the values of 1 are being used 
+fc_less_50[fc_less_50 == 0] <- NA
+fc_great_50 <-fc_mask > 50
+#remove 0s to allow a mask where just the values of 1 are being used 
+fc_great_50[fc_great_50 == 0] <- NA
+plot(fc_less_50, main="forest cover <= 50%")
+plot(fc_great_50, main="forest cover > 50%")
+# Take richness layer and mask by these forest cover cover subsets to have richness found above and below these thresholds
+rich_less_50 <-  mask(raster_rich_fin_res,fc_less_50)
+rich_great_50 <- mask(raster_rich_fin_res, fc_great_50)
+  
+#Plots of taxonomic richness in forest/non-forest
+plot(rich_less_50, main="taxonomic richness in areas of <=50% forest cover", add=T)
+plot(rich_great_50, main="taxonomic richness in areas > 50% forest cover")
+#Summary of richness over those two forest thresholds
+summary(values(rich_less_50))
+summary(values(rich_great_50))
+hist((values(rich_less_50)), xlab="taxonomic richness", ylab="frequency", main= "Taxonomic richness in regions <= 50% forest cover")
+hist((values(rich_great_50)), xlab="taxonomic richness", ylab="frequency", main= "Taxonomic richness in regions > 50% forest cover")
+```
+```

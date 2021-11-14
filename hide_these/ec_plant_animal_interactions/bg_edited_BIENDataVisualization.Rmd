@@ -1,0 +1,101 @@
+---
+title: "BIEN data visualization"
+author: "Hazel Anderson"
+date: "3/1/2021"
+output: html_document
+---
+
+
+```{r}
+library(BIEN)
+library(sp)
+library(sf)
+library(raster)
+library(ggplot2)
+library(dplyr)
+```
+
+/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA
+```{r}
+#load files
+traits <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L0/Ecuador_species_withTraits.csv")
+allplant_rich <- raster("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/analysis/MODIS_data_2019/plant_ric.tif")
+fruiting_rich <- raster("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/analysis/MODIS_data_2019/fruitingplant_ric.tif")
+forestfruiting_rich <- raster("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/analysis/MODIS_data_2019/fruitingplant_rich_great_50.tif")
+```
+
+```{r}
+allplant_rich@crs
+fruiting_rich@crs
+forestfruiting_rich@crs
+
+plot(allplant_rich)
+plot(fruiting_rich)
+plot(forestfruiting_rich)
+```
+```{r}
+allplant_rich@extent
+fruiting_rich@extent
+forestfruiting_rich@extent
+```
+
+
+```{r}
+# extract values from elevation at species richness grid cells
+elevation <-raster("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/analysis/MODIS_data_2019/srtm_1km.tif")
+elevation@crs
+plot(elevation)
+
+#Elevation resolution needs to match the richness resolution
+elevation_resample <- resample(elevation, allplant_rich, method="bilinear")
+elevation_resample_crop <- crop(elevation_resample, allplant_rich)
+# does not work -- NEED HELP HERE***
+#extract coordinates from richness map gridcells 
+rich_points <- rasterToPoints(allplant_rich)
+
+#need xy only for coordinates
+rich_points_xy <- rich_points[, -c(3)]
+
+#extract elevation at species richness cell coordinates
+elevation_extract <- extract(elevation_resample_crop, rich_points_xy, cellnumbers = T)
+
+#add elevation column to richness dataframe 
+richness_pt_df <-as.data.frame(rich_points)
+#for some reason it's a list so change it back to a dataframe
+unlist<- unlist(elevation_extract)
+elevation_edited <-as.data.frame(unlist)
+
+#attach elecation to species richness dataset
+richness_elevation <- cbind(richness_pt_df, elevation_edited)
+
+#write code that only keeps rows where elevation and species richness in not NA
+library(dplyr)
+test <- richness_elevation %>% filter_at(vars(plant_ric,srtm_1km),all_vars(!is.na(.)))
+#ridiculously ugly
+plot(test$srtm_1km, test$plant_ric, pch = 20, cex=.5, col="blue", lwd=2)
+
+
+
+
+
+#fruiting_rich <- extract(fruiting_rich, xy, cellnumbers = T)
+#forestfruiting_rich <- extract(forestfruiting_rich, xy, cellnumbers = T)
+```
+
+```{r}
+elevation <-raster("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/analysis/MODIS_data_2019/srtm_1km.tif")
+elevation@crs
+plot(elevation)
+#NEED TO SUBSET TO ECUADOR
+```
+
+
+```{r}
+
+subset_traits <- table(traits$scrubbed_species_binomial, traits$trait_name)
+subset_traits
+
+#WANT TO PLOT Trait_name by number of species with record for that trait
+#ALSO want to map one trait in Space; NEED to subset to all records with values for selected trait
+```
+

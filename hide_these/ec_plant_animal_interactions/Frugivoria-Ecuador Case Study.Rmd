@@ -1,0 +1,157 @@
+---
+title: 'Frugivoria: Ecuadorian Birds, Mammals, and Plants'
+author: "Beth Gerstner & Hazel Anderson"
+date: "6/1/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+# Load packages and IUCN API
+```{r, message=FALSE}
+library(httr) 
+library(jsonlite)
+library(dplyr)
+library(rredlist) 
+
+token <- '3b3db1c753a7cad0616e16146363ec88eead97d185cb3304070d7343123516fd'
+```
+
+# Pull in Ecuadorian species from IUCN Redlist
+```{r}
+#Ecuador
+ecuador_species <- rl_sp_country("EC", key = token, parse = TRUE)
+c1 <- ecuador_species$result[1]
+
+```
+
+# Break down by species group for the world (will subset to Ecuadorian species)
+```{r}
+
+# Get codes for the birds
+all_birds <-rl_comp_groups(group = c('birds'), key = token)
+
+# Get codes for the mammals
+all_mammals <-rl_comp_groups(group = c('mammals'), key = token)
+
+```
+
+# Mammals and birds occurring in Ecuador 
+```{r}
+
+#Mammals
+
+#South America
+#extract IUCN results for all mammals and birds from list
+all_mammals_df <- as.data.frame(all_mammals[['result']])
+all_birds_df <- as.data.frame(all_birds[['result']])
+
+#Mammals
+ec_mammals <-all_mammals_df %>%
+  filter(taxonid %in% c1$taxonid)
+
+
+#Birds
+ec_birds <-all_birds_df %>%
+  filter(taxonid %in% c1$taxonid)
+
+```
+
+# Get habitat for each species --------------------------------------------
+# want lowland montane and highland montane species
+
+```{r}
+# Include error-checking code in the function so that it will return NA for everything if there's no data.
+
+get_habitat <- function(ID) {
+    habitat_by_sp<- rl_habitats(id=ID,key=token)$result
+    if (class(habitat_by_sp) == 'data.frame') {
+        data.frame(taxonid=ID, habitat_by_sp)
+    } else {
+        data.frame(taxonid=ID)
+    }
+}
+```
+
+# Apply get_habitat to each row of ec_mammals
+```{r}
+
+ec_habitat_mammals <- ec_mammals %>%
+  rowwise %>%
+  do(get_habitat(.$taxonid))
+
+```
+
+# Apply get_habitat to each row of_birds
+
+```{r}
+ec_habitat_birds <- ec_birds %>%
+  rowwise %>%
+  do(get_habitat(.$taxonid))
+
+
+```
+
+# Merge the habitat data with the IUCN list so that we have the statuses and habitats combined
+```{r}
+
+mammal_IUCN_full<- merge.data.frame(ec_mammals, ec_habitat_mammals, by= "taxonid", all=TRUE)
+
+bird_IUCN_full<- merge.data.frame(ec_birds, ec_habitat_birds, by= "taxonid", all=TRUE)
+
+
+```
+
+# Pull in Elton Traits data to begin subsetting to frugivores
+
+```{r}
+#Read in Elton Traits dataset 
+birds <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L0/Elton_traits/BirdFuncDat.csv")
+mamm <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/L0/Elton_traits/MamFuncDat.csv")
+```
+
+# Combine bird elton traits dataset (full) and IUCN bird dataset for Ecuador together
+```{r}
+
+#Combine mammal elton traits dataset and IUCN mammal data together
+colnames(mamm)[which(names(mamm) == "Scientific")] <- "scientific_name"
+mamm_trait_IUCN <- merge.data.frame(mamm, mammal_IUCN_full, by= "scientific_name", all.y=TRUE)
+
+#Combine bird elton traits dataset and IUCN bird data together
+colnames(birds)[which(names(birds) == "Scientific")] <- "scientific_name"
+bird_trait_IUCN<- merge.data.frame(birds, bird_IUCN_full, by= "scientific_name", all.y=TRUE)
+
+```
+
+# Go through the merges that did not work correctly (kept all IUCN species that were not found in the Elton Traits database) and compare against synonym lists
+
+```{r}
+
+
+
+
+```
+
+
+
+#____________________________________________________________________________________________
+#### Hazel start your code here! I'll continue adding above
+
+# Load packages
+```{r}
+library(BIEN)
+library(ape)
+library(maps)
+library(sp)
+```
+# Pull Ecuador plant species list from BIEN
+```{r}
+Ecuador <- BIEN_occurrence_country("Ecuador")
+```
+
+# Trait lists
+```{r}
+fruit_type <- BIEN_trait_trait(trait = "fruit type")
+minimum_fruit_length <- BIEN_trait_trait(trait = "minimum fruit length")
+maximum_fruit_lenth <- BIEN_trait_trait(trait = "maximum fruit length")
+plant_fruiting_duration <- BIEN_trait_trait(trait = "plant fruiting duration")
+```

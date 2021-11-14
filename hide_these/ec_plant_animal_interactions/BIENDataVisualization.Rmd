@@ -1,0 +1,80 @@
+---
+title: "BIEN data visualization"
+author: "Hazel Anderson"
+date: "3/1/2021"
+output: html_document
+---
+
+
+```{r}
+library(BIEN)
+library(sp)
+library(sf)
+library(raster)
+library(ggplot2)
+library(dplyr)
+```
+
+
+```{r}
+#load files
+traits <- read.csv("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/L0/Ecuador_species_withTraits.csv")
+allplant_rich <- raster("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/analysis/MODIS_data_2019/plant_ric.tif")
+fruiting_rich <- raster("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/analysis/MODIS_data_2019/fruitingplant_ric.tif")
+forestfruiting_rich <- raster("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/analysis/MODIS_data_2019/fruitingplant_rich_great_50.tif")
+```
+
+```{r}
+allplant_rich@crs
+fruiting_rich@crs
+forestfruiting_rich@crs
+
+plot(allplant_rich)
+plot(fruiting_rich)
+plot(forestfruiting_rich)
+```
+```{r}
+allplant_rich@extent
+fruiting_rich@extent
+forestfruiting_rich@extent
+```
+```{r}
+allplant_rich.pts <- rasterToPoints(allplant_rich, spatial=TRUE)
+fruiting_rich.pts <- rasterToPoints(fruiting_rich, spatial=TRUE)
+forestfruiting_rich.pts <- rasterToPoints(forestfruiting_rich, spatial=TRUE)
+```
+
+
+```{r}
+# extract values from maps
+all_rich.data <- extract(allplant_rich, allplant_rich.pts)
+fruiting_rich.data <- extract(fruiting_rich, fruiting_rich.pts)
+forestfruiting_rich.data <- extract(forestfruiting_rich, forestfruiting_rich.pts)
+```
+
+```{r}
+elevation <-raster("G:/Shared drives/SpaCE_Lab_FRUGIVORIA/analysis/MODIS_data_2019/srtm_1km.tif")
+elevation@crs
+#THE LINE BELOW DOESN"T WORK
+ecuador_elevation <-crop(elevation, c(xmin=-91.3884, xmax=-70.00002, ymin=--10.0014, ymax=10))
+#suggestion--intersect elevation with richness points; check to make sure they are the same resolution
+```
+```{r}
+#Plotting fruiting species richness vs elevation
+#Combine .data and .pts into a dataframe
+fruiting_rich.pts$richness <- fruiting_rich.data
+
+#NEED to get richness data and elevation data to be the same length
+plot(fruiting_rich.pts, ecuador_elevation)
+```
+
+
+```{r}
+
+subset_traits <- table(traits$scrubbed_species_binomial, traits$trait_name)
+subset_traits
+
+#WANT TO PLOT Trait_name by number of species with record for that trait
+#ALSO want to map one trait in Space; NEED to subset to all records with values for selected trait
+```
+

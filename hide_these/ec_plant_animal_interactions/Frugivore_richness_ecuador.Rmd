@@ -1,0 +1,299 @@
+---
+title: 'Frugivoria: Ecuadorian Birds & Mammals richness'
+author: "Beth E. Gerstner"
+date: "7/16/2020"
+output:
+  html_document: default
+  pdf_document: default
+description: This script is part of the overarching Frugivoria project, which aims
+  to build a comprehensive database of functional traits for birds and mammals (frugivores)
+  in Central and South American tropical forests. This smaller project focuses on
+  birds and mammals in Ecuador and will eventually be used to understand plant/animal
+  interactions. Specifically, this script takes IUCN range maps and stacks them, allowing
+  us to summarize taxonomic richness based on ranges. (Currently only works with mammals,
+  but will have birds done shortly.)
+---
+```{r, warning=FALSE, echo=FALSE}
+library(sf)
+library(dplyr)
+library(ggplot2)
+library(scico)
+library(rnaturalearth)
+library(purrr)
+library(smoothr)
+library(rgbif)
+library(lwgeom)
+library(raster)
+library(ggsn)
+```
+
+# Load packages
+```{r, warning=FALSE, echo=FALSE}
+library(sf)
+library(rgeos)
+library(rgdal)
+```
+
+# Pull shapefiles for frugivorous species (mammals and birds)
+```{r,warning=FALSE, message=FALSE}
+
+IUCN_mam <-read_sf("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/IUCN_Data/MAMMALS_TERRESTRIAL_Nov/MAMMALS_TERRESTRIAL_ONLY.shp")
+IUCN_bird <-read_sf("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/IUCN_Data/BOTW/BOTW_shapefile/All_Species.shp")
+
+# Pull in species/trait lists for Ecuador
+mam_frug_ec <- read.csv("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/Ecuador_species/mam_frug_ec.csv")
+bird_frug_ec <- read.csv("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/Ecuador_species/bird_frug_ec.csv")
+
+```
+
+# Subset IUCN mammal shapefile by: creating new column in the shapefile so that each shapefile has a unique identifier 
+```{r, warning=FALSE, message=FALSE}
+IUCN_mam$new_id = 1:nrow(IUCN_mam)
+
+# list of unique species names for frugivorous mammals in Ecuador made above
+
+mam_frug_sn <-as.vector(unique(mam_frug_ec$IUCN_species_name))
+
+# Subset the new IDs made above by those that have species names matching the frugivorous subset
+shapes  = IUCN_mam$new_id[IUCN_mam$binomial %in% mam_frug_sn] # shapes = ID numbers for subset
+
+# Subsets the IUCN shapefiles to those with IDs matching the frugivorous subset
+IUCN_mam_df = IUCN_mam[IUCN_mam$new_id %in% shapes,] #268 shapefiles for species list (209 species)
+
+#write the shapefile to a file
+#setwd("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/mx_species")
+#st_write(IUCN_mam_df, "ec_mammals.shp")
+```
+
+#Same as above for birds
+# Subset IUCN mammal shapefile by: creating new column in the shapefile so that each shapefile has a unique identifier 
+```{r, warning=FALSE, message=FALSE}
+IUCN_bird$new_id = 1:nrow(IUCN_bird)
+
+# list of unique species names for frugivorous mammals in Ecuador made above
+
+bird_frug_sn <-as.vector(unique(bird_frug_ec$IUCN_species_name))
+
+# Subset the new IDs made above by those that have species names matching the frugivorous subset
+shapes  = IUCN_bird$new_id[IUCN_bird$SCINAME %in% bird_frug_sn] # shapes = ID numbers for subset
+
+# Subsets the IUCN shapefiles to those with IDs matching the frugivorous subset
+IUCN_bird_df = IUCN_bird[IUCN_bird$new_id %in% shapes,] #770 shapefiles for species list (463 species)
+
+
+#combine both bird and mammal shapefile, but first remove columns that don't match between the two spatial datasets. They have different names and most of these columns are not necessary for the richness estimation.
+
+IUCN_bird_df_short <- IUCN_bird_df[,c(2,16:19)]
+
+#fix column names so that the two datasets match and can be appended to each other so we can plot richness together.
+colnames(IUCN_bird_df_short)[which(names(IUCN_bird_df_short) == "SCINAME")] <- "IUCN_scientific_name"
+IUCN_bird_df_short$new_id <- NULL
+
+IUCN_mam_df_short <- IUCN_mam_df[,c(2,26:29)]
+colnames(IUCN_mam_df_short)[which(names(IUCN_mam_df_short) == "binomial")] <- "IUCN_scientific_name"
+colnames(IUCN_mam_df_short)[which(names(IUCN_mam_df_short) == "SHAPE_Leng")] <- "Shape_Leng"
+colnames(IUCN_mam_df_short)[which(names(IUCN_mam_df_short) == "SHAPE_Area")] <- "Shape_Area"
+IUCN_mam_df_short$new_id <- NULL
+
+#bind two datasets together
+all_frug_shp <- rbind(IUCN_mam_df_short, IUCN_bird_df_short)
+
+#write the shapefile to a file
+#setwd("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Data/Elton_Traits_birds_mammals/mx_species")
+#st_write(IUCN_mam_df, "ec_mammals.shp")
+```
+
+# Load in a world map
+```{r, warning=FALSE, message=FALSE}
+worldMap <- ne_countries(scale = "medium", type = "countries", returnclass = "sf")
+
+# country subset. In this case we are removing the Galapagos by defining the bounding box around the Ecuador polygon.
+CRpoly <- worldMap %>% filter(sovereignt == "Ecuador")
+ecuador_shp <-st_crop(CRpoly, c(xmin=-84, xmax=-75.24961, ymin=-4.990625, ymax=1.455371))
+```
+
+```{r, warning=FALSE, message=FALSE}
+# trim the map to appropriate study area. This zooms out of Ecuador, which will be easier for visualization down the line.
+limsCR <- st_buffer(ecuador_shp, dist = 9) %>% st_bbox()
+
+# neighboring countries (will include Colombia as well)
+adjacentPolys <- st_touches(ecuador_shp, worldMap)
+neighbours <- worldMap %>% slice(pluck(adjacentPolys, 1))
+
+# countries
+divpolPlot <-
+  ggplot() +
+  scalebar(neighbours, location= "bottomright",dist = 200, st.dist=.1, st.size=2, height=0.1, transform = TRUE, dist_unit = "km", model = 'WGS84') +
+  north(ecuador_shp, location="topleft", scale=0.5, symbol=1) +
+  geom_sf(data = neighbours, color = "white") +
+  geom_sf(data = ecuador_shp) +
+  coord_sf(
+    xlim = c(limsCR["xmin"], limsCR["xmax"]),
+    ylim = c(limsCR["ymin"], limsCR["ymax"])
+  ) +
+  scale_x_continuous(breaks = c(-84)) +
+  theme(
+    plot.background = element_rect(fill = "#f1f2f3"),
+    panel.background = element_rect(fill = "#2F4051"),
+    panel.grid = element_blank(),
+    line = element_blank(),
+    rect = element_blank()
+  )
+divpolPlot
+```
+# plot hulls
+```{r, warning=FALSE, message=FALSE}
+hullsPlot <-
+  ggplot() +
+  geom_sf(data = neighbours, color = "white") +
+  geom_sf(data = ecuador_shp) +
+  geom_sf(data = all_frug_shp, aes(fill = IUCN_scientific_name), alpha = 0.7) +
+  scale_fill_scico_d(palette = "davos", direction = -1, end = 0.9, guide = FALSE) +
+  coord_sf(
+    xlim = c(limsCR["xmin"], limsCR["xmax"]),
+    ylim = c(limsCR["ymin"], limsCR["ymax"])
+  ) +
+  scale_x_continuous(breaks = c(-84)) +
+  theme(
+    plot.background = element_rect(fill = "#f1f2f3"),
+    panel.background = element_rect(fill = "#2F4051"),
+    panel.grid = element_blank(),
+    line = element_blank(),
+    rect = element_blank()
+  )
+hullsPlot
+```
+
+# define a grid. Should I change the projection to utm so we can have a grid size in meters/km?
+```{r, warning=FALSE, message=FALSE}
+CRGrid <- ecuador_shp %>%
+  st_make_grid(cellsize = 0.2) %>%
+  st_intersection(ecuador_shp) %>%
+  st_cast("MULTIPOLYGON") %>%
+  st_sf() %>%
+  mutate(cellid = row_number())
+```
+
+# richness for convex hulls
+```{r, warning=FALSE, message=FALSE}
+richness_gridEOO <- CRGrid %>%
+  st_join(all_frug_shp) %>%
+  mutate(overlap = ifelse(!is.na(id), 1, 0)) %>%
+  group_by(cellid) %>%
+  summarize(num_species = sum(overlap))
+```
+# empty grid, more detailed in nature
+```{r, warning=FALSE, message=FALSE}
+gridPlot <-
+  ggplot() +
+  geom_sf(data = neighbours, color = "white") +
+  geom_sf(data =ecuador_shp) +
+  geom_sf(data = CRGrid) +
+  coord_sf(
+    xlim = c(limsCR["xmin"], limsCR["xmax"]),
+    ylim = c(limsCR["ymin"], limsCR["ymax"])
+  ) +
+  scale_x_continuous(breaks = c(-84)) +
+  theme(
+    plot.background = element_rect(fill = "#f1f2f3"),
+    panel.background = element_rect(fill = "#2F4051"),
+    panel.grid = element_blank(),
+    line = element_blank(),
+    rect = element_blank()
+  )
+gridPlot
+```
+
+
+# richness for convex hulls, more detailed
+```{r, warning=FALSE, message=FALSE}
+gridRichCR_eoo <-
+  ggplot(richness_gridEOO) +
+  geom_sf(data = neighbours, color = "white") +
+  geom_sf(data = ecuador_shp, fill = "grey", size = 0.1) +
+  geom_sf(aes(fill = num_species), color = NA) +
+  scale_fill_scico(palette = "davos", direction = -1, end = 0.9) +
+  coord_sf(
+    xlim = c(limsCR["xmin"], limsCR["xmax"]),
+    ylim = c(limsCR["ymin"], limsCR["ymax"])
+  ) +
+  scale_x_continuous(breaks = c(-84)) +
+  theme(
+    plot.background = element_rect(fill = "#f1f2f3"),
+    panel.background = element_rect(fill = "#2F4051"),
+    panel.grid = element_blank(),
+    line = element_blank(),
+    rect = element_blank()
+  ) + labs(fill = "richness")
+gridRichCR_eoo
+```
+
+#Investigate the overlap of species ranges with forest cover
+```{r}
+library(fasterize)
+#Load in forest cover data for 2019
+
+
+# Run fasterize to turn the richness map into a raster 
+raster_grid <- fasterize(
+  richness_gridEOO,
+  for_cov,
+  field = "num_species",
+  fun = "sum",
+  background = NA,
+)
+
+#Write the richness raster to a file 
+#writeRaster(raster_grid, filename="/Users/bethgerstner/Desktop/MODIS_2019/frugivore_ric.tif", format="GTiff")
+
+#read in raster
+raster_grid <- raster("/Users/bethgerstner/Desktop/MODIS_2019/frugivore_ric.tif")
+
+```
+
+#To look at trends in forest cover over the species richness surface, they have to have the same resolution so we must resample the richness raster to make it match forest cover (finer res)
+```{r, figures-side, fig.show="hold", out.width="50%"}
+#Resample the diversity raster
+
+for_cov <- raster("/Users/bethgerstner/Desktop/MODIS_2019/MODIS_per_forest_2019.tif")
+raster_rich_fin_res<-resample(raster_grid, for_cov, method="bilinear")
+
+#make sure extents match
+fc_mask <- mask(for_cov, raster_rich_fin_res)
+
+#remove water (value 200)
+fc_mask[fc_mask==200] <-NA
+
+
+#Subset the forest cover raster to areas <50 and >50% forest cover 
+fc_less_50 <- fc_mask <= 50
+
+#remove 0s to allow a mask where just the values of 1 are being used 
+fc_less_50[fc_less_50 == 0] <- NA
+
+fc_great_50 <-fc_mask > 50
+#remove 0s to allow a mask where just the values of 1 are being used 
+fc_great_50[fc_great_50 == 0] <- NA
+
+plot(fc_less_50, main="forest cover <= 50%")
+plot(fc_great_50, main="forest cover > 50%")
+
+# Take richness layer and mask by these forest cover cover subsets to have richness found above and below these thresholds
+
+rich_less_50 <-  mask(raster_rich_fin_res,fc_less_50)
+rich_great_50 <- mask(raster_rich_fin_res, fc_great_50)
+writeRaster(rich_great_50, "/Users/bethgerstner/Desktop/MODIS_2019/rich_great_50.tif" )
+  
+#Plots of taxonomic richness in forest/non-forest
+
+plot(rich_less_50, main="taxonomic richness in areas of <=50% forest cover", add=T)
+plot(rich_great_50, main="taxonomic richness in areas > 50% forest cover")
+
+#Summary of richness over those two forest thresholds
+summary(values(rich_less_50))
+summary(values(rich_great_50))
+hist((values(rich_less_50)), xlab="taxonomic richness", ylab="frequency", main= "Taxonomic richness in regions <= 50% forest cover")
+hist((values(rich_great_50)), xlab="taxonomic richness", ylab="frequency", main= "Taxonomic richness in regions > 50% forest cover")
+```
+
+

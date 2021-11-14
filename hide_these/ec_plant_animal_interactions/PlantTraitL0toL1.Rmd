@@ -1,0 +1,179 @@
+---
+title: "Plant Trait L0 to L1"
+author: "Hazel Anderson"
+date: "6/11/2020"
+output: html_document
+---
+
+# Load required packages
+```{r}
+library(BIEN)
+library(ape)
+library(maps)
+library(sp)
+```
+# Pull Ecuador plant species list from BIEN
+```{r}
+Ecuador <- BIEN_occurrence_country("Ecuador")
+```
+
+#List of all avaliable traits in BIEN
+```{r}
+BIEN_trait_list()
+```
+
+# Create a vector of all the Trait Names.  The BIEN functions will take a vector of traits instead of just one
+
+
+```{r}
+
+trait_vector <- c( "diameter at breast height (1.3 m)", 
+    "flower color", 
+    "flower pollination syndrome", 
+    "fruit type", 
+    "inflorescence length", 
+    "leaf area", 
+    "leaf area per leaf dry mass", 
+    "leaf carbon content per leaf dry mass", 
+    "leaf carbon content per leaf nitrogen content", 
+    "leaf compoundness", 
+    "leaf dry mass", 
+    "leaf dry mass per leaf fresh mass", 
+    "leaf fresh mass", 
+    "Leaf lamina fracture toughness", 
+    "leaf life span", 
+    "leaf nitrogen content per leaf area", 
+    "leaf nitrogen content per leaf dry mass", 
+    "leaf phosphorus content per leaf area", 
+    "leaf phosphorus content per leaf dry mass", 
+    "leaf photosynthetic rate per leaf area", 
+    "leaf photosynthetic rate per leaf dry mass", 
+    "leaf relative growth rate", 
+    "leaf stomatal conductance for H2O per leaf area", 
+    "leaf thickness", 
+    "longest whole plant longevity", 
+    "maximum fruit length", 
+    "maximum leaf length", 
+    "maximum leaf width", 
+    "maximum whole plant height", 
+    "maximum whole plant longevity", 
+    "minimum fruit length", 
+    "minimum leaf length", 
+    "minimum leaf width", 
+    "minimum whole plant height", 
+    "plant flowering begin", 
+    "plant flowering duration", 
+    "plant fruiting duration", 
+    "root dry mass", 
+    "seed length", 
+    "seed mass", 
+    "stem dry mass", 
+    "stem relative growth rate", 
+    "stem wood density", 
+    "vessel lumen area", 
+    "vessel number", 
+    "whole plant dispersal syndrome", 
+    "whole plant growth form", 
+    "whole plant growth form diversity", 
+    "whole plant height", 
+    "whole plant primary juvenile period length", 
+    "whole plant sexual system", 
+    "whole plant vegetative phenology", 
+    "whole plant woodiness"
+)
+# diameter_at_breast_height <- BIEN_trait_trait(trait = "diameter at breast height (1.3 m)")
+# flower_color <- BIEN_trait_trait( trait = "flower color")
+# flower_pollination_syndrome <- BIEN_trait_trait(trait = "flower pollination syndrome")
+# fruit_type <- BIEN_trait_trait(trait = "fruit type")
+# inflorescence_length <- BIEN_trait_trait(trait = "	inflorescence length")
+# leaf_area <- BIEN_trait_trait(trait = "leaf area")
+# leaf_area_per_leaf_dry_mass <- BIEN_trait_trait(trait = "leaf area per leaf dry mass")
+# leaf_carbon_content_per_leaf_dry_mass <- BIEN_trait_trait(trait = "leaf carbon content per leaf dry mass")
+# leaf_carbon_content_per_leaf_nitrogen_content <- BIEN_trait_trait(trait = "leaf carbon content per leaf nitrogen content")
+# leaf_compoundness <- BIEN_trait_trait(trait = "leaf compoundness")
+# leaf_dry_mass <- BIEN_trait_trait(trait = "leaf dry mass")
+# leaf_dry_mass_per_leaf_fresh_mass <- BIEN_trait_trait(trait = "leaf dry mass per leaf fresh mass")
+# leaf_fresh_mass <- BIEN_trait_trait(trait = "leaf fresh mass")
+# Leaf_lamina_fracture_toughness <- BIEN_trait_trait(trait = "Leaf lamina fracture toughness")
+# leaf_life_span <- BIEN_trait_trait(trait = "leaf life span")
+# leaf_nitrogen_content_per_leaf_area <- BIEN_trait_trait(trait = "leaf nitrogen content per leaf area")
+# leaf_nitrogen_content_per_leaf_dry_mass <- BIEN_trait_trait(trait = "leaf nitrogen content per leaf dry mass")
+# leaf_phosphorus_content_per_leaf_area <- BIEN_trait_trait(trait = "leaf phosphorus content per leaf area")
+# leaf_phosphorus_content_per_leaf_dry_mass <- BIEN_trait_trait(trait = "leaf phosphorus content per leaf dry mass")
+# leaf_photosynthetic_rate_per_leaf_area <- BIEN_trait_trait(trait = "leaf photosynthetic rate per leaf area")
+# leaf_photosynthetic_rate_per_leaf_dry_mass <- BIEN_trait_trait(trait = "leaf photosynthetic rate per leaf dry mass")
+# leaf_relative_growth_rate <- BIEN_trait_trait(trait = "leaf relative growth rate")
+# leaf_stomatal_conductance_for_H2O_per_leaf_area <- BIEN_trait_trait(trait = "leaf stomatal conductance for H2O per leaf area")
+# leaf_thickness <- BIEN_trait_trait(trait = "leaf thickness")
+# longest_whole_plant_longevity <- BIEN_trait_trait(trait = "longest whole plant longevity")
+# maximum_fruit_lenth <- BIEN_trait_trait(trait = "maximum fruit length")
+# maximum_leaf_length <- BIEN_trait_trait(trait = "maximum leaf length")
+# maximum_leaf_width <- BIEN_trait_trait(trait = "maximum leaf width")
+# maximum_whole_plant_height <- BIEN_trait_trait(trait = "maximum whole plant height")
+# maximum_whole_plant_longevity <- BIEN_trait_trait(trait = "maximum whole plant longevity")
+# minimum_fruit_length <- BIEN_trait_trait(trait = "minimum fruit length")
+# minimum_leaf_length <- BIEN_trait_trait(trait = "minimum leaf length")
+# minimum_leaf_width <- BIEN_trait_trait(trait = "minimum leaf width")
+# minimum_whole_plant_height <- BIEN_trait_trait(trait = "minimum whole plant height")
+# plant_flowering_begin <- BIEN_trait_trait(trait = "plant flowering begin")
+# plant_flowering_duration <-BIEN_trait_trait(trait = "plant flowering duration")
+# plant_fruiting_duration <- BIEN_trait_trait(trait = "plant fruiting duration")
+# root_dry_mass <- BIEN_trait_trait(trait = "root dry mass")
+# seed_length <- BIEN_trait_trait(trait = "seed length")
+# seed_mass <- BIEN_trait_trait(trait = "seed mass")
+# stem_dry_mass <- BIEN_trait_trait(trait = "stem dry mass")
+# stem_relative_growth_rate <- BIEN_trait_trait(trait = "stem relative growth rate")
+# stem_wood_density <- BIEN_trait_trait(trait = "stem wood density")
+# vessel_lumen_area <- BIEN_trait_trait(trait = "vessel lumen area")
+# vessel_number <- BIEN_trait_trait(trait = "vessel number")
+# whole_plant_dispersal_syndrome <- BIEN_trait_trait(trait = "whole plant dispersal syndrome")
+# whole_plant_growth_form <- BIEN_trait_trait(trait = "whole plant growth form")
+# whole_plant_growth_form_diversity <- BIEN_trait_trait(trait = "whole plant growth form diversity")
+# whole_plant_height <- BIEN_trait_trait(trait = "whole plant height")
+# whole_plant_primary_juvenile_period_length <- BIEN_trait_trait(trait = "whole plant primary juvenile period length")
+# whole_plant_sexual_system <- BIEN_trait_trait(trait = "whole plant sexual system")
+# whole_plant_vegetative_phenology <- BIEN_trait_trait(trait = "whole plant vegetative phenology")
+# whole_plant_woodiness <- BIEN_trait_trait(trait = "whole plant woodiness")
+```
+
+## Unique species list for Ecuador
+
+count of species in Ecuador list: 
+
+```{r}
+Ecuador_species_list <- unique(Ecuador$scrubbed_species_binomial)
+print(length(Ecuador_species_list))
+```
+
+
+## Test geting a list of all traits for one species (first in Ecuaador list).  
+
+```{r}
+species <- Ecuador_species_list[1]
+```
+
+
+Traits for `r species` : 
+
+```{r}
+traits <- BIEN_trait_traitbyspecies(species, trait_vector)
+```
+
+
+
+## Traits for species in Ecuador
+
+working on this...
+
+```{r}
+# for (i in Ecuador_species_list) {
+#   BIEN_trait_species(species = "i")
+# }
+```
+
+#Unique list of fruit types
+```{r}
+fruit_type <- BIEN_trait_trait(trait = "fruit type")
+fruit_type_list <- unique(fruit_type$trait_value)
+print(fruit_type_list)
+```
