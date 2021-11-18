@@ -6,16 +6,16 @@
 
 #Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
-#Overview: This script obtains the species list of birds and mammals for relevant countries from IUCN and subsets by habitat habitat.
+#Overview: This script obtains the species list of birds and mammals for relevant countries from the IUCN and subsets by species habitat.
 
 #Data output: IUCN species lists for countries of interest in tropical moist montane habitat - mam_IUCN.csv, bird_IUCN.csv
 
 #Date: Oct 10th, 2020
 
-#Modified:Oct 15th, 2021
+#Modified: Oct 15th, 2021
 
 
-
+# Libraries
 library(taxize)
 library(httr)
 library(jsonlite)
@@ -34,7 +34,7 @@ all_countries_1 <- fromJSON(content(all_countries, as = 'text'), simplifyDataFra
 # Extract all species in the IUCN database by country
 # In this example, we are downloading species lists for countries with significant mountain ranges in Central and South America
 
-##South America
+## South America
 
 #Colombia
 colombia_species <- rl_sp_country("CO", key = token, parse = TRUE)
