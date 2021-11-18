@@ -8,7 +8,7 @@
 
 #Data Output: percent_comp.pdf
 
-#Requires:  The % composition numbers that were calculated as the last step of script "Frugivoria_montane_analysis_demo.R".
+#Requires:  The % composition numbers that were calculated as the last step of script "L1_Frugivoria_montane_analysis_demo.R".
 
 #Date: Oct 11th, 2021
 

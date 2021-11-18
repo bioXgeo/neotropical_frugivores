@@ -1,4 +1,4 @@
-#Title: Trait map
+#Title: Trait map figure
 
 #Project: Montane Frugivoria
 
@@ -6,16 +6,17 @@
 
 #Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
-#Data Input: gbif data for birds and mammals, Frugivoria_montane_bird_database.csv, Frugivoria_montane_mammal_database.csv
+#Data Input: GBIF data for birds and mammals, Frugivoria_montane_bird_database.csv, Frugivoria_montane_mammal_database.csv
 
 #Data Output: density plots for two traits, trait distribution maps for those traits made in ggplot, final multipanel plot combining this information.
 
 #Overview: Trait maps (mass and generation time) for birds and mammals. The final maps have a study region inset map and also a density plot showing the distribution of the trait in the dataset. 
 
-#Requires: Uses final outputs of script "downloading_gbif_records.R". To retrieve the GBIF data obtained through that script, it must first be downloaded from the GBIF website.
+#Requires: Uses final outputs of script "L2_downloading_gbif_records.R". To retrieve the GBIF data obtained through that script, it must first be downloaded from the GBIF website.
 
 #Date: Oct 11th, 2021
 
+# Libraries
 library(dplyr)
 library(maps)
 library(ggplot2)
@@ -27,6 +28,8 @@ library(ggsn)
 library(rgeos)
 library(cowplot)
 library(BAMMtools)
+library(MASS)
+library(scales)
 
 ## Trait: Body Mass
 
@@ -64,22 +67,23 @@ study_region_crop <-st_crop(study_region, xmin = -83, xmax = -70, ymin = -7, yma
 # Test how this looks
 test <- ggplot() + geom_sf(data = study_region_crop) + theme_bw() + geom_point(data = bird_dataset, aes(x = decimalLongitude, y = decimalLatitude, color=body_mass_value_g_e), size=.1) 
 
-#  Need to know where the breaks should be so we can see color differences easily.
+#where should the breaks be so we can see color differences
 getJenksBreaks(bird_dataset$body_mass_value_g_e, 10, subset = NULL)
 
-bins <- c(4.24,   41.00,  106.00,  200.00,  314.06,  485.00,  806.71, 1600.10, 2872.00, 4133.00)
+#bins <-  c(5.08,   41.00,  106.00,  200.00,  322.00,  485.00,  806.71, 1600.10, 2872.00, 4133.00)
 
-# Create mass map
+#Chose to break at lower values to help with viewing. All values higher than the last break are then included in that range.
 bird_mass <-test + scale_fill_binned(
   alpha=1,
-  begin=.1,
+  begin=0,
   end=1,
-  limits = c(4.24,350), 
-  breaks = c(4, 41, 106, 200, 314),
+  limits = c(5,350), 
+  breaks = c(41, 106, 200, 322,485),
   type="viridis",
   na.value = "grey50",
   direction = -1,
-  guide = guide_colorsteps(draw.ulim = F, draw.llim = T, even.steps = TRUE), aesthetics = "colour", guide_legend("Body mass (g)")) 
+  guide = guide_colorsteps(draw.ulim = F, draw.llim = F, even.steps = TRUE), aesthetics = "colour", guide_legend("Body mass (g)")) 
+
 
 # add map features
 final_bird_mass <-bird_mass + theme(legend.title = element_text(size=12, color = "black", face="bold"), legend.justification=c(0,1),legend.position=c(0.05, 0.7), legend.background = element_blank(), legend.key = element_blank())+ scalebar(x.min = -84, x.max = -81.7, y.min =-3, y.max = -5,dist = 100, st.dist=.1, st.size=1.9, height=.19, transform = TRUE, dist_unit = "km", model = 'WGS84') + north(study_region_crop, location="bottomleft", scale=.07, symbol=1) + ylab("Latitude") + xlab("Longitude") 
@@ -209,14 +213,15 @@ mam_test_new <- ggplot() + geom_sf(data = study_region_crop) + theme_bw() + geom
 mam_jenks <-mam_dataset$body_mass_value_g_e
 getJenksBreaks(mam_jenks, 10, subset = NULL)
 
-#bins_mam <- c( 5.60,   1339.99,   3249.97,   5000.00,   7274.95,   9599.97,  12500.0,  21266.69,  32233.69, 140000.63)
+#bins_mam <- c( 5.60,   1339.99,   3249.97,   5000.00,  6394.85, 7274.95,  12500.0,  21266.69,  32233.69, 140000.63)
 
+#Chose to show jenks in the densist part of the dataset for viewability
 mam_mass <-mam_test_new + scale_fill_binned(
   alpha=1,
   begin=.1,
   end=1,
   limits = c(0,7500), 
-  breaks = c(5,   1340,   3250,   5000,   7275),
+  breaks = c(5.6,   1340,   3250,   5000,   6394.9),
   type="viridis",
   na.value = "grey50",
   direction=-1,
@@ -272,7 +277,7 @@ bird_gen <-bird_gen_time + scale_fill_binned(
   low= "mistyrose1",
   high="magenta4",
   limits = c(0,14), 
-  breaks = c(2.9, 3.8, 4.2,  5.7, 8.5, 13.5),
+  breaks = c(2.0, 4.2,  5.7, 8.5, 15.2),
   na.value = "grey50",
   guide = guide_colorsteps(draw.ulim = T, draw.llim = T, even.steps = TRUE), aesthetics = "colour", guide_legend("Generation time (y)")) 
 
@@ -314,25 +319,22 @@ mam_dataset$generation_time <-as.numeric(mam_dataset$generation_time)
 
 mam_gen <- ggplot() + geom_sf(data = study_region_crop) + theme_bw() + geom_point(data = mam_dataset, aes(x = decimalLongitude, y = decimalLatitude, color=generation_time), size=.01)
 
-# Find where the breaks should be so we can see color differences
+# Where should the breaks be so we can see color differences
 mam_jenks_gen <-mam_dataset$generation_time
-getJenksBreaks(mam_jenks_gen, 6, subset = NULL)
+getJenksBreaks(mam_jenks_gen, 5, subset = NULL)
 
-#bins_mam <- c(0.29,  3.00,  6.00,  8.40, 12.00, 16.00)
+#bins_mam <- c(1.55,  3.39,  7.40,  10.5, 16.00)
 
 mam_gen_final <-mam_gen + scale_fill_binned(
   low= "mistyrose1",
   high="magenta4",
-  limits = c(0,16), 
-  breaks = c(0.29,  3.00,  6.00,  8.40, 12.00, 16.00),
+  limits = c(0,14), 
+  breaks = c(1.6,  3.4,  7.4,  10.5, 16.0),
   na.value = "grey50",
   guide = guide_colorsteps(draw.ulim = F, draw.llim = T, even.steps = T), aesthetics = "colour", guide_legend("Generation time (y)"))
 
 #Add map features
 final_mam_gen <-mam_gen_final + theme(legend.title = element_text(size=12, color = "black", face="bold"), legend.justification=c(0,1),legend.position=c(0.05, 0.7), legend.background = element_blank(), legend.key = element_blank())+ scalebar(x.min = -84, x.max = -81.7, y.min =-3, y.max = -5,dist = 100, st.dist=.1, st.size=1.9, height=.19, transform = TRUE, dist_unit = "km", model = 'WGS84') + north(study_region_crop, location="bottomleft", scale=.07, symbol=1) + ylab("") + xlab("") 
-
-library(MASS)
-library(scales)
 
 mam_trait_data$generation_time <- as.numeric(mam_trait_data$generation_time)
 
@@ -366,7 +368,7 @@ final_mam_gen_inset_density <-ggdraw(final_mam_gen) +
 
 final_mam_gen_inset_density
 
-# Create multipanel plot
+# Create multipanel plots
 mass_plot <-plot_grid(final_bird_mass_inset_density_f, NULL, final_mam_mass_inset_density, rel_widths = c(1, -0.1, 1), align = "hv", nrow = 1)
 
 gen_time_plot <- plot_grid(final_bird_gen_inset, NULL, final_mam_gen_inset_density, rel_widths = c(1, -0.1, 1), align = "hv",  nrow = 1)

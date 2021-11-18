@@ -10,7 +10,7 @@
 
 #Data output: trait_count_barplot.pdf
 
-#Overview: This script analyzes the trait composition of the database for newly added traits and creates a barplot. 
+#Overview: This script analyzes the trait composition of the database for newly added traits and creates a barplot. Also includes PanTHERIA to show how many of those overlapping traits we have filled for mammals.
 
 
 library(dplyr)

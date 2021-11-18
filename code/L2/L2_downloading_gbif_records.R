@@ -10,11 +10,11 @@
 
 #Data outputs: GBIF occurrence record download on the GBIF website
 
-#Overview: Downloading occurrence records for species in a small spatial subset (Colombia and Ecuador). WKT boundaries were extract from roughly drawn polygons around Colombia and Ecuador through the GBIF website "location" tab for searching occurrence records.  This code is modified from that provided by the GBIF blog, which overcomes the issue of pulling large numbers of records through GBIF for multiple species at once (Waller & Grosjean, 2019)
+#Overview: Downloading occurrence records for species in a small spatial subset (Colombia and Ecuador). WKT boundaries were extracted from roughly drawn polygons around Colombia and Ecuador through the GBIF website "location" tab for searching occurrence records.  This code is modified from that provided by the GBIF blog, which overcomes the issue of pulling large numbers of records through GBIF for multiple species at once (Waller & Grosjean, 2019)
 
 #Code modified from: John Waller and Marie Grosjean's blog post: https://data-blog.gbif.org/post/downloading-long-species-lists-on-gbif/
 
-#Requires: Uses output of "3_montane_frugivore_subset", which must be run first to obtain species subset.
+#Requires: Uses output of "L0_3_montane_frugivore_subset", which must be run first to obtain species subset.
 
 
 # fill in your gbif.org credentials 
@@ -31,7 +31,7 @@ library(taxize) # for get_gbifid_
 
 # Set path to mammal database.
 mammal_frug <- "INSERT PATH HERE"
-# match the names 
+# Match the names 
 gbif_taxon_keys_mammals <- 
   readr::read_csv(mammal_frug) %>% 
   pull("IUCN_species_name") %>% # use fewer names if you want to just test 

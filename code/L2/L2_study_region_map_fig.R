@@ -12,7 +12,7 @@
 
 #Data outputs: ggplot maps of study region and occurrence records available for bird and mammal species in the database. 
 
-#Requires: Uses final outputs of script "downloading_gbif_records.R". To retrieve the GBIF data obtained through that script, it must first be downloaded from the GBIF website.
+#Requires: Uses final outputs of script "L2_downloading_gbif_records.R". To retrieve the GBIF data obtained through that script, it must first be downloaded from the GBIF website.
 
 #Date: Oct 11th, 2021
 

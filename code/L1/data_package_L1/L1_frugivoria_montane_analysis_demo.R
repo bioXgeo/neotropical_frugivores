@@ -16,9 +16,9 @@
 
 #By: Beth E. Gerstner
 
-#read in completed mammal database
+# Read in completed mammal database
 mam <- read.csv("INSERT PATH HERE")
-#read in completed bird database
+# Read in completed bird database
 bird<- read.csv("INSERT PATH HERE")
 
 ## Assessing composition of database (Elton Traits, newly added traits, PanTHERIA)
@@ -40,7 +40,7 @@ diet_inv_b <- length(which(!is.na(bird$diet_inv_e)))
 #diet_seed_b <-length(which(!is.na(bird$diet_seed_e)))                 
 #diet_plant_b <-length(which(!is.na(bird$diet_plant_e)))                    
 
-#Total # traits from EltonTraits
+# Total # traits from EltonTraits
 elton_traits_b <- body_mass_b + diet_categ_b + nocturnal_b + for_strat_b + diet_inv_b #. Did not count each of the % columns seperately as this is part of a single trait (% diet makeup and % time in strata)
 
 # New bird traits that we have added
