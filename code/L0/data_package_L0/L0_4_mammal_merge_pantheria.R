@@ -29,7 +29,7 @@ pantheria <- read.csv("INSERT PATH HERE")
 # Change column name to match that of mammal database species names (IUCN_species_names)
 colnames(pantheria)[which(names(pantheria) == "MSW05_Binomial")] <- "IUCN_species_name"
 
-# Read in database from previous step (3_montane_frugivore_subset)
+# Read in database from previous step (L0:3_montane_frugivore_subset)
 mam_frug_montane <- read.csv("INSERT PATH HERE")
 
 # Merge the dataset together
