@@ -243,29 +243,45 @@ bird_phylo_level_impute <- bird%>%
   group_by(x)%>%
   tally(value==2)
 
+#impute for bird diet
+length(bird$diet_certainty_e[bird$diet_certainty_e=="D1"]) #genus level diet info, 112
+length(bird$diet_certainty_e[bird$diet_certainty_e=="D2"]) #family level diet info 24
+
+
 mam_phylo_level_impute <- mam%>%
   gather(x, value)%>%
   group_by(x)%>%
   tally(value==2)
 
+#impute for diet
+length(mam$diet_certainty_e[mam$diet_certainty_e=="D1"]) #genus level diet info, 70
+length(mam$diet_certainty_e[mam$diet_certainty_e=="D2"]) #family level diet info, 22
+
+#impute for activity
+length(mam$activity_certainty_e[mam$activity_certainty_e=="D1"]) #genus level diet info, 9
+length(mam$activity_certainty_e[mam$activity_certainty_e=="D2"]) #family level diet info, 68
+
 ##Total family impute for Elton Traits. They do not distinguish between genus and family level imputations
 ##birds
 #body mass: 37 genus or fam
 #for strat: 29 genus or fam
+#bird diet: 136
 ##mam
 #body mass: 58 genus or fam
+#mam_diet: 92
+#activity pattern: 77
 #           4 phylogenetic imputations
 
-all_elton_impute <-37 + 29 + 58 + 4
+all_elton_impute <-37 + 29 + 136 + 58 + 4 +92 +77 #433
 
 # All new traits for birds and mammals
-all_new_traits_b_m <-new_mam_traits + new_bird_traits
+all_new_traits_b_m <-new_mam_traits + new_bird_traits #6,066
 
 # Percent imputed in total for new traits (birds and mammals)
 full_impute_b_m/all_new_traits_b_m #= 7.17% imputed for newly added traits
 
 # Total # of imputations in database 
-total_impute <- all_elton_impute + full_impute_b_m #563
+total_impute <- all_elton_impute + full_impute_b_m #868
 
 
 # Species in the database that are data deficient (DD) in IUCN

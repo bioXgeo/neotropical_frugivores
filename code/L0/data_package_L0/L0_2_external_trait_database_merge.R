@@ -58,7 +58,7 @@ write.csv(mamm_trait_IUCN, 'mamm_trait_IUCN.csv')
 mamm_trait_na <-mamm_trait_IUCN[is.na(mamm_trait_IUCN$Diet.Vunk),]  
 mamm_trait_na <- mamm_trait_na[!duplicated(mamm_trait_na[,c('scientific_name')]),] #391 IUCN mammal species didn't merge correctly
 
-# Manually look up species synonyms for species with NA for EltonTrait values. Use these synonyms and create an alternate name list, or "lookup table". First column labeled "IUCN_species_name", second column for "Elton_species_name". We created a lookup table for all mammal and bird species not merging correctly. This list is titled "lookup_table_all_montane_mammals" and "lookup_table_all_montane_birds".
+# Manually look up species synonyms for species with NA for EltonTrait values. Use these synonyms and create an alternate name list, or "lookup table". First column labeled "IUCN_species_name", second column for "Elton_species_name". We created a lookup table for all mammal and bird species not merging correctly. This list is titled "lookup_table_all_montane_mammals.csv" and "lookup_table_all_montane_birds". 
 
 # Pull EltonTraits for those species and append to the original merged dataset.
 
