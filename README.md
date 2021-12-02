@@ -18,3 +18,6 @@ This repository contains code and the accompanying workflow for producing the Fr
 This code and workflow allows users to follow the construction of the Frugivoria montane database and also construct relevant outputs.
 
 See ./code/readme.md for more details.
+
+## Data Repository
+The Frugivoria trait dataset, R scripts, and supporting information are hosted on EDI and can be viewed [here](https://portal.edirepository.org/nis/mapbrowse?packageid=edi.1035.1). However, the full data package is embargoed and will not be downloadable until after the review process. 
