@@ -10,7 +10,7 @@ NASA FINESST Grant #80NSSC19K1332
 - Phoebe L. Zarnetske: PI, [MSU Spatial & Community Ecology Lab (SpaCE Lab)](http://www.communityecologylab.com)
 
 ## Publications
-In Decemeber 2021, a data paper manuscript was been submitted for peer review.
+In December 2021, a data paper manuscript was been submitted for peer review.
 
 ## Code & Workflow
 This repository contains code and the accompanying workflow for producing the Frugivoria functional trait database and evaluating its data. The data workflow follows the recommendations from the [Environmental Data Initiative](http://www.environmentaldatainitiative.org) and the database is hosted by EDI. 
