@@ -5,13 +5,19 @@ Frugivoria is a trait database containing dietary, life-history, morphological t
 NASA FINESST Grant #80NSSC19K1332
 
 ## Collaborators
-- Beth E. Gerstner (MSU)
-- Patrick Bills (MSU)
-- Phoebe L. Zarnetske (MSU)
+- Beth E. Gerstner: PhD Candidate, Michigan State University (MSU)
+- Patrick Bills: Data Scientist, MSU
+- Phoebe L. Zarnetske: PI, [MSU Spatial & Community Ecology Lab (SpaCE Lab)](http://www.communityecologylab.com)
 
-# Frugivoria Database
-Code for Frugivoria functional trait database for montane birds and mammals
+## Publications
+In December 2021, a data paper manuscript was been submitted for peer review.
 
-This code will allow users to follow the construction of the Frugivoria montane database and also construct relevant outputs.
+## Code & Workflow
+This repository contains code and the accompanying workflow for producing the Frugivoria functional trait database and evaluating its data. The data workflow follows the recommendations from the [Environmental Data Initiative](http://www.environmentaldatainitiative.org) and the database is hosted by EDI. 
 
-See Code readme for more details.
+This code and workflow allows users to follow the construction of the Frugivoria montane database and also construct relevant outputs.
+
+See ./code/readme.md for more details.
+
+## Dataset Repository
+The Frugivoria trait dataset, R scripts, and supporting information are hosted on EDI and can be viewed [here](https://portal.edirepository.org/nis/mapbrowse?packageid=edi.1035.1). However, the full data package is embargoed and will not be downloadable until after the review process. 
