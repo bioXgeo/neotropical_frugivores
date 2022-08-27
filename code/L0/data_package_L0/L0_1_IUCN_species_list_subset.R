@@ -1,6 +1,6 @@
 #Title: IUCN species list subset
 
-#Project: Montane Frugivoria
+#Project: Frugivoria
 
 #Author: Beth E. Gerstner
 
@@ -8,11 +8,11 @@
 
 #Overview: This script obtains the species list of birds and mammals for relevant countries from the IUCN and subsets by species habitat.
 
-#Data output: IUCN species lists for countries of interest in tropical moist montane habitat - mam_IUCN.csv, bird_IUCN.csv
+#Data output: IUCN species lists for countries of interest in tropical/subtroptical moist montane and tropical/subtropical moist lowland forest - mam_IUCN.csv, bird_IUCN.csv
 
 #Date: Oct 10th, 2020
 
-#Modified: Oct 15th, 2021
+#Modified: Aug 27th, 2022
 
 
 # Libraries
@@ -226,8 +226,11 @@ all_habitat_birds <- rbind(bird_hab_1, bird_hab_2, bird_hab_3, bird_hab_4, bird_
 write.csv(all_habitat_birds, 'all_habitat_birds.csv')
 
 # Subset the habitat information for all species by those that are tropical montane
+# There will be species that overlap between the two habitat types; can condense those later on with a "habitat" column for each species where the categories are montane, lowland, and both.
 bird_habitat_montane <- all_habitat_birds[all_habitat_birds$habitat =="Forest - Subtropical/Tropical Moist Montane",]
 mam_habitat_montane <- all_habitat_mammals[all_habitat_mammals$habitat =="Forest - Subtropical/Tropical Moist Montane",]
+bird_habitat_lowland <- all_habitat_birds[all_habitat_birds$habitat =="Forest - Subtropical/Tropical Moist Lowland",]
+mam_habitat_lowland <- all_habitat_mammals[all_habitat_mammals$habitat =="Forest - Subtropical/Tropical Moist Lowland",]
 
 # Merge Latin American animal datasets with Central and South American species lists for montane and lowland species
 #join lowland and montane together
@@ -239,9 +242,9 @@ mammal_habitat_join <- rbind(mam_habitat_lowland, mam_habitat_montane)
 
 # Merge the habitat data with the IUCN lists so that we have the statuses and habitats combined with species names (not just taxonid). Only keep species with habitat info.
 
-mammal_IUCN<-merge(latin_american_mammals, mam_habitat_montane, by= "taxonid", all.y=TRUE)
-write.csv(mam_IUCN, "mam_montane_IUCN.csv")
+mammal_IUCN<-merge(latin_american_mammals, mam_habitat_join, by= "taxonid", all.y=TRUE)
+write.csv(mam_IUCN, "mam_IUCN.csv")
 
 
-bird_IUCN<- merge(latin_american_birds, bird_habitat_montane, by= "taxonid", all.y=TRUE)
-write.csv(bird_IUCN, "bird_montane_IUCN.csv")
+bird_IUCN<- merge(latin_american_birds, bird_habitat_join, by= "taxonid", all.y=TRUE)
+write.csv(bird_IUCN, "bird_IUCN.csv")

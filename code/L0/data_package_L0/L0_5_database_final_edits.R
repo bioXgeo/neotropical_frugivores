@@ -1,20 +1,20 @@
 #Title: Database final edits
 
-#Project: Montane Frugivoria 
+#Project:Frugivoria 
 
 #Author: Beth E. Gerstner
 
 #Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
-#Overview: Merge in IUCN range calculations and add column showing taxonomic disparities. Takes datebase output of scripts "montane_frugivore_subset" for birds and "mammal_merge_PanTHERIA" for mammals.
+#Overview: Merge in IUCN range calculations (as of 2021) and add column showing taxonomic disparities for final database. Takes database output of scripts "frugivore_subset" for birds and "mammal_merge_PanTHERIA" for mammals.
 
-#Data Input: bird_frug_montane.csv, final_mammal_dataset.csv
+#Data Input: bird_frug.csv, final_mammal_dataset.csv
 
 #Data Output: final_mammal_database.csv, final_bird_database.csv
 
-#Requires: "L0_3_montane_frugivore_subset.R" and "L0_4_mammal_merge_pantheria.R" should be run first.
+#Requires: "L0_3_frugivore_subset.R" and "L0_4_mammal_merge_pantheria.R" should be run first.
 
-#Date: Oct 11th, 2021
+#Date: Aug 27th, 2022
 
 
 # Read in mammal database
@@ -23,13 +23,13 @@ mam <- read.csv("INSERT DATABASE PATH")
 bird<- read.csv("INSERT DATABASE PATH")
 
 # Read in mammal range data
-mam_range <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L0/frugivore_range_data/montane_mammal_ranges.csv")
+mam_range <- read.csv("INSERT RANGE DATA PATH HERE")
 
 colnames(mam_range)[which(names(mam_range) == "iucn_species_name")] <- "IUCN_species_name"
 mam_range$X <- NULL
 
 # Read in bird range data
-bird_range <- read.csv("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L0/frugivore_range_data/montane_bird_ranges.csv")
+bird_range <- read.csv("INSERT RANGE DATA PATH HERE")
 bird_range$X <-NULL
 colnames(bird_range)[which(names(bird_range) == "iucn_species_name")] <- "IUCN_species_name"
 
@@ -53,7 +53,7 @@ bird_db_ranges$taxonomic_disparity <- ifelse(bird_db_ranges$IUCN_species_name ==
                                    ifelse(bird_db_ranges$IUCN_species_name != bird_db_ranges$elton_species_name, '1','NA'))
 
 # Save as new database
-setwd("/Volumes/GoogleDrive/Shared drives/SpaCE_Lab_FRUGIVORIA/data/frugivore/L1")
+setwd("INSERT PATH HERE")
 write.csv(mam_db_ranges, "final_mammal_database.csv")
 write.csv(bird_db_ranges, "final_bird_database.csv")
 

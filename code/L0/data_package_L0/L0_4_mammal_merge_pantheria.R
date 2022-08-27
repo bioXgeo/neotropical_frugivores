@@ -1,6 +1,6 @@
 #Title: Mammal merge pantheria
 
-#Project: Montane Frugivoria
+#Project: Frugivoria
 
 #Author: Beth E. Gerstner
 
@@ -8,15 +8,15 @@
 
 #Overview: This script merges PanTHERIA traits into the mammal database in the same fashion as the "L0_2_external_database_merge.R" script, except for the smaller subset of mammal species.
 
-#Data Input: PanTHERIA dataset (Jones et al. 2009), mam_frug_montane.csv
+#Data Input: PanTHERIA dataset (Jones et al. 2009), mam_frug.csv
 
 #Data Output: list of species that did not merge correctly - mamm_pantheria_na_original.csv; final mammal dataset with PanTHERIA inclided - final_mammal_dataset.csv
 
 #Date: Oct 10th, 2020
 
-#Modified: Oct 15th, 2021
+#Modified: Aug 27th, 2022
 
-#Requires: "L0_3_montane_frugivore_subset.R" should be run first.
+#Requires: "L0_3_frugivore_subset.R" should be run first.
 
 
 #load library
@@ -29,11 +29,11 @@ pantheria <- read.csv("/Users/bethgerstner/Desktop/MSU/Zarnetske_Lab/Mammals_Bir
 # Change column name to match that of mammal database species names (IUCN_species_names)
 colnames(pantheria)[which(names(pantheria) == "MSW05_Binomial")] <- "IUCN_species_name"
 
-# Read in database from previous step (L0:3_montane_frugivore_subset)
-mam_frug_montane <- read.csv("/Users/bethgerstner/Desktop/database_lowland_edits/lowland_mammals_2021_diet_cat.csv")
+# Read in database from previous step (L0:3_frugivore_subset; mam_frug)
+mam_frug <- read.csv("INSERT PATH HERE")
 
 # Merge the dataset together
-mamm_pantheria_original <- merge.data.frame(mam_frug_montane, pantheria, by= "IUCN_species_name", all.x=TRUE)
+mamm_pantheria_original <- merge.data.frame(mam_frug, pantheria, by= "IUCN_species_name", all.x=TRUE)
 
 # Write to file
 write.csv(mamm_pantheria, "mamm_pantheria.csv")
@@ -52,7 +52,6 @@ mamm_pantheria_alt_names_original <- pantheria %>%
 # Remove Pantheria columns from the NA dataset so we do not get repeats
 pantheria_rm_na_original <-mamm_pantheria_na_original[,-c(71:124)]
 
-
 # Change the species name to "scientific_name"
 colnames(mamm_pantheria_alt_names_original)[which(names(mamm_pantheria_alt_names_original) == "IUCN_species_name")] <- "scientific_name"
 
@@ -63,8 +62,7 @@ full_subset_NA_original <- merge.data.frame(pantheria_rm_na_original, mamm_panth
 
 colnames(full_subset_NA_original)[which(names(full_subset_NA_original) == "scientific_name")] <- "elton_species_name"
 
-
 # Merge original dataset with NA's removed with this final dataset
 final_mammal_dataset <- rbind(full_subset_NA_original, mamm_pantheria_original_no_NA)
-write.csv(final_mammal_dataset, "final_lowland_mammal_dataset_2022.csv")
+write.csv(final_mammal_dataset, "final_mammal_dataset_2022.csv")
 

@@ -1,6 +1,6 @@
 #Title: External trait database merge
 
-#Project: Montane Frugivoria
+#Project: Frugivoria
 
 #Author: Beth E. Gerstner
 
@@ -18,7 +18,7 @@
 
 #Date: Oct 10th, 2020
 
-#Modified: Oct 15th, 2021
+#Modified: Aug 27th, 2022
 
 
 #Trait Information
@@ -58,11 +58,11 @@ write.csv(mamm_trait_IUCN, 'mamm_trait_IUCN.csv')
 mamm_trait_na <-mamm_trait_IUCN[is.na(mamm_trait_IUCN$Diet.Vunk),]  
 mamm_trait_na <- mamm_trait_na[!duplicated(mamm_trait_na[,c('scientific_name')]),] #391 IUCN mammal species didn't merge correctly
 
-# Manually look up species synonyms for species with NA for EltonTrait values. Use these synonyms and create an alternate name list, or "lookup table". First column labeled "IUCN_species_name", second column for "Elton_species_name". We created a lookup table for all mammal and bird species not merging correctly. This list is titled "lookup_table_all_montane_mammals.csv" and "lookup_table_all_montane_birds". 
+# Manually look up species synonyms for species with NA for EltonTrait values. Use these synonyms and create an alternate name list, or "lookup table". First column labeled "IUCN_species_name", second column for "Elton_species_name". We created a lookup table for all mammal and bird species not merging correctly. This list is titled "lookup_table_all_mammals.csv" and "lookup_table_all_birds". 
 
 # Pull EltonTraits for those species and append to the original merged dataset.
 
-# Download lookup table for mammals (saved here: lookup_table_all_montane_mammals.csv)
+# Download lookup table for mammals (saved here: lookup_table_all_mammals.csv)
 mam_lookup_final <- read.csv("INSERT PATH HERE")
 
 # Find species names present in the lookup table for those faulty merges 
