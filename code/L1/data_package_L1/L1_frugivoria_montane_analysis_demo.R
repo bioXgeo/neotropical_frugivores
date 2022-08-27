@@ -6,9 +6,9 @@
 
 #Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
-#Overview: To demonstrate ways to analyze and assess what is contained within the montane frugivore database. Uses final trait datasets that include those entered through exhaustive search of the literature and online sources. 
+#Overview: To demonstrate ways to analyze and assess what is contained within the Frugivoria database. Uses final trait datasets that include those entered through exhaustive search of the literature and online sources. 
 
-#Data Input: Frugivoria_montane_bird_database.csv, Frugivoria_montane_mammal_database.csv
+#Data Input: Frugivoria_bird_database.csv, Frugivoria_mammal_database.csv
 
 #Data Output: trait counts, imputation counts, taxonomic stats, IUCN data deficient counts
 
@@ -79,13 +79,13 @@ in_db_pantheria <- length(which(mam=="PanTHERIA")) #6 in database. Will remove t
 
 #count the number of traits in PanTHERIA 
 #subsetted the PanTHERIA traits from the mammal database
-pantheria <- mam[,79:128]
+pantheria <- mam[,79:132]
 
 # Removed reference column from count
 pantheria$references_p <- NULL
 
 # Count number of traits from PanTHERIA
-pantheria_traits <- length(which(!is.na(pantheria))) #6076
+pantheria_traits <- length(which(!is.na(pantheria))) #14,517
 
 #count the number of newly added traits
 diet_categ_m <- length(which(!is.na(mam$diet_cat)))
@@ -98,39 +98,39 @@ range_1_m <- length(which(!is.na(mam$observed_range_sqkm)))
 range_2_m <-  length(which(!is.na(mam$inferred_range_sqkm)))
 
 # All new traits added minus those within database from PanTHERIA
-new_mam_traits <- diet_categ_m + longevity_m +home_range_m +range_1_m +range_2_m + habitat_special_m +gen_time_m +body_size_m -6
+new_mam_traits <- diet_categ_m + longevity_m +home_range_m +range_1_m +range_2_m + habitat_special_m +gen_time_m +body_size_m #4005
 
 #Total number of traits in the database
-all_mam_traits <- new_mam_traits + pantheria_traits + elton_traits_m
+all_mam_traits <- new_mam_traits + pantheria_traits + elton_traits_m #22116
 
 #Total number of traits in the entire dataset
-all_mam_traits + all_bird_traits
+all_mam_traits + all_bird_traits #34,680
 
 #Genera count
 
 library(tidyr)
 
 # count unique genera birds
-length(unique(bird$genus)) 
+length(unique(bird$genus)) #329 genera
 
-# count unique genera mammals
-length(unique(mam$genus))
+#unique genera mammals
+length(unique(mam$genus)) #160 genera
 
-# Unique mammal species 
-length(unique(mam$IUCN_species_name))
+#unique mammal species 
+length(unique(mam$IUCN_species_name)) #584
 
-# Unique Bird species 
-length(unique(bird$IUCN_species_name))
+#unique Bird species 
+length(unique(bird$IUCN_species_name)) #1148
 
 #New species/name changes
-#These are species that have either been reclassified or recently discovered. These species can be new species that we've then imputed to a close relative, species that have been reclassified, species with misspellings that we've standardized to the IUCN name. This was assessed manually.
+#These are species that have either been reclassified or recently discovered. These species can be new species that we've then imputed to a close relative, species that have been reclassified, species with misspellings that we've standardized to the IUCN name. This was assessed manually and is shown in lookup_table_frugivore_mammal_species.csv & lookup_table_frugivore_mammal_species.csv
 
-#23 new mammal species
-#67 mammal species reclassified
+#42 new mammal species
+#132 mammal species reclassified
 
 # 2 new bird species
-# 126 birds reclassified
-# 6 Spelling errors
+# 182 birds reclassified
+# 8 Spelling errors
 
 # Quantify mismatches between the elton_species_name and IUCN_species_name.
 # Mammals
@@ -150,40 +150,40 @@ mam_genus_level_impute<-mam%>%
   tally(value==0)
 
 #imputed to genus: new traits
-#home_range 27
-#longevity 40
-#generation_time 45
-#body_size 39
-#sexual dimorphism 61
-#diet_cat #23 new species. need to know how many were reclassified to figure out what's imputed to genus
+#home_range 73
+#longevity 75
+#generation_time 100
+#body_size 95
+#sexual dimorphism 77
+#diet_cat #42 new species. need to know how many were reclassified to figure out what's imputed to genus
 
-# Total imputed for newly added traits
-impute_mam_genus_new <-27+40+45+39+61+23 # 235
+#total imputed for newly added traits
+impute_mam_genus_new <-73+75+100+95+77 # 420
 
 
-# Percent imputed in total for genus
-genus_impute_m <-impute_mam_genus_new/new_mam_traits #11.49% to genus for mammals
+##percent imputed in total for genus
+genus_impute_m <-impute_mam_genus_new/new_mam_traits #10.49% to genus for mammals
 
 ##imputed to family: new traits
 
-#longevity 50
-#generation_time 91
-#body_size 3
-#sexual dimorphism 31
-#home range 1
+#longevity 111
+#generation_time 181
+#body_size 5
+#sexual dimorphism 34
+#home range 53
 
 mam_fam_level_impute<-mam%>%
   gather(x, value)%>%
   group_by(x)%>%
   tally(value==-1)
 
-impute_mam_fam_new <-50+91+3+31+1 # 176 
+impute_mam_fam_new <-111+181+5+34+53 # 384
 
 #total traits imputed
-total_mam_impute <-impute_mam_genus_new+impute_mam_fam_new #411
+total_mam_impute <-impute_mam_genus_new+impute_mam_fam_new #804
 
 #%imputed for mammals
-total_mam_impute/new_mam_traits # 20.10% new traits imputed to family or genus
+total_mam_impute/new_mam_traits # 20.07% new traits imputed to family or genus
 
 
 #Bird imputation
@@ -193,16 +193,17 @@ bird_genus_level_impute<-bird%>%
   tally(value==0)
 
 #imputed for birds
-#home_range 4
-#longevity 6
+#home_range 47
+#longevity 37
 #sexual dim 1
 #generation_time 1
+#body_size 1
 
-# Total imputed for newly added traits to genus
-impute_bird_genus_new <-4+6+1+1 # 12
+#Total imputed for newly added traits to genus
+impute_bird_genus_new <-47+37+1+1+1 # 87
 
-# Percent traits imputed to genus
-genus_impute_b <-impute_bird_genus_new/new_bird_traits #.30%
+#total traits imputed
+genus_impute_b <-impute_bird_genus_new/new_bird_traits #1.27%
 
 #Bird imputation to family
 bird_family_level_impute<-bird%>%
@@ -211,101 +212,192 @@ bird_family_level_impute<-bird%>%
   tally(value==-1)
 
 #imputed for birds
-#home_range 
-#longevity 
+#home_range 3
+#longevity 75
 #sexual dim 1
-#generation_time 
 
-# Total imputed for newly added traits to genus
-impute_bird_family_new <-1 # 1
 
-# Percent traits imputed to family
-family_impute_b <-impute_bird_family_new/new_bird_traits #.025%
+#Total imputed for newly added traits to genus
+impute_bird_family_new <-1 + 75 + 1 # 1 
 
-# Total imputed for birds
+family_impute_b <-impute_bird_family_new/new_bird_traits # 1.12%
+
+#total imputed for birds
 total_bird_impute <-impute_bird_genus_new+impute_bird_family_new #13
 
-# Percent imputed for birds
-total_bird_impute/new_bird_traits # .32% imputed to family and genus
+#%imputed for birds
+total_bird_impute/new_bird_traits # 2.4% imputed to family or genus
 
-# All database imputations
-full_impute_b_m <- impute_bird_fam_new + impute_bird_genus_new + impute_mam_fam_new + impute_mam_genus_new
+#all database imputations
+full_impute_b_m <- impute_bird_family_new + impute_bird_genus_new + impute_mam_fam_new + impute_mam_genus_new # 968
 
-#Total genus impute for new traits
-genus_impute <- impute_bird_genus_new + impute_mam_genus_new 
-
-#total family impute for new traits 
-family_impute <- impute_mam_fam_new + impute_bird_fam_new
+#all new traits for birds and mammals
+all_new_traits_b_m <-new_mam_traits + new_bird_traits #10,853
 
 #impute for EltonTraits - they include phylogenetically imputed data with a value of 2.
 bird_phylo_level_impute <- bird%>%
   gather(x, value)%>%
   group_by(x)%>%
-  tally(value==2)
+  tally(value==2) #
 
 #impute for bird diet
-length(bird$diet_certainty_e[bird$diet_certainty_e=="D1"]) #genus level diet info, 112
-length(bird$diet_certainty_e[bird$diet_certainty_e=="D2"]) #family level diet info 24
+length(bird$diet_certainty_e[bird$diet_certainty_e=="D1"]) #genus level diet info, 170
+length(bird$diet_certainty_e[bird$diet_certainty_e=="D2"]) #family level diet info 33
 
 
 mam_phylo_level_impute <- mam%>%
   gather(x, value)%>%
   group_by(x)%>%
-  tally(value==2)
+  tally(value==2) #9 body mass
 
 #impute for diet
-length(mam$diet_certainty_e[mam$diet_certainty_e=="D1"]) #genus level diet info, 70
-length(mam$diet_certainty_e[mam$diet_certainty_e=="D2"]) #family level diet info, 22
+length(mam$diet_certainty_e[mam$diet_certainty_e=="D1"]) #genus level diet info, 98
+length(mam$diet_certainty_e[mam$diet_certainty_e=="D2"]) #family level diet info, 34
 
 #impute for activity
-length(mam$activity_certainty_e[mam$activity_certainty_e=="D1"]) #genus level diet info, 9
-length(mam$activity_certainty_e[mam$activity_certainty_e=="D2"]) #family level diet info, 68
+length(mam$activity_certainty_e[mam$activity_certainty_e=="D1"]) #genus level diet info, 33
+length(mam$activity_certainty_e[mam$activity_certainty_e=="D2"]) #family level diet info, 74
 
 ##Total family impute for Elton Traits. They do not distinguish between genus and family level imputations
 ##birds
-#body mass: 37 genus or fam
-#for strat: 29 genus or fam
-#bird diet: 136
+#body mass: 56 genus or fam
+#for strat: 53 genus or fam
+#bird diet: 203 
 ##mam
-#body mass: 58 genus or fam
-#mam_diet: 92
-#activity pattern: 77
-#           4 phylogenetic imputations
+#body mass: 78 genus or fam
+#mam_diet: 132
+#activity pattern: 107
+#           9 phylogenetic imputations
 
-all_elton_impute <-37 + 29 + 136 + 58 + 4 +92 +77 #433
-
-# All new traits for birds and mammals
-all_new_traits_b_m <-new_mam_traits + new_bird_traits #6,066
-
-# Percent imputed in total for new traits (birds and mammals)
-full_impute_b_m/all_new_traits_b_m #= 7.17% imputed for newly added traits
+all_elton_impute <-56 + 53 + 203 + 78 + 132 +107 + 9 #638
 
 # Total # of imputations in database 
-total_impute <- all_elton_impute + full_impute_b_m #868
+total_impute <- all_elton_impute + full_impute_b_m #1606
 
 
-# Species in the database that are data deficient (DD) in IUCN
-length(mam[mam$IUCN_category=="DD",]) #129
-length(bird[bird$IUCN_category=="DD",]) #75
+#How many species in the database are data deficient
+length(mam[mam$IUCN_category=="DD",]) #132
+length(bird[bird$IUCN_category=="DD",]) #78
 
 #mammals with data deficiency
-129/312 #41.35%
+129/599 #21.5
 
 #birds with data deficiency
-75/682 #11%
+78/1148 #6.79
 
-#Total % makeup of trait database
+#The 44 new species added to the Frugivoria dataset are all imputed to genus. These must be modified in the imputation counts.
+
+#read in lookup tables with new species information
+new_bird <-read.csv("/Users/bethgerstner/Desktop/database_lowland_edits/lookup_table_frugivore_bird_species.csv")
+
+new_mam <- read.csv("/Users/bethgerstner/Desktop/database_lowland_edits/lookup_table_frugivore_mammal_species.csv")
+
+#Mammals
+mam_new_sp_subset <- new_mam %>%
+  filter(new_species==1) 
+
+#subset database to those species that are newly discovered
+mam_database_new_sp <- mam %>%
+  filter(IUCN_species_name %in% mam_new_sp_subset$IUCN_species_name) 
+
+write.csv(mam_database_new_sp, "mam_database_new_sp.csv")
+
+#count phylogenetically imputed traits
+mam_phylo_level_impute_nsp <- mam_database_new_sp %>%
+  gather(x, value)%>%
+  group_by(x)%>%
+  tally(value==2) #0 body mass
+
+#impute for diet
+length(mam_database_new_sp$diet_certainty_e[mam_database_new_sp$diet_certainty_e=="D1"]) #genus level diet info, 5
+length(mam_database_new_sp$diet_certainty_e[mam_database_new_sp$diet_certainty_e=="D2"]) #family level diet info, 3
+
+#impute for activity
+length(mam_database_new_sp$activity_certainty_e[mam_database_new_sp$activity_certainty_e=="D1"]) #genus level diet info, 0
+length(mam_database_new_sp$activity_certainty_e[mam_database_new_sp$activity_certainty_e=="D2"]) #family level diet info, 4
+total_previously_included_imputes <- 5 + 3 + 4 #12 
+
+#count pantheria traits that will all be at the genus level
+pantheria_new <- mam_database_new_sp[,79:132]
+pantheria_new$references_p <- NULL
+pantheria_traits_new <- length(which(!is.na(pantheria_new))) #1,020 imputed PanTHERIA traits for new species
+
+#42 new species so all Elton Traits and PanTHERIA traits will have been imputed
+#These are from previous databases (need to add Pantheria in here), try and sum NAs for x:x for Pantheria traits
+
+diurnal_m_new <-length(which(!is.na(mam_database_new_sp$activity_diurnal_e)))
+crepuscular_m_new <-length(which(!is.na(mam_database_new_sp$activity_crepuscular_e)))
+nocturnal_m_new <- length(which(!is.na(mam_database_new_sp$activity_nocturnal_e)))
+body_mass_m_new<- length(which(!is.na(mam_database_new_sp$body_mass_e)))
+for_strat_m_new <- length(which(!is.na(mam_database_new_sp$for_strat_value_e))) 
+diet_inv_m_new <- length(which(!is.na(mam_database_new_sp$diet_inv_e)))  #% diet will count as one trait
+
+# Elton trait imputes
+elton_traits_m_new <- diurnal_m_new + crepuscular_m_new + nocturnal_m_new + body_mass_m_new + for_strat_b_new + diet_inv_m_new #210
+
+#subtract the imputes for Elton Traits that were already included in the total database impute numbers
+new_mam_imputes <- 210 - 12 + 1020
+
+
+#birds
+bird_new_sp_subset <- new_bird %>%
+  filter(new_species==1) 
+
+#subset bird database to newly discovered species
+bird_database_new_sp <- bird %>%
+  filter(IUCN_species_name %in% bird_new_sp_subset$IUCN_species_name) 
+
+write.csv(bird_database_new_sp, "bird_database_new_sp.csv")
+
+bird_phylo_level_impute_nsp <- bird_database_new_sp %>%
+  gather(x, value)%>%
+  group_by(x)%>%
+  tally(value==2) #0 body mass
+
+#impute for diet
+length(bird_database_new_sp$diet_certainty_e[bird_database_new_sp$diet_certainty_e=="D1"]) #genus level diet info, 1
+length(bird_database_new_sp$diet_certainty_e[bird_database_new_sp$diet_certainty_e=="D2"]) #family level diet info, 0
+
+#impute for activity
+length(bird_database_new_sp$activity_certainty_e[bird_database_new_sp$activity_certainty_e=="D1"]) #genus level diet info, 0
+length(bird_database_new_sp$activity_certainty_e[bird_database_new_sp$activity_certainty_e=="D2"]) #family level diet info, 0
+total_previously_included_imputes <- 1
+
+
+#2 new species so all Elton Traits have been imputed
+#These are from previous databases 
+
+nocturnal_b_new <- length(which(!is.na(bird_database_new_sp$activity_nocturnal_e)))
+body_mass_b_new<- length(which(!is.na(bird_database_new_sp$body_mass_e)))
+for_strat_b_new <- length(which(!is.na(bird_database_new_sp$for_strat_value_e))) 
+diet_inv_b_new <- length(which(!is.na(bird_database_new_sp$diet_inv_e)))  #% diet will count as one trait
+
+elton_traits_b_new <- diurnal_b_new + crepuscular_b_new + nocturnal_b_new + body_mass_b_new + for_strat_b_new + diet_inv_b_new #6
+
+#subtract the imputes for Elton Traits that were already included in the total database numbers
+new_bird_imputes <-  6-1
+
+#total imputes in Frugivoria
+total_impute_with_new <- total_impute + new_bird_imputes + new_mam_imputes #2829
+
+# % imputed full database
+perc_impute_full_database <- total_impute_with_new/(all_mam_traits + all_bird_traits) #8.16%
+
+
+#_____________________________________________________________________
+
+#% composition of Frugivoria
+
 #Mammals
 #pantheria %
-pantheria_traits/all_mam_traits #60.92
+pantheria_traits/all_mam_traits #65.64
 #elton %
-elton_traits_m/all_mam_traits #18.68
+elton_traits_m/all_mam_traits #16.25
 #new %
-new_mam_traits/all_mam_traits #20.40
+new_mam_traits/all_mam_traits #18.11
 
 #birds
 #elton
-elton_traits_b/all_bird_traits #45.89
+elton_traits_b/all_bird_traits #45.49
 #new
-new_bird_traits/all_bird_traits #54.11
-
+new_bird_traits/all_bird_traits #54.50

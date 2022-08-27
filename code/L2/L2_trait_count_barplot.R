@@ -6,7 +6,7 @@
 
 #Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
-#Data input: Frugivoria_montane_bird_database.csv, Frugivoria_montane_mammal_database.csv
+#Data input: Frugivoria_bird_database.csv, Frugivoria_mammal_database.csv
 
 #Data output: trait_count_barplot.pdf
 

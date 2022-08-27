@@ -13,22 +13,19 @@
 #Date: Oct 11th, 2021
 
 
-## Mammal % makeup
+#Mammals
 #pantheria %
-#60.92
-
+pantheria_traits/all_mam_traits #65.64
 #elton %
-#18.68
-
-#newly added traits%
-#20.4
+elton_traits_m/all_mam_traits #16.25
+#new %
+new_mam_traits/all_mam_traits #18.11
 
 #birds
 #elton
-#45.89
-
-#newly added traits
-#54.11
+elton_traits_b/all_bird_traits #45.49
+#new
+new_bird_traits/all_bird_traits #54.50
 
 #start pdf
 pdf("percent_comp.pdf") 
@@ -36,7 +33,7 @@ pdf("percent_comp.pdf")
 #create parameters for the stacked barplot
 category<- c("Mammals","Mammals","Mammals","Birds","Birds","Birds")
 condition<-c("PanTHERIA","EltonTraits","New Traits in Frugivoria","PanTHERIA","EltonTraits","New Traits in Frugivoria")
-percent <- c(60.92,18.68,20.4,0,45.89,54.11) #% composition
+percent <- c(65.64,16.25,18.11,0,45.49,54.50) #% composition
 data <- data.frame(category,condition,percent) #dataframe of composition
 
 # Stacked barplot + percent

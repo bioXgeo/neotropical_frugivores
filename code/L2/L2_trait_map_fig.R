@@ -6,7 +6,7 @@
 
 #Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
-#Data Input: GBIF data for birds and mammals, Frugivoria_montane_bird_database.csv, Frugivoria_montane_mammal_database.csv
+#Data Input: GBIF data for birds and mammals, Frugivoriae_bird_database.csv, Frugivoria_mammal_database.csv
 
 #Data Output: density plots for two traits, trait distribution maps for those traits made in ggplot, final multipanel plot combining this information.
 
@@ -20,6 +20,7 @@
 library(dplyr)
 library(maps)
 library(ggplot2)
+library(ggspatial)
 library(tmap)
 library(rnaturalearth)
 library(leaflet)
@@ -70,15 +71,13 @@ test <- ggplot() + geom_sf(data = study_region_crop) + theme_bw() + geom_point(d
 #where should the breaks be so we can see color differences
 getJenksBreaks(bird_dataset$body_mass_value_g_e, 10, subset = NULL)
 
-#bins <-  c(5.08,   41.00,  106.00,  200.00,  322.00,  485.00,  806.71, 1600.10, 2872.00, 4133.00)
-
 #Chose to break at lower values to help with viewing. All values higher than the last break are then included in that range.
 bird_mass <-test + scale_fill_binned(
   alpha=1,
   begin=0,
   end=1,
   limits = c(5,350), 
-  breaks = c(41, 106, 200, 322,485),
+  breaks = c(441, 103, 181, 322,532),
   type="viridis",
   na.value = "grey50",
   direction = -1,
@@ -86,7 +85,23 @@ bird_mass <-test + scale_fill_binned(
 
 
 # add map features
-final_bird_mass <-bird_mass + theme(legend.title = element_text(size=12, color = "black", face="bold"), legend.justification=c(0,1),legend.position=c(0.05, 0.7), legend.background = element_blank(), legend.key = element_blank())+ scalebar(x.min = -84, x.max = -81.7, y.min =-3, y.max = -5,dist = 100, st.dist=.1, st.size=1.9, height=.19, transform = TRUE, dist_unit = "km", model = 'WGS84') + north(study_region_crop, location="bottomleft", scale=.07, symbol=1) + ylab("Latitude") + xlab("Longitude") 
+final_bird_mass_1 <-bird_mass + theme(legend.title = element_text(size=12, color = "black", face="bold"), legend.justification=c(0,1),legend.position=c(0.05, 0.7), legend.background = element_blank(), legend.key = element_blank())+  ylab("Latitude") + xlab("Longitude") 
+
+final_bird_mass <- final_bird_mass_1 + ggspatial::annotation_scale(
+  location = "bl", 
+  pad_x = unit(.06, "in"), pad_y = unit(.15,"in"),
+  bar_cols = c("grey60", "white"),
+  text_family = "Arial"
+) +
+  ggspatial::annotation_north_arrow(
+    location = "bl", which_north = "true",
+    pad_x = unit(0.1, "in"), pad_y = unit(2, "in"),
+    style = ggspatial::north_arrow_nautical(
+      fill = c("grey40", "white"),
+      line_col = "grey20",
+      text_family = "Arial"
+    )
+  )
 
 #Inset map
 
@@ -96,7 +111,7 @@ final_bird_mass <-bird_mass + theme(legend.title = element_text(size=12, color =
 SA_study_region <- worldMap %>% filter(region_wb == "Latin America & Caribbean")
 
 #Polygon of study region drawn for trait database including moist montane regions.
-wkt_full_study_region <-readWKT("POLYGON((-117.90586 32.40823,-114.93283 24.02867,-103.38519 17.57394,-95.69147 14.92501,-93.74959 16.49881,-92.64833 13.26132,-86.8181 11.91952,-85.36732 7.62409,-78.95541 7.29366,-82.2415 -6.75735,-73.62066 -17.43199,-69.74556 -20.27371,-74.26679 -41.31821,-75.77755 -51.68231,-72.9972 -52.59989,-72.9972 -52.59989,-72.9972 -52.59989,-72.9972 -52.59989,-66.35996 -29.99383,-64.2351 -12.64059,-73.18461 -6.82992,-69.07763 1.34059,-67.37915 2.79301,-67.6658 5.65767,-69.44627 6.92719,-70.93479 7.4764,-72.13081 10.06589,-72.54342 11.79581,-75.00572 11.32275,-77.1206 9.48178,-78.31286 10.38244,-81.55377 9.55725,-83.40351 10.96224,-81.82526 12.13639,-85.4989 16.5353,-88.11664 20.69613,-94.66028 18.37092,-95.47524 23.39009,-98.81918 27.37902,-104.5994 31.71723,-117.90586 32.40823))")
+wkt_full_study_region <-readWKT("POLYGON((-116.39878 32.14502,-116.18439 25.589,-103.35463 18.51935,-78.19944 5.42044,-82.02377 -5.17495,-75.35233 -17.47622,-70.61516 -17.66095,-73.69595 -39.73744,-76.89099 -49.35018,-71.89115 -55.00772,-64.31938 -57.53321,-68.33512 -51.38147,-63.74197 -48.20784,-65.71778 -44.50498,-56.70514 -36.93942,-57.44673 -33.15855,-57.44673 -26.14211,-62.84294 -21.53527,-57.83652 -18.17212,-61.04452 -13.37745,-65.16414 -7.68073,-72.90818 -8.70505,-70.65325 -4.52629,-66.15564 0.14301,-60.45847 3.35677,-59.58068 8.57429,-68.03483 12.85263,-76.02387 9.6308,-81.75551 9.26437,-82.18541 13.87265,-85.9107 17.83896,-87.64715 21.66655,-95.89125 19.41326,-96.31007 26.3313,-106.27585 31.97955,-116.39878 32.14502))")
 
 # Change CRS
 crs(wkt_full_study_region) <-"+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
@@ -213,22 +228,20 @@ mam_test_new <- ggplot() + geom_sf(data = study_region_crop) + theme_bw() + geom
 mam_jenks <-mam_dataset$body_mass_value_g_e
 getJenksBreaks(mam_jenks, 10, subset = NULL)
 
-#bins_mam <- c( 5.60,   1339.99,   3249.97,   5000.00,  6394.85, 7274.95,  12500.0,  21266.69,  32233.69, 140000.63)
-
 #Chose to show jenks in the densist part of the dataset for viewability
 mam_mass <-mam_test_new + scale_fill_binned(
   alpha=1,
   begin=.1,
   end=1,
   limits = c(0,7500), 
-  breaks = c(5.6,   1340,   3250,   5000,   6394.9),
+  breaks = c(5.6,   1537.52,   3250,   5000,   7274.95),
   type="viridis",
   na.value = "grey50",
   direction=-1,
   guide = guide_colorsteps(draw.ulim = F, draw.llim = T, even.steps = T), aesthetics = "colour", guide_legend("Body mass (g)"))
 
 
-final_mam_mass <-mam_mass + theme(legend.title = element_text(size=12, color = "black", face="bold"), legend.justification=c(0,1),legend.position=c(0.05, 0.7), legend.background = element_blank(), legend.key = element_blank())+ scalebar(x.min = -84, x.max = -81.7, y.min =-3, y.max = -5,dist = 100, st.dist=.1, st.size=1.9, height=.19, transform = TRUE, dist_unit = "km", model = 'WGS84') + north(study_region_crop, location="bottomleft", scale=.07, symbol=1) + ylab("") + xlab("") 
+final_mam_mass <-mam_mass + theme(legend.title = element_text(size=12, color = "black", face="bold"), legend.justification=c(0,1),legend.position=c(0.05, 0.7), legend.background = element_blank(), legend.key = element_blank()) + ylab("") + xlab("") 
 library(MASS)
 library(scales)
 
@@ -277,12 +290,12 @@ bird_gen <-bird_gen_time + scale_fill_binned(
   low= "mistyrose1",
   high="magenta4",
   limits = c(0,14), 
-  breaks = c(2.0, 4.2,  5.7, 8.5, 15.2),
+  breaks = c(1.9, 4.1,  5.8, 8.8, 15.2),
   na.value = "grey50",
   guide = guide_colorsteps(draw.ulim = T, draw.llim = T, even.steps = TRUE), aesthetics = "colour", guide_legend("Generation time (y)")) 
 
 #Add map features
-final_bird_gen <-bird_gen + theme(legend.title = element_text(size=12, color = "black", face="bold"), legend.justification=c(0,1),legend.position=c(0.05, 0.7), legend.background = element_blank(), legend.key = element_blank())+ scalebar(x.min = -84, x.max = -81.7, y.min =-3, y.max = -5,dist = 100, st.dist=.1, st.size=1.9, height=.19, transform = TRUE, dist_unit = "km", model = 'WGS84') + north(study_region_crop, location="bottomleft", scale=.07, symbol=1) + ylab("Latitude") + xlab("Longitude") 
+final_bird_gen <-bird_gen + theme(legend.title = element_text(size=12, color = "black", face="bold"), legend.justification=c(0,1),legend.position=c(0.05, 0.7), legend.background = element_blank(), legend.key = element_blank())+ ylab("Latitude") + xlab("Longitude") 
 
 
 #density plot
@@ -323,13 +336,11 @@ mam_gen <- ggplot() + geom_sf(data = study_region_crop) + theme_bw() + geom_poin
 mam_jenks_gen <-mam_dataset$generation_time
 getJenksBreaks(mam_jenks_gen, 5, subset = NULL)
 
-#bins_mam <- c(1.55,  3.39,  7.40,  10.5, 16.00)
-
 mam_gen_final <-mam_gen + scale_fill_binned(
   low= "mistyrose1",
   high="magenta4",
   limits = c(0,14), 
-  breaks = c(1.6,  3.4,  7.4,  10.5, 16.0),
+  breaks = c(1.0,  3.8,  6.8,  11.4, 16.0),
   na.value = "grey50",
   guide = guide_colorsteps(draw.ulim = F, draw.llim = T, even.steps = T), aesthetics = "colour", guide_legend("Generation time (y)"))
 
