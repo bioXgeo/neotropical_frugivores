@@ -17,7 +17,7 @@ library(dplyr)
 library(tidyr)
 library (ggplot2)
 
-pdf("trait_count_barplot.pdf") 
+
 
 #read in completed mammal database
 mam <- read.csv("INSERT PATH HERE")
@@ -77,6 +77,8 @@ mam_df <- data.frame(longevity_m,home_range_m,range_1_m, habitat_special_m, gen_
 oldnames.m = c("longevity_m", "home_range_m","range_1_m","habitat_special_m", "gen_time_m", "body_size_m", "sexual_dim_m")
 newnames.m = c("longevity", "home_range","range_size","habitat_special", "gen_time", "body_size", "sexual_dim")
 
+mam_df_wide <-mam_df %>% rename_at(vars(oldnames.m), ~ newnames.m)
+
 # Pantheria change names of traits
 #Mammals change names of traits
 mam_df_p <- data.frame(longevity_m_p,home_range_m_p,range_1_m_p,habitat_special_m_p, gen_time_m_p, body_size_m_p, sexual_dim_m_p)
@@ -99,7 +101,7 @@ full_long_trait_db$trait <-as.factor(full_long_trait_db$trait)
 
 #plot traits
 all_new_traits <-ggplot(full_long_trait_db, aes(x=trait, y=species, fill=taxa, color)) + scale_fill_manual(values = c("birds" = "lightcoral", "mammals" = "lightseagreen","PanTHERIA" = "grey51"))+ labs(x = "New Frugivoria traits", y = "# species with trait") +
-  geom_bar(stat="identity", position=position_dodge()) +geom_hline(yintercept=313, color="lightseagreen") + geom_hline(yintercept=682, color="lightcoral") + theme(panel.background = element_rect(fill = "white"))
+  geom_bar(stat="identity", position=position_dodge()) +geom_hline(yintercept=599, color="lightseagreen") + geom_hline(yintercept=1148, color="lightcoral") + theme(panel.background = element_rect(fill = "white"))
 
 #add trait labels
 all_new_traits + scale_x_discrete(labels = c("body size", "gen time", "habitat special","home range","longevity", "range size", "sexual dim")) + theme(axis.line = element_line(color="black", size = .2))
