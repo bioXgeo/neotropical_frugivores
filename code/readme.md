@@ -51,4 +51,4 @@ The L2 subfolder contains scripts for Level-2 analysis, mainly visualization of 
 
 
 
-*This readme last modified by PLZ & BEG 1 Aug 2022*
+*This readme last modified by BEG & PLZ Aug 2022*
