@@ -22,7 +22,7 @@ The L0 subfolder contains scripts for Level-0 (raw data) analysis, mainly pullin
 
 - L0_2_external_trait_database_merge: merge with EltonTraits and resolve taxonomic disparities
 
-- L0_3_montane_frugivore_subset: subset database by consumption of fruit
+- L0_3_frugivore_subset: subset database by consumption of fruit
 
 - L0_4_mammal_merge_pantheria: merge final dataset for mammals with PanTHERIA dataset
 
@@ -51,4 +51,4 @@ The L2 subfolder contains scripts for Level-2 analysis, mainly visualization of 
 
 
 
-*This readme last modified by PLZ & BEG 1 Dec 2021*
+*This readme last modified by PLZ & BEG 1 Aug 2022*
