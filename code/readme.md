@@ -1,5 +1,5 @@
 # Frugivoria
-Frugivoria is a trait database containing dietary, life-history, morphological traits as well as IUCN conservation status, for birds and mammals exhibiting frugivory, which are important for seed dispersal, an essential ecosystem service. This version of Frugivoria encompasses species in moist montane forests of Central and South America. Frugivoria and its workflow enables researchers to quantify relationships between traits and the environment, as well as spatial trends in functional diversity, contributing to basic knowledge and applied conservation of frugivores in this region. By harmonizing trait information from disparate sources and providing code to access species occurrence data, this open-access database fills a major knowledge gap and enables more comprehensive trait-based studies of species exhibiting frugivory in this ecologically important region.
+Frugivoria is a trait database containing dietary, life-history, morphological traits as well as IUCN conservation status, for birds and mammals exhibiting frugivory, which are important for seed dispersal, an essential ecosystem service. This version of Frugivoria encompasses species in moist forests of Central and South America including countries with contiguous mountain ranges. Frugivoria and its workflow enables researchers to quantify relationships between traits and the environment, as well as spatial trends in functional diversity, contributing to basic knowledge and applied conservation of frugivores in this region. By harmonizing trait information from disparate sources and providing code to access species occurrence data, this open-access database fills a major knowledge gap and enables more comprehensive trait-based studies of species exhibiting frugivory in this ecologically important region.
 
 
 ## Funding
@@ -22,7 +22,7 @@ The L0 subfolder contains scripts for Level-0 (raw data) analysis, mainly pullin
 
 - L0_2_external_trait_database_merge: merge with EltonTraits and resolve taxonomic disparities
 
-- L0_3_montane_frugivore_subset: subset database by consumption of fruit
+- L0_3_frugivore_subset: subset database by consumption of fruit
 
 - L0_4_mammal_merge_pantheria: merge final dataset for mammals with PanTHERIA dataset
 
@@ -51,4 +51,4 @@ The L2 subfolder contains scripts for Level-2 analysis, mainly visualization of 
 
 
 
-*This readme last modified by PLZ & BEG 1 Dec 2021*
+*This readme last modified by BEG & PLZ Aug 2022*
