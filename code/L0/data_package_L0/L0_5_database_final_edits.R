@@ -8,7 +8,7 @@
 
 #Overview: Merge in IUCN range calculations (as of 2021) and add column showing taxonomic disparities for final database. Takes database output of scripts "frugivore_subset" for birds and "mammal_merge_PanTHERIA" for mammals.
 
-#Data Input: bird_frug.csv, final_mammal_dataset.csv
+#Data Input: bird_frug.csv, final_mammal_dataset.csv, full_mammal_ranges_2021.csv, full_bird_ranges_2021.csv
 
 #Data Output: final_mammal_database.csv, final_bird_database.csv
 
@@ -22,7 +22,7 @@ mam <- read.csv("INSERT DATABASE PATH")
 # Read in bird database
 bird<- read.csv("INSERT DATABASE PATH")
 
-# Read in mammal range data
+# Read in mammal range data 
 mam_range <- read.csv("INSERT RANGE DATA PATH HERE")
 
 colnames(mam_range)[which(names(mam_range) == "iucn_species_name")] <- "IUCN_species_name"
