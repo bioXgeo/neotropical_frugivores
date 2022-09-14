@@ -15,17 +15,19 @@
 
 #Mammals
 #pantheria %
-pantheria_traits/all_mam_traits #65.64
+#Mammals
+#pantheria %
+pantheria_traits/all_mam_traits #64.47
 #elton %
-elton_traits_m/all_mam_traits #16.25
+elton_traits_m/all_mam_traits #15.96
 #new %
-new_mam_traits/all_mam_traits #18.11
+new_mam_traits/all_mam_traits #19.56
 
 #birds
 #elton
-elton_traits_b/all_bird_traits #45.49
+elton_traits_b/all_bird_traits #45.50
 #new
-new_bird_traits/all_bird_traits #54.50
+new_bird_traits/all_bird_traits #54.49
 
 #start pdf
 pdf("percent_comp.pdf") 

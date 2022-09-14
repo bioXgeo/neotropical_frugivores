@@ -85,7 +85,7 @@ pantheria <- mam[,79:132]
 pantheria$references_p <- NULL
 
 # Count number of traits from PanTHERIA
-pantheria_traits <- length(which(!is.na(pantheria))) #14,517
+pantheria_traits <- length(which(!is.na(pantheria))) 
 
 #count the number of newly added traits
 diet_categ_m <- length(which(!is.na(mam$diet_cat)))
@@ -96,15 +96,16 @@ gen_time_m <- length(which(!is.na(mam$generation_time)))
 body_size_m<- length(which(!is.na(mam$body_size_cm)))
 range_1_m <- length(which(!is.na(mam$observed_range_sqkm)))
 range_2_m <-  length(which(!is.na(mam$inferred_range_sqkm)))
+sexual_dim_m <- length(which(!is.na(mam$sexual_dimorphism)))
 
 # All new traits added minus those within database from PanTHERIA
-new_mam_traits <- diet_categ_m + longevity_m +home_range_m +range_1_m +range_2_m + habitat_special_m +gen_time_m +body_size_m #4005
+new_mam_traits <- diet_categ_m + sexual_dim_m + longevity_m +home_range_m +range_1_m +range_2_m + habitat_special_m +gen_time_m +body_size_m 
 
 #Total number of traits in the database
-all_mam_traits <- new_mam_traits + pantheria_traits + elton_traits_m #22116
+all_mam_traits <- new_mam_traits + pantheria_traits + elton_traits_m 
 
 #Total number of traits in the entire dataset
-all_mam_traits + all_bird_traits #34,680
+all_mam_traits + all_bird_traits
 
 #Genera count
 
@@ -170,17 +171,17 @@ genus_impute_m <-impute_mam_genus_new/new_mam_traits #10.49% to genus for mammal
 #generation_time 181
 #body_size 5
 #sexual dimorphism 34
-#home range 53
+#home range 55
 
 mam_fam_level_impute<-mam%>%
   gather(x, value)%>%
   group_by(x)%>%
   tally(value==-1)
 
-impute_mam_fam_new <-111+181+5+34+53 # 384
+impute_mam_fam_new <-111+181+5+34+55
 
 #total traits imputed
-total_mam_impute <-impute_mam_genus_new+impute_mam_fam_new #804
+total_mam_impute <-impute_mam_genus_new+impute_mam_fam_new
 
 #%imputed for mammals
 total_mam_impute/new_mam_traits # 20.07% new traits imputed to family or genus
@@ -272,7 +273,7 @@ length(mam$activity_certainty_e[mam$activity_certainty_e=="D2"]) #family level d
 all_elton_impute <-56 + 53 + 203 + 78 + 132 +107 + 9 #638
 
 # Total # of imputations in database 
-total_impute <- all_elton_impute + full_impute_b_m #1606
+total_impute <- all_elton_impute + full_impute_b_m 
 
 
 #How many species in the database are data deficient
@@ -378,7 +379,7 @@ elton_traits_b_new <- diurnal_b_new + crepuscular_b_new + nocturnal_b_new + body
 new_bird_imputes <-  6-1
 
 #total imputes in Frugivoria
-total_impute_with_new <- total_impute + new_bird_imputes + new_mam_imputes #2829
+total_impute_with_new <- total_impute + new_bird_imputes + new_mam_imputes 
 
 # % imputed full database
 perc_impute_full_database <- total_impute_with_new/(all_mam_traits + all_bird_traits) #8.16%
@@ -390,14 +391,15 @@ perc_impute_full_database <- total_impute_with_new/(all_mam_traits + all_bird_tr
 
 #Mammals
 #pantheria %
-pantheria_traits/all_mam_traits #65.64
+
+pantheria_traits/all_mam_traits #64.47
 #elton %
-elton_traits_m/all_mam_traits #16.25
+elton_traits_m/all_mam_traits #15.96
 #new %
-new_mam_traits/all_mam_traits #18.11
+new_mam_traits/all_mam_traits #19.56
 
 #birds
 #elton
-elton_traits_b/all_bird_traits #45.49
+elton_traits_b/all_bird_traits #45.50
 #new
-new_bird_traits/all_bird_traits #54.50
+new_bird_traits/all_bird_traits #54.49
