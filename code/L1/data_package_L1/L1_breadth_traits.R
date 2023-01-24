@@ -93,7 +93,6 @@ for(i in 1293:1746){
 
 # join all habitat subsets
 all.species.habitat.full <- rbind(all.species.habitat, all.species.habitat.2, all.species.habitat.3)
-all.species.habitat.full <- all.species.habitat.3
 
 # remove duplicated habitat types (these are because of certain habitats being listed multiple times for a species since they can be for both "breeding" and "resident").
 
