@@ -20,9 +20,9 @@ library (ggplot2)
 
 
 #read in completed mammal database
-mam <- read.csv("INSERT PATH HERE")
-#read in bird database
-bird<- read.csv("INSERT PATH HERE")
+mam <- read.csv("G:/Shared drives/SpaCE_Lab_neotropical_frugivores/Manuscripts/Database_Manuscript/Database_paper/EDI_resubmission_2022/databases_2022/Frugivoria_mammal_database_2022.csv")
+#read in bird da
+bird <-read.csv("G:/Shared drives/SpaCE_Lab_neotropical_frugivores/Manuscripts/Database_Manuscript/Database_paper/EDI_resubmission_2022/databases_2022/Frugivoria_bird_database_2022.csv")
 
 # New bird traits
 longevity_b <- length(which(!is.na(bird$longevity)))
@@ -109,3 +109,4 @@ all_new_traits + scale_x_discrete(labels = c("body size", "gen time", "habitat s
 
 setwd("INSERT PATH TO SAVE")
 dev.off()
+
