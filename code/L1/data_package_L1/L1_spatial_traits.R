@@ -6,7 +6,7 @@
 
 #Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
-#Overview: Derives range based traits from both IUCN and BirdLife International. Here we calculate range size for all species and, in a addition, calculate mean annual temperature over range, mean annual precipitation over range, and average human footprint index. Both temperature and precipitation data are based on the ERA Interim Reanalysis (CHELSA dataset; https://chelsa-climate.org/). The human footprint index was sources from the Wildlife Conservation Society (https://wcshumanfootprint.org/)
+#Overview: Derives range based traits from both IUCN and BirdLife International. Here we calculate range size for all species and, in a addition, calculate mean annual temperature over range, mean annual precipitation over range, and average human footprint index. Both temperature and precipitation data are based on the ERA Interim Reanalysis (CHELSA dataset; https://chelsa-climate.org/). The human footprint index was sourced from the Wildlife Conservation Society (https://wcshumanfootprint.org/)
 
 #Data Input: Frugivoria_bird_database_2023.csv, Frugivoria_mammal_database_2023.csv
 
