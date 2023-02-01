@@ -22,7 +22,6 @@ library(raster)
 mam_shp <- st_read("C:/Users/bgers/Desktop/MAMMALS_TERRESTRIAL_ONLY/MAMMALS_TERRESTRIAL_ONLY.shp")
 
 #Read in  Frugivoria databases
-
 bird <- read.csv("G:/Shared drives/SpaCE_Lab_neotropical_frugivores/Manuscripts/Database_Manuscript/Database_paper/EDI_resubmission_2023/databases_2023/Frugivoria_bird_database_2023.csv")
 
 #read in bird database
@@ -30,7 +29,6 @@ mam <-read.csv("G:/Shared drives/SpaCE_Lab_neotropical_frugivores/Manuscripts/Da
 
 
 #subset mammal and bird databases so that we have a list of their scientific names
-
 scientific_name_m<- mam %>%
   select(IUCN_species_name)
 
@@ -38,8 +36,6 @@ scientific_name_b<- bird %>%
   select(IUCN_species_name)
 
 ## MAMMALS
-
-
 # Rename sci_name column to match 
 colnames(mam_shp)[2] <- "IUCN_species_name"
 
@@ -79,9 +75,7 @@ human_fp_range_2010 <- raster("C:/Users/bgers/Desktop/frugivoria_range/human_fp_
 env <- stack(mean_temp_range,mean_precip_range, human_fp_range_2010,human_fp_range_2020)
 
 # Extract values of each variable over the range. Here we are summing all the values within the species range and counting the number of cells in each range for later calculations of mean. This helps overcome the issue where some species have multiple polygons. Will later add each individual polygon together
-
 mean_variables <- exact_extract(env, frug_mam_spat, fun=c("sum","count"), append_cols="IUCN_species_name", coverage_area=T)
-
 
 #Group all polygons by IUCN_species_name, which allows sums  to be calculated for each species; only want one value for each column)
 variable_sums <- mean_variables %>% group_by(IUCN_species_name) %>% 
@@ -114,6 +108,7 @@ human_footprint_means <-variable_sums %>%
 #remove unnecessary columns
 human_footprint_means <- human_footprint_means[,c("IUCN_species_name","mean_human_fp_range_2010_p", "mean_human_fp_range_2020_p")]
 
+#merge climate and footprint data together
 env_calculation_means <- merge(clim_means, human_footprint_means, by="IUCN_species_name")
 
 # Write to file so do not have to run again (takes a while)
@@ -124,7 +119,7 @@ write.csv(env_calculation_means, file="mean_env_mammal.csv")
 env_calculation_means$percent_change_hf_2010_2020 <- apply(env_calculation_means[,c('mean_human_fp_range_2020_p', 'mean_human_fp_range_2010_p')], 1, function(x) { (x[1]-x[2])/x[2] * 100 } )
 write.csv(env_calculation_means, file="mean_env_mammal.csv")
 
-#Calculating range sizes
+##Calculating range sizes
 #known and inferred presence
 library(sf)
 
@@ -135,22 +130,23 @@ all_mam_polygon$inferred_range_sqkm <- st_area(st_transform(all_mam_polygon, 432
 all_mam_inferred_range <-all_mam_polygon %>% group_by(IUCN_species_name) %>% 
   summarise(inferred_range_sqkm=sum(inferred_range_sqkm)) %>% as.data.frame()
 
-
 # Known presence
 # Remove all shapefiles that have a presence code above 1 (this removes parts of the range where the species is inferred to be)
 frug_mam_pres_only <- frug_mam[!frug_mam$presence >1,]
 # Remove Ursus americanus because it's causing issues
 #frug_mam_pres_only_1 <-frug_mam_pres_only %>%  filter(!IUCN_species_name=='Ursus americanus')
 
-# Joins the multiple polygons per species into one multipolygon, which will help calculations down the line
+# Joins the separates multipolygons into polygons, which will help calculations down the line
 all_mam_polygon_po <-st_cast(frug_mam_pres_only_1, "MULTIPOLYGON") %>% st_cast("POLYGON")
 
-
+#Calculate range size of observed range
 all_mam_polygon_po$observed_range_sqkm <- st_area(st_transform(all_mam_polygon_po, 4326))/(1000*1000) #Take care of units)
+
+#Group by species and add up range sizes
 all_mam_observed_range <-all_mam_polygon_po %>% group_by(IUCN_species_name) %>% 
   summarise(observed_range_sqkm=sum(observed_range_sqkm)) %>% as.data.frame()
 
-#range dataframe
+#Merge range data and remove irrelevant columns
 final_range_data <- merge(all_mam_observed_range,all_mam_inferred_range, by="IUCN_species_name")
 final_range_data$geometry.x <- NULL
 final_range_data$geometry.y<- NULL
