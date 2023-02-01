@@ -47,7 +47,7 @@ frug_mam <- mam_shp %>% filter(IUCN_species_name %in% scientific_name_m$IUCN_spe
 frug_mam_rm <- frug_mam[!frug_mam$presence >3,]
 
 # Remove Ursus americanus because it's causing issues
-#frug_mam_rm_1 <-frug_mam_rm %>%  filter(!IUCN_species_name=='Ursus americanus')
+all_mam_polygon <-all_mam_polygon %>%  filter(!IUCN_species_name=='Ursus americanus')
 
 # Separates the multiple polygons per species into indivual polygons, which will help calculations down the line
 all_mam_polygon <-st_cast(frug_mam_rm, "MULTIPOLYGON") %>% st_cast("POLYGON")
@@ -121,7 +121,6 @@ write.csv(env_calculation_means, file="mean_env_mammal.csv")
 
 ##Calculating range sizes
 #known and inferred presence
-library(sf)
 
 #calculate inferred range size
 all_mam_polygon$inferred_range_sqkm <- st_area(st_transform(all_mam_polygon, 4326))/(1000*1000) #Take care of units
@@ -134,7 +133,7 @@ all_mam_inferred_range <-all_mam_polygon %>% group_by(IUCN_species_name) %>%
 # Remove all shapefiles that have a presence code above 1 (this removes parts of the range where the species is inferred to be)
 frug_mam_pres_only <- frug_mam[!frug_mam$presence >1,]
 # Remove Ursus americanus because it's causing issues
-#frug_mam_pres_only_1 <-frug_mam_pres_only %>%  filter(!IUCN_species_name=='Ursus americanus')
+frug_mam_pres_only_1 <-frug_mam_pres_only %>%  filter(!IUCN_species_name=='Ursus americanus')
 
 # Joins the separates multipolygons into polygons, which will help calculations down the line
 all_mam_polygon_po <-st_cast(frug_mam_pres_only_1, "MULTIPOLYGON") %>% st_cast("POLYGON")
@@ -152,10 +151,9 @@ final_range_data$geometry.x <- NULL
 final_range_data$geometry.y<- NULL
 
 #create final dataframe will all spatial calculations
-final_spatial_calcs <- merge(env_calculation_means, final_range_data, by="IUCN_species_name")
+final_spatial_calcs <- merge(env_calculation_means, final_range_data, by="IUCN_species_name", all=T)
 write.csv(final_spatial_calcs, file="final_spatial_calculations_mammals.csv")
 
 #how many species missing spatial data
 missing_mam <- mam %>% filter(!IUCN_species_name %in% final_spatial_calcs$IUCN_species_name)
-missing_shp <-as.data.frame(mam_shp)
-Amphinectomys savamis
+missing_shp <-as.data.frame(mam_shp) #8 species missing
