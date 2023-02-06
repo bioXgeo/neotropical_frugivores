@@ -22,9 +22,9 @@ library(exactextractr)
 
 #Read in all range maps from IUCN (2022)
 mam_shp <- st_read("C:/Users/bgers/Desktop/MAMMALS_TERRESTRIAL_ONLY/MAMMALS_TERRESTRIAL_ONLY.shp")
-bird_shp <-st_read("C:/Users/bgers/Desktop/frugivoria_range/BOTW_subset.shp")
 
-#read in all range maps for BirdLife International (2022)
+#read in all range maps for BirdLife International (2022) - subsetted to species of interest in MSU's HPC
+bird_shp <-st_read("C:/Users/bgers/Desktop/frugivoria_range/BOTW_subset.shp")
 
 
 #Read in  Frugivoria databases
