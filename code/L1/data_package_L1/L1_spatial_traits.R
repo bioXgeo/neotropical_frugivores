@@ -41,7 +41,6 @@ scientific_name_m<- mam %>%
 scientific_name_b<- bird %>%
   select(IUCN_species_name)
 
-## MAMMALS
 # Rename sci_name column to match 
 colnames(mam_shp)[2] <- "IUCN_species_name"
 colnames(bird_shp)[2] <- "IUCN_species_name"
