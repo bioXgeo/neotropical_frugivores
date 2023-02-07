@@ -55,7 +55,7 @@ colnames(mam_shp)[2] <- "IUCN_species_name"
 frug_mam <- mam_shp %>% filter(IUCN_species_name %in% scientific_name_m$IUCN_species_name)
 frug_bird <- bird_shp
 
-# Remove all shapefiles that have a presence code above 3 (this removes parts of the range where the species is extinct or likely extinct)
+# Remove all shapefiles that have a presence code above 3 (this removes parts of the range where the species is extinct or likely extinct; see spatial traits metadata for all codes)
 frug_mam_rm <- frug_mam[!frug_mam$presence >3,]
 frug_bird_rm <- frug_bird[!frug_bird$presenc >3,]
 
