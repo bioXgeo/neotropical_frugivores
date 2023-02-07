@@ -13,7 +13,7 @@
 
 #Dependencies: Requires running of L1_BOTW_processing.R prior to this script
 
-#Data Input: Frugivoria_bird_database_2023.csv, Frugivoria_mammal_database_2023.csv, CHELSA Bioclim 1, CHELSA Bioclim 12, Human Footprint Index years 2010 & 2020.
+#Data Input: Frugivoria_bird_database_2023.csv, Frugivoria_mammal_database_2023.csv, CHELSA Bioclim 1, CHELSA Bioclim 12, Human Footprint Index years 2010 & 2020, IUCN mammal range shapefile, BOTW bird range shapefile (pre-processed)
 
 #Data Output: Frugivoria_bird_database_2023.csv, Frugivoria_mammal_database_2023.csv with added range based traits.
 
