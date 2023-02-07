@@ -12,7 +12,7 @@
 
 #Data Output: Frugivoria_bird_database_2023.csv, Frugivoria_mammal_database_2023.csv with added range based traits.
 
-#Date: 1/31/23
+#Date: 2/5/23
 
 #Load libraries
 library(sf)
@@ -70,7 +70,7 @@ frug_bird_spat <- as(all_bird_polygon, 'Spatial')
 mean_temp_range <- raster("C:/Users/bgers/Desktop/frugivoria_range/CHELSA_bio1_1981-2010_V.2.1.tif")
 mean_precip_range <-  raster("C:/Users/bgers/Desktop/frugivoria_range/CHELSA_bio12_1981-2010_V.2.1.tif")
 
-#Load human footprint data from WCS (already resampled to match CHELSA; see commented out code below to run this part)
+# Load human footprint data from WCS (already resampled to match CHELSA; see commented out code below to run this part)
 human_fp_range_2020 <- raster("C:/Users/bgers/Desktop/frugivoria_range/human_fp_range_2020_p.tif")
 human_fp_range_2010 <- raster("C:/Users/bgers/Desktop/frugivoria_range/human_fp_range_2010_p.tif")
 
@@ -89,7 +89,7 @@ env <- stack(mean_temp_range,mean_precip_range, human_fp_range_2010,human_fp_ran
 mean_variables_m <- exact_extract(env, frug_mam_spat, fun=c("sum","count"), append_cols="IUCN_species_name", coverage_area=T)
 mean_variables_b <- exact_extract(env, frug_bird_spat, fun=c("sum","count"), append_cols="IUCN_species_name", coverage_area=T)
 
-#Group all polygons by IUCN_species_name, which allows sums to be calculated for each species; only want one value for each species)
+# Group all polygons by IUCN_species_name, which allows sums to be calculated for each species; only want one value for each species)
 #mammals
 variable_sums_m <- mean_variables_m %>% group_by(IUCN_species_name) %>% 
   summarise(mean_CHELSA_bio1_1981.2010_V.2.1=sum(sum.CHELSA_bio1_1981.2010_V.2.1),
@@ -145,12 +145,12 @@ human_footprint_means_b <-variable_sums_b %>%
     funs(. / count.human_fp_range_2010_p)
   )
 
-#remove unnecessary columns
+# remove unnecessary columns
 human_footprint_means_m <- human_footprint_means_m[,c("IUCN_species_name","mean_human_fp_range_2010_p", "mean_human_fp_range_2020_p")]
 human_footprint_means_b <- human_footprint_means_b[,c("IUCN_species_name","mean_human_fp_range_2010_p", "mean_human_fp_range_2020_p")]
 
 
-#merge climate and footprint data together
+# merge climate and footprint data together
 env_calculation_means_m <- merge(clim_means_m, human_footprint_means_m, by="IUCN_species_name")
 env_calculation_means_b <- merge(clim_means_b, human_footprint_means_b, by="IUCN_species_name")
 
@@ -169,7 +169,7 @@ write.csv(env_calculation_means_b, file="mean_env_bird.csv")
 ##Calculating range sizes
 #known and inferred presence
 
-#calculate inferred range size (is in km2)
+# calculate inferred range size (is in km2)
 all_mam_polygon$inferred_range_sqkm <- st_area(st_transform(all_mam_polygon, 4326))/(1000*1000) #Take care of units
 
 table(sf::st_is_valid(all_bird_polygon))
@@ -205,7 +205,7 @@ all_bird_polygon_po <-st_cast(frug_bird_pres_only, "MULTIPOLYGON") %>% st_cast("
 # Some bird ranges are not valid and spatial metrics can't be calculated. Remove those ranges
 all_bird_polygon_po_e <-all_bird_polygon_po[sf::st_is_valid(all_bird_polygon_po),]
 
-#Calculate range size of observed range
+# Calculate range size of observed range
 all_mam_polygon_po$observed_range_sqkm <- st_area(st_transform(all_mam_polygon_po, 4326))/(1000*1000) #Take care of units)
 all_bird_polygon_po_e$observed_range_sqkm <- st_area(st_transform(all_bird_polygon_po_e, 4326))/(1000*1000) #Take care of units)
 
@@ -232,7 +232,7 @@ write.csv(final_spatial_calcs_m, file="final_spatial_calculations_mammals.csv")
 final_spatial_calcs_b <- merge(env_calculation_means_b, final_range_data_b, by="IUCN_species_name", all=T)
 write.csv(final_spatial_calcs_b, file="final_spatial_calculations_birds.csv")
 
-#how many species missing spatial data
+# How many species missing spatial data
 missing_mam <- mam %>% filter(!IUCN_species_name %in% final_spatial_calcs_m$IUCN_species_name)
 
 missing_bird <- bird %>% filter(!IUCN_species_name %in% final_spatial_calcs_b$IUCN_species_name) #5 birds without spatial data
