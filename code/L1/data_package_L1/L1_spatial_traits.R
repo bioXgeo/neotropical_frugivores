@@ -95,7 +95,7 @@ env <- stack(mean_temp_range,mean_precip_range, human_fp_range_2010,human_fp_ran
 mean_variables_m <- exact_extract(env, frug_mam_spat, fun=c("sum","count"), append_cols="IUCN_species_name", coverage_area=T)
 mean_variables_b <- exact_extract(env, frug_bird_spat, fun=c("sum","count"), append_cols="IUCN_species_name", coverage_area=T)
 
-# Group all polygons by IUCN_species_name, which allows sums to be calculated for each species; only want one value for each species)
+# Group all polygons by IUCN_species_name, which allows sums to be calculated for each species; only want one value for each species
 #mammals
 variable_sums_m <- mean_variables_m %>% group_by(IUCN_species_name) %>% 
   summarise(mean_CHELSA_bio1_1981.2010_V.2.1=sum(sum.CHELSA_bio1_1981.2010_V.2.1),
@@ -212,8 +212,8 @@ all_bird_polygon_po <-st_cast(frug_bird_pres_only, "MULTIPOLYGON") %>% st_cast("
 all_bird_polygon_po_e <-all_bird_polygon_po[sf::st_is_valid(all_bird_polygon_po),]
 
 # Calculate range size of observed range
-all_mam_polygon_po$observed_range_sqkm <- st_area(st_transform(all_mam_polygon_po, 4326))/(1000*1000) #Take care of units)
-all_bird_polygon_po_e$observed_range_sqkm <- st_area(st_transform(all_bird_polygon_po_e, 4326))/(1000*1000) #Take care of units)
+all_mam_polygon_po$observed_range_sqkm <- st_area(st_transform(all_mam_polygon_po, 4326))/(1000*1000) #Take care of units
+all_bird_polygon_po_e$observed_range_sqkm <- st_area(st_transform(all_bird_polygon_po_e, 4326))/(1000*1000) #Take care of units
 
 # Group by species and add up range sizes (this takes a while to run with large datasets. Grab a few cups of coffee)
 all_mam_observed_range <-all_mam_polygon_po %>% group_by(IUCN_species_name) %>% 
