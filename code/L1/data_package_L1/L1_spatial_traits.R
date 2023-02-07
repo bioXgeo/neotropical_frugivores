@@ -89,7 +89,9 @@ human_fp_range_2010 <- raster("C:/Users/bgers/Desktop/frugivoria_range/human_fp_
 # Stack all environmental variables
 env <- stack(mean_temp_range,mean_precip_range, human_fp_range_2010,human_fp_range_2020)
 
-# Extract values of each variable over the range. Here, we are summing all the values within the species range and counting the number of cells in each range for later calculation of mean. This helps overcome the issue where some species have multiple polygons. Will later add values of each individual polygon together. Do not use "extract" function in raster package here because it runs too slow.
+# Extract values of each variable over the range. Here, we are summing all the values within the species range and counting the number of cells in each range for later calculation of mean.
+# This helps overcome the issue where some species have multiple polygons. Will later add values of each individual polygon together. 
+# Note: Do not use "extract" function in raster package here because it runs too slow.
 mean_variables_m <- exact_extract(env, frug_mam_spat, fun=c("sum","count"), append_cols="IUCN_species_name", coverage_area=T)
 mean_variables_b <- exact_extract(env, frug_bird_spat, fun=c("sum","count"), append_cols="IUCN_species_name", coverage_area=T)
 
