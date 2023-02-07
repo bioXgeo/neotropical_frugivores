@@ -11,6 +11,8 @@
 # and average human footprint index. Both temperature and precipitation data are based on the ERA Interim Reanalysis (CHELSA dataset; https://chelsa-climate.org/). 
 # The human footprint index was sourced from the Wildlife Conservation Society (https://wcshumanfootprint.org/)
 
+#Dependencies: Requires running of L1_BOTW_processing.R prior to this script
+
 #Data Input: Frugivoria_bird_database_2023.csv, Frugivoria_mammal_database_2023.csv, CHELSA Bioclim 1, CHELSA Bioclim 12, Human Footprint Index years 2010 & 2020.
 
 #Data Output: Frugivoria_bird_database_2023.csv, Frugivoria_mammal_database_2023.csv with added range based traits.
@@ -45,9 +47,8 @@ scientific_name_m<- mam %>%
 scientific_name_b<- bird %>%
   select(IUCN_species_name)
 
-# Rename sci_name column to match 
+# Rename sci_name column of range maps to match species list; this is already done for birds on HPC
 colnames(mam_shp)[2] <- "IUCN_species_name"
-colnames(bird_shp)[2] <- "IUCN_species_name"
 
 
 # Filter the mammal shapefile so that only species in the Frugivoria database remain; this was already done for birds on the HPC
