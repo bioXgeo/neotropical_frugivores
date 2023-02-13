@@ -224,8 +224,8 @@ all_bird_observed_range <-all_bird_polygon_po_e %>% group_by(IUCN_species_name) 
 
 # Merge range data and remove irrelevant columns
 final_range_data_m <- merge(all_mam_observed_range,all_mam_inferred_range, by="IUCN_species_name")
-final_range_data$geometry.x <- NULL
-final_range_data$geometry.y<- NULL
+final_range_data_m$geometry.x <- NULL
+final_range_data_m$geometry.y<- NULL
 
 final_range_data_b <- merge(all_bird_observed_range,all_bird_inferred_range, by="IUCN_species_name")
 final_range_data_b$geometry.x <- NULL
