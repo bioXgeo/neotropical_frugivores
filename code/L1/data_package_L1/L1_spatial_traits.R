@@ -26,18 +26,18 @@ library(dplyr)
 library(exactextractr)
 
 # Read in all range maps from IUCN (2022)
-mam_shp <- st_read("C:/Users/bgers/Desktop/MAMMALS_TERRESTRIAL_ONLY/MAMMALS_TERRESTRIAL_ONLY.shp")
+mam_shp <- st_read("INSERT PATH")
 
 # Read in all range maps for BirdLife International (2022) - subsetted to species of interest in MSU's HPC
-bird_shp <-st_read("C:/Users/bgers/Desktop/frugivoria_range/BOTW_subset.shp")
+bird_shp <-st_read("INSERT PATH")
 
 
 ## Read in Frugivoria databases
-# Read in bird database
-bird <- read.csv("G:/Shared drives/SpaCE_Lab_neotropical_frugivores/Manuscripts/Database_Manuscript/Database_paper/EDI_resubmission_2023/databases_2023/Frugivoria_bird_database_2023.csv")
+# Read in bird database constructed previously
+bird <- read.csv("INSERT PATH")
 
-# Read in mammal database
-mam <-read.csv("G:/Shared drives/SpaCE_Lab_neotropical_frugivores/Manuscripts/Database_Manuscript/Database_paper/EDI_resubmission_2023/databases_2023/Frugivoria_mammal_database_2023_complete.csv")
+# Read in mammal database constructed previously
+mam <-read.csv("INSERT PATH")
 
 
 # Subset mammal and bird databases so that we have a list of their scientific names
@@ -52,14 +52,14 @@ colnames(mam_shp)[2] <- "IUCN_species_name"
 
 
 # Filter the mammal shapefile so that only species in the Frugivoria database remain; this was already done for birds on the HPC
-frug_mam <- mam_shp %>% filter(IUCN_species_name %in% scientific_name_m$IUCN_species_name)
+frug_mam <- mam_shp %>% filter(IUCN_species_name %in% mam_shp$IUCN_species_name)
 frug_bird <- bird_shp
 
 # Remove all shapefiles that have a presence code above 3 (this removes parts of the range where the species is extinct or likely extinct; see spatial traits metadata for all codes)
 frug_mam_rm <- frug_mam[!frug_mam$presence >3,]
 frug_bird_rm <- frug_bird[!frug_bird$presenc >3,]
 
-# Remove Ursus americanus because it's causing issues
+# Remove Ursus americanus because range error "invalid"
 all_mam_polygon <-all_mam_polygon %>%  filter(!IUCN_species_name=='Ursus americanus')
 
 # Separates the multiple polygons per species into individual polygons, which will help calculations down the line
@@ -71,12 +71,12 @@ frug_mam_spat <- as(all_mam_polygon, 'Spatial')
 frug_bird_spat <- as(all_bird_polygon, 'Spatial')
 
 # Load Bio1 (mean annual temp) and Bio12 (mean annual precipitation) (Bioclim variables from CHELSA dataset)
-mean_temp_range <- raster("C:/Users/bgers/Desktop/frugivoria_range/CHELSA_bio1_1981-2010_V.2.1.tif")
-mean_precip_range <-  raster("C:/Users/bgers/Desktop/frugivoria_range/CHELSA_bio12_1981-2010_V.2.1.tif")
+mean_temp_range <- raster("INSERT PATH")
+mean_precip_range <-  raster("INSERT PATH")
 
 # Load human footprint data from WCS (already resampled to match CHELSA; see commented out code below to run this part)
-human_fp_range_2020 <- raster("C:/Users/bgers/Desktop/frugivoria_range/human_fp_range_2020_p.tif")
-human_fp_range_2010 <- raster("C:/Users/bgers/Desktop/frugivoria_range/human_fp_range_2010_p.tif")
+human_fp_range_2020 <- raster("INSERT PATH")
+human_fp_range_2010 <- raster("INSERT PATH")
 
 #Resample human_fp to match that of climate data
 #human_fp_range_2020 <- resample(human_fp_range_2020,mean_temp_range,method="bilinear")
@@ -242,3 +242,11 @@ write.csv(final_spatial_calcs_b, file="final_spatial_calculations_birds.csv")
 missing_mam <- mam %>% filter(!IUCN_species_name %in% final_spatial_calcs_m$IUCN_species_name)
 
 missing_bird <- bird %>% filter(!IUCN_species_name %in% final_spatial_calcs_b$IUCN_species_name) #5 birds without spatial data
+
+# Merge spatial datasets with final database
+full_mam <- merge(mam, final_spatial_calcs_m, by="IUCN_species_name", all.x=T)
+full_bird <- merge(bird, final_spatial_calcs_b, by="IUCN_species_name", all.x=T)
+
+#overcomes excel issue where it doesn't write into UFT 8
+write.csv(full_mam, file="Frugivoria_mammal_database_2023_full.csv")
+write.csv(full_bird, file="Frugivoria_bird_database_2023_full.csv")
