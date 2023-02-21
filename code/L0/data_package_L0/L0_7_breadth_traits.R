@@ -10,10 +10,11 @@
 # The diet breadth trait was derived from % contribution of species diets (e.g., "diet_inv_e", "diet_vend_e", "diet_vect_e", etc.) based on traits from the EltonTraits dataset. 
 # Diet breadth here is defined as the number of diet categories consumed, with any category with a % value greater than 0 being counted. 
 # Habitat breadth was derived from the number of habitat types listed for each species in their formal IUCN assessment.
+# Need to generate and IUCN Redlist token to be able to use this code (https://apiv3.iucnredlist.org/api/v3/token)
 
 #Data Input: Frugivoria_bird_database_2023.csv, Frugivoria_mammal_database_2023.csv
 
-#Data Output: Frugivoria_bird_database_2023.csv, Frugivoria_mammal_database_2023.csv with added traits.
+#Data Output: Frugivoria_bird_database_2023_full.csv, Frugivoria_mammal_database_2023_full.csv with added traits.
 
 #Date: 1/24/23
 
@@ -65,12 +66,12 @@ scientific_name_b<- bird %>%
 scientific_names <- rbind(scientific_name_m, scientific_name_b)
 
 
-#Divide into groups of 600. IUCN's API times out after too many species - noted in package description under "rate limiting".
+#Divide into groups of 600. IUCN's API times out after too many species - noted in package description under "rate limiting". Need to obtain a redlist API key (https://apiv3.iucnredlist.org/api/v3/token).
 
 all.species.habitat <- data.frame()
 for(i in 1:691){
   species.i <- scientific_names[i,"IUCN_species_name"]
-  IUCN_habitat.n <- rl_habitats(species.i, key='3b3db1c753a7cad0616e16146363ec88eead97d185cb3304070d7343123516fd')
+  IUCN_habitat.n <- rl_habitats(species.i, key='INSERT KEY')
   IUCN_habitat <- as.data.frame(IUCN_habitat.n$result)
   IUCN_habitat$species <- IUCN_habitat.n$name
   all.species.habitat= rbind(all.species.habitat, IUCN_habitat)
@@ -79,7 +80,7 @@ for(i in 1:691){
 all.species.habitat.2 <- data.frame()
 for(i in 692:1292){
   species.i <- scientific_names[i,"IUCN_species_name"]
-  IUCN_habitat.n <- rl_habitats(species.i, key='3b3db1c753a7cad0616e16146363ec88eead97d185cb3304070d7343123516fd')
+  IUCN_habitat.n <- rl_habitats(species.i, key='INSERT KEY')
   IUCN_habitat <- as.data.frame(IUCN_habitat.n$result)
   IUCN_habitat$species <- IUCN_habitat.n$name
   all.species.habitat.2= rbind(all.species.habitat.2, IUCN_habitat)
@@ -88,7 +89,7 @@ for(i in 692:1292){
 all.species.habitat.3 <- data.frame()
 for(i in 1293:1746){
   species.i <- scientific_names[i,"IUCN_species_name"]
-  IUCN_habitat.n <- rl_habitats(species.i, key='3b3db1c753a7cad0616e16146363ec88eead97d185cb3304070d7343123516fd')
+  IUCN_habitat.n <- rl_habitats(species.i, key='INSERT KEY')
   IUCN_habitat <- as.data.frame(IUCN_habitat.n$result)
   IUCN_habitat$species <- IUCN_habitat.n$name
   all.species.habitat.3= rbind(all.species.habitat.3, IUCN_habitat)
@@ -123,5 +124,5 @@ full_bird <- merge(bird, habitat_breadth_df, by= "IUCN_species_name", all.x=T)
 setwd("INSERT FILE PATH")
 
 # Write full database with breadth traits to a file
-write.csv(full_mam, "Frugivoria_mammal_database_2023.csv")
-write.csv(full_bird, "Frugivoria_bird_database_2023.csv")
+write.csv(full_mam, "Frugivoria_mammal_database_2023_full.csv")
+write.csv(full_bird, "Frugivoria_bird_database_2023_full.csv")

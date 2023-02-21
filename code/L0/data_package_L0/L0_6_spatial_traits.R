@@ -13,7 +13,7 @@
 
 #Dependencies: Requires running of L1_BOTW_processing.R prior to this script
 
-#Data Input: Frugivoria_bird_database_2023.csv, Frugivoria_mammal_database_2023.csv, CHELSA Bioclim 1, CHELSA Bioclim 12, Human Footprint Index years 2010 & 2020, IUCN mammal range shapefile, BOTW bird range shapefile (pre-processed)
+#Data Input: final_mammal_dataset.csv, final_bird_dataset.csv, CHELSA Bioclim 1, CHELSA Bioclim 12, Human Footprint Index years 2010 & 2020, IUCN mammal range shapefile, BOTW bird range shapefile (pre-processed)
 
 #Data Output: Frugivoria_bird_database_2023.csv, Frugivoria_mammal_database_2023.csv with added range based traits.
 
@@ -100,23 +100,23 @@ mean_variables_b <- exact_extract(env, frug_bird_spat, fun=c("sum","count"), app
 variable_sums_m <- mean_variables_m %>% group_by(IUCN_species_name) %>% 
   summarise(mean_CHELSA_bio1_1981.2010_V.2.1=sum(sum.CHELSA_bio1_1981.2010_V.2.1),
             mean_CHELSA_bio12_1981.2010_V.2.1= sum(sum.CHELSA_bio12_1981.2010_V.2.1),
-            mean_human_fp_range_2010_p= sum(sum.human_fp_range_2010_p),
-            mean_human_fp_range_2020_p= sum(sum.human_fp_range_2020_p),
+            mean_human_fp_range_2010= sum(sum.human_fp_range_2010),
+            mean_human_fp_range_2020= sum(sum.human_fp_range_2020),
             count.CHELSA_bio1_1981.2010_V.2.1=sum(count.CHELSA_bio1_1981.2010_V.2.1),
             count.CHELSA_bio12_1981.2010_V.2.1=sum(count.CHELSA_bio1_1981.2010_V.2.1),
-            count.human_fp_range_2010_p=sum(count.human_fp_range_2010_p),
-            count.human_fp_range_2020_p=sum(count.human_fp_range_2010_p)) %>% as.data.frame()
+            count.human_fp_range_2010=sum(count.human_fp_range_2010),
+            count.human_fp_range_2020=sum(count.human_fp_range_2010)) %>% as.data.frame()
 
 #birds
 variable_sums_b <- mean_variables_b %>% group_by(IUCN_species_name) %>% 
   summarise(mean_CHELSA_bio1_1981.2010_V.2.1=sum(sum.CHELSA_bio1_1981.2010_V.2.1),
             mean_CHELSA_bio12_1981.2010_V.2.1= sum(sum.CHELSA_bio12_1981.2010_V.2.1),
-            mean_human_fp_range_2010_p= sum(sum.human_fp_range_2010_p),
-            mean_human_fp_range_2020_p= sum(sum.human_fp_range_2020_p),
+            mean_human_fp_range_2010= sum(sum.human_fp_range_2010),
+            mean_human_fp_range_2020= sum(sum.human_fp_range_2020),
             count.CHELSA_bio1_1981.2010_V.2.1=sum(count.CHELSA_bio1_1981.2010_V.2.1),
             count.CHELSA_bio12_1981.2010_V.2.1=sum(count.CHELSA_bio1_1981.2010_V.2.1),
-            count.human_fp_range_2010_p=sum(count.human_fp_range_2010_p),
-            count.human_fp_range_2020_p=sum(count.human_fp_range_2010_p)) %>% as.data.frame()
+            count.human_fp_range_2010=sum(count.human_fp_range_2010),
+            count.human_fp_range_2020=sum(count.human_fp_range_2010)) %>% as.data.frame()
 
 
 # Takes two climate variables and divides them by the number of cells in the range (# cells are variable specific due to NAs)
@@ -140,20 +140,20 @@ clim_means_b <- clim_means_b[,c("IUCN_species_name","mean_CHELSA_bio1_1981.2010_
 # mammals
 human_footprint_means_m <-variable_sums_m %>%
   mutate_at(
-    c("mean_human_fp_range_2010_p", "mean_human_fp_range_2020_p"),
+    c("mean_human_fp_range_2010", "mean_human_fp_range_2020"),
     funs(. / count.human_fp_range_2010_p)
   )
 
 # birds
 human_footprint_means_b <-variable_sums_b %>%
   mutate_at(
-    c("mean_human_fp_range_2010_p", "mean_human_fp_range_2020_p"),
+    c("mean_human_fp_range_2010", "mean_human_fp_range_2020"),
     funs(. / count.human_fp_range_2010_p)
   )
 
 # remove unnecessary columns
-human_footprint_means_m <- human_footprint_means_m[,c("IUCN_species_name","mean_human_fp_range_2010_p", "mean_human_fp_range_2020_p")]
-human_footprint_means_b <- human_footprint_means_b[,c("IUCN_species_name","mean_human_fp_range_2010_p", "mean_human_fp_range_2020_p")]
+human_footprint_means_m <- human_footprint_means_m[,c("IUCN_species_name","mean_human_fp_range_2010", "mean_human_fp_range_2020")]
+human_footprint_means_b <- human_footprint_means_b[,c("IUCN_species_name","mean_human_fp_range_2010", "mean_human_fp_range_2020")]
 
 
 # merge climate and footprint data together
@@ -166,10 +166,10 @@ write.csv(env_calculation_means_m, file="mean_env_mammal.csv")
 write.csv(env_calculation_means_b, file="mean_env_bird.csv")
 
 # Percent change in human impact since 2010
-env_calculation_means_m$percent_change_hf_2010_2020 <- apply(env_calculation_means_m[,c('mean_human_fp_range_2020_p', 'mean_human_fp_range_2010_p')], 1, function(x) { (x[1]-x[2])/x[2] * 100 } )
+env_calculation_means_m$percent_change_hf_2010_2020 <- apply(env_calculation_means_m[,c('mean_human_fp_range_2020', 'mean_human_fp_range_2010')], 1, function(x) { (x[1]-x[2])/x[2] * 100 } )
 write.csv(env_calculation_means_m, file="mean_env_mammal.csv")
 
-env_calculation_means_b$percent_change_hf_2010_2020 <- apply(env_calculation_means_b[,c('mean_human_fp_range_2020_p', 'mean_human_fp_range_2010_p')], 1, function(x) { (x[1]-x[2])/x[2] * 100 } )
+env_calculation_means_b$percent_change_hf_2010_2020 <- apply(env_calculation_means_b[,c('mean_human_fp_range_2020', 'mean_human_fp_range_2010')], 1, function(x) { (x[1]-x[2])/x[2] * 100 } )
 write.csv(env_calculation_means_b, file="mean_env_bird.csv")
 
 ##Calculating range sizes
@@ -248,5 +248,5 @@ full_mam <- merge(mam, final_spatial_calcs_m, by="IUCN_species_name", all.x=T)
 full_bird <- merge(bird, final_spatial_calcs_b, by="IUCN_species_name", all.x=T)
 
 #overcomes excel issue where it doesn't write into UFT 8
-write.csv(full_mam, file="Frugivoria_mammal_database_2023_full.csv")
-write.csv(full_bird, file="Frugivoria_bird_database_2023_full.csv")
+write.csv(full_mam, file="Frugivoria_mammal_database_2023.csv")
+write.csv(full_bird, file="Frugivoria_bird_database_2023.csv")

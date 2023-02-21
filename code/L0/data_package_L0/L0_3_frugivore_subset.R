@@ -21,7 +21,15 @@
 mam_trait_all_final <- read.csv("INSERT PATH HERE")
 bird_trait_all_final <-read.csv("INSERT PATH HERE")
 
-# Subset by frugivorous species
+# Subset by frugivorous mammal species
 mam_frug <- mam_trait_all_final[mam_trait_all_final$Diet.Fruit>=10,] 
 
+
+# Subset by frugivorous bird species
+bird_frug <- bird_trait_all_final[bird_trait_all_final$Diet.Fruit>=10,] 
+
+# Write frugivore subsets to a file
+setwd("INSERT PATH HERE")
+write.csv(mam_frug, "mam_frug.csv")
+write.csv(bird_frug, "final_bird_dataset.csv")
 

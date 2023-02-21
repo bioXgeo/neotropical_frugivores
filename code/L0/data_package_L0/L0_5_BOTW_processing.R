@@ -8,7 +8,7 @@
 
 #Overview: Loads and processes the Birds of the World (BOTW) geodatabase from BirdLife International. This dataset has to be requested.
 
-#Data Input: BOTW.gdb 
+#Data Input: BOTW.gdb; final_bird_dataset.csv
 
 #Data Output: BOTW_subset.shp
 
@@ -20,13 +20,13 @@ library(sf)
 library(dplyr)
 
 # Set working directory to folder where the BOTW geodatabase is stored
-setwd("/mnt/ufs18/rs-008/plz-lab/DATA/neotropical_frugivores/")
+setwd("INSERT PATH HERE")
 
 # Read in the proper layer (this takes considerable time; approximately an hour or more)
 all_botw <- st_read("BOTW.gdb", layer = "All_Species")   
 
 # Read in completed bird database (or any species list to use for subsetting)
-bird <-read.csv("/mnt/ufs18/home-048/gerstn11/IUCN_shape/databases_2023/Frugivoria_bird_database_2023.csv")
+bird <-read.csv("INSERT PATH HERE") #final_bird_dataset.csv from L0_3_frugivore_subset.R
 
 # Extract species name column from bird database
 scientific_name_b<- bird %>%

@@ -10,28 +10,27 @@
 
 #Data Input: PanTHERIA dataset (Jones et al. 2009), mam_frug.csv
 
+#Requires: "L0_3_frugivore_subset.R" should be run first; mam_frug.csv
+
 #Data Output: list of species that did not merge correctly - mamm_pantheria_na_original.csv; final mammal dataset with PanTHERIA inclided - final_mammal_dataset.csv
 
 #Date: Oct 10th, 2020
 
 #Modified: Aug 27th, 2022
 
-#Requires: "L0_3_frugivore_subset.R" should be run first.
 
-
-#load library
+# Load library
 library(dplyr)
 
 
 # Read in PanTHERIA dataset (can be found here: https://esapubs.org/archive/ecol/E090/184/)
-
-pantheria <- read.csv("C:/Users/bgers/Desktop/MSU/Zarnetske_lab/Mammals_Birds_all_data/Trait_Database_2019/PanTHERIA_traits.csv")
+pantheria <- read.csv("INSERT PATH HERE")
 
 # Change column name to match that of mammal database species names (IUCN_species_names)
 colnames(pantheria)[which(names(pantheria) == "MSW05_Binomial")] <- "IUCN_species_name"
 
 # Read in database from previous step (L0:3_frugivore_subset; mam_frug)
-mam_frug <- read.csv("G:/Shared drives/SpaCE_Lab_neotropical_frugivores/Manuscripts/Database_Manuscript/Database_paper/EDI_resubmission_2023/databases_2023/Frugivoria_mammal_database_2023_complete.csv")
+mam_frug <- read.csv("INSERT PATH HERE")
 
 # Merge the dataset together
 mamm_pantheria_original <- merge.data.frame(mam_frug, pantheria, by= "IUCN_species_name", all.x=TRUE)
@@ -61,5 +60,5 @@ full_subset_NA_original <- merge.data.frame(pantheria_rm_na_original, mamm_panth
 
 # Merge original dataset with NA's removed with this final dataset
 final_mammal_dataset <- rbind(full_subset_NA_original, mamm_pantheria_original_no_NA)
-write.csv(final_mammal_dataset, "final_mammal_dataset_2023.csv")
+write.csv(final_mammal_dataset, "final_mammal_dataset.csv")
 
