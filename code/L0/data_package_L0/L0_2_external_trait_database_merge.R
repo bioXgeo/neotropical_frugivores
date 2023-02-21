@@ -14,7 +14,7 @@
 
 #Requires: "L0_1_IUCN_species_list_subset" to be run first
 
-#Notes: Harmonization process was done manually and is noted in the code.
+#Notes: Harmonization process in some instances was done manually and is noted in the code.
 
 #Date: Oct 10th, 2020
 

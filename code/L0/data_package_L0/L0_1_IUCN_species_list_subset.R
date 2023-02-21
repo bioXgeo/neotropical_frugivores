@@ -8,7 +8,7 @@
 
 #Overview: This script obtains the species list of birds and mammals for relevant countries from the IUCN and subsets by species habitat.
 
-#Data output: IUCN species lists for countries of interest in tropical/subtroptical moist montane and tropical/subtropical moist lowland forest - mam_IUCN.csv, bird_IUCN.csv
+#Data output: IUCN species lists for countries of interest in tropical/subtropical moist montane and tropical/subtropical moist lowland forest - mam_IUCN.csv, bird_IUCN.csv
 
 #Date: Oct 10th, 2020
 

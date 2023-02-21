@@ -1,4 +1,4 @@
-#Title: Montane frugivore subset
+#Title: Frugivore subset
 
 #Project: Frugivoria
 
@@ -10,7 +10,7 @@
 
 #Data output: bird_frug.csv, mam_frug.csv
 
-#Overview: Subset IUCN/EltonTraits dataset to only those species eating 10% fruit or greater. Further subset the dataset by those existing in tropical moist montaneforest only.
+#Overview: Subset IUCN/EltonTraits dataset to only those species eating 10% fruit or greater.
 
 #Date: Oct 10th, 2020
 

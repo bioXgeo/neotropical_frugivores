@@ -11,13 +11,13 @@
 # and average human footprint index. Both temperature and precipitation data are based on the ERA Interim Reanalysis (CHELSA dataset; https://chelsa-climate.org/). 
 # The human footprint index was sourced from the Wildlife Conservation Society (https://wcshumanfootprint.org/)
 
-#Dependencies: Requires running of L1_BOTW_processing.R prior to this script
+#Requires: Must run L1_BOTW_processing.R prior to this script.
 
 #Data Input: final_mammal_dataset.csv, final_bird_dataset.csv, CHELSA Bioclim 1, CHELSA Bioclim 12, Human Footprint Index years 2010 & 2020, IUCN mammal range shapefile, BOTW bird range shapefile (pre-processed)
 
 #Data Output: Frugivoria_bird_database_2023.csv, Frugivoria_mammal_database_2023.csv with added range based traits.
 
-#Date: 2/5/23
+#Date: February 5th, 2023
 
 #Load libraries
 library(sf)

@@ -6,19 +6,17 @@
 
 #Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
-#Overview: Derives breadth traits from different data sources and append to full database for mammals and birds. 
+#Overview: Derives breadth traits from different data sources and appends to full database for mammals and birds. 
 # The diet breadth trait was derived from % contribution of species diets (e.g., "diet_inv_e", "diet_vend_e", "diet_vect_e", etc.) based on traits from the EltonTraits dataset. 
 # Diet breadth here is defined as the number of diet categories consumed, with any category with a % value greater than 0 being counted. 
 # Habitat breadth was derived from the number of habitat types listed for each species in their formal IUCN assessment.
-# Need to generate and IUCN Redlist token to be able to use this code (https://apiv3.iucnredlist.org/api/v3/token)
+# Note: Need to generate an IUCN Redlist token to be able to use this code (https://apiv3.iucnredlist.org/api/v3/token)
 
 #Data Input: Frugivoria_bird_database_2023.csv, Frugivoria_mammal_database_2023.csv
 
 #Data Output: Frugivoria_bird_database_2023_full.csv, Frugivoria_mammal_database_2023_full.csv with added traits.
 
-#Date: 1/24/23
-
-#By: Beth E. Gerstner
+#Date: January 24th, 2023
 
 
 #read in completed mammal database

@@ -6,13 +6,13 @@
 
 #Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
-#Overview: This script merges PanTHERIA traits into the mammal database in the same fashion as the "L0_2_external_database_merge.R" script, except for the smaller subset of mammal species.
+#Overview: This script merges PanTHERIA with the frugivorous mammal subset.
 
 #Data Input: PanTHERIA dataset (Jones et al. 2009), mam_frug.csv
 
 #Requires: "L0_3_frugivore_subset.R" should be run first; mam_frug.csv
 
-#Data Output: list of species that did not merge correctly - mamm_pantheria_na_original.csv; final mammal dataset with PanTHERIA inclided - final_mammal_dataset.csv
+#Data Output: list of species that did not merge correctly - mamm_pantheria_na_original.csv; final mammal dataset with PanTHERIA included - final_mammal_dataset.csv
 
 #Date: Oct 10th, 2020
 

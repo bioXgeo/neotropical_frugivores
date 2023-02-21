@@ -6,13 +6,13 @@
 
 #Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
-#Overview: Loads and processes the Birds of the World (BOTW) geodatabase from BirdLife International. This dataset has to be requested.
+#Overview: Loads and processes the Birds of the World (BOTW) geodatabase from BirdLife International. This dataset has to be requested (http://datazone.birdlife.org/species/requestdis).
 
 #Data Input: BOTW.gdb; final_bird_dataset.csv
 
 #Data Output: BOTW_subset.shp
 
-#Date: 2/05/23
+#Date: February 5th, 2023
 
 
 # Load packages

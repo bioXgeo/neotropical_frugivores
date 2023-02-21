@@ -6,7 +6,7 @@
 
 #Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
-#Overview: This code adds a column showing taxonomic disparities for final database. This column references differences in naming conventions between the IUCN_species_name column and the Elton_species_name column. These differences may be due to changes in taxonomy, inclusion of new species, or potential misspellings. This script also creates a subset of the final mammal and bird databases to include only select shared cross-taxa traits. This subset is meant to enhance ease of use for individuals looking to conduct cross-taxa analyses. 
+#Overview: This code adds a column showing taxonomic naming disparities between IUCN and EltonTraits for final database. This column references differences in naming conventions between the IUCN_species_name column and the Elton_species_name column. These differences may be due to changes in taxonomy, inclusion of new species, or potential misspellings. This script also creates a subset of the final mammal and bird databases to include only select shared cross-taxa traits. This subset is meant to enhance ease of use for individuals looking to conduct cross-taxa analyses. 
 
 #Data Input: Frugivoria_bird_database_2023_full.csv, Frugivoria_mammal_database_2023_full.csv
 
@@ -14,7 +14,7 @@
 
 #Requires: All LO code should be run first.
 
-#Date: Aug 27th, 2022
+#Date:  February 21st, 2023
 
 library(dplyr)
 
