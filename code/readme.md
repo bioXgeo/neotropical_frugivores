@@ -26,7 +26,13 @@ The L0 subfolder contains scripts for Level-0 (raw data) analysis, mainly pullin
 
 - L0_4_mammal_merge_pantheria: merge final dataset for mammals with PanTHERIA dataset
 
-- L0_5_database_final_edits: final additions to the database. Merge in range size calculations and add column for presence of taxonomic disparities
+- L0_5_BOTW_processing: reads in and subsets Birds of the World spatial dataset
+
+- L0_6_spatial_traits: derives range based traits from both IUCN and BirdLife International spatial databases
+
+- L0_7_breadth_traits: derives habitat and diet breadth
+
+- L0_8_database_final_edits: final additions to the database. Merge in range size calculations and add column for presence of taxonomic disparities
 
 - workflow_diagram: diagram demonstrating all steps of building the Frugivoria database
 
