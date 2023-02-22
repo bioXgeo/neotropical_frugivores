@@ -1,4 +1,4 @@
-#Title: Mammal merge pantheria
+#Title: Mammal merge PanTHERIA
 
 #Project: Frugivoria
 
