@@ -26,18 +26,18 @@ library(dplyr)
 library(exactextractr)
 
 # Read in all range maps from IUCN (2022)
-mam_shp <- st_read("INSERT PATH")
+mam_shp <- st_read("INSERT PATH HERE")
 
 # Read in all range maps for BirdLife International (2022) - subsetted to species of interest in MSU's HPC
-bird_shp <-st_read("INSERT PATH")
+bird_shp <-st_read("INSERT PATH HERE")
 
 
 ## Read in Frugivoria databases
 # Read in bird database constructed previously
-bird <- read.csv("INSERT PATH")
+bird <- read.csv("INSERT PATH HERE")
 
 # Read in mammal database constructed previously
-mam <-read.csv("INSERT PATH")
+mam <-read.csv("INSERT PATH HERE")
 
 
 # Subset mammal and bird databases so that we have a list of their scientific names
