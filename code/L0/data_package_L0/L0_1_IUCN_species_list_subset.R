@@ -225,7 +225,7 @@ all_habitat_birds <- rbind(bird_hab_1, bird_hab_2, bird_hab_3, bird_hab_4, bird_
 # write to a file to avoid re-running
 write.csv(all_habitat_birds, 'all_habitat_birds.csv')
 
-# Subset the habitat information for all species by those that are tropical montane
+# Subset the habitat information for all species by those that are tropical moist montane or tropical moist lowland
 # There will be species that overlap between the two habitat types; can condense those later on with a "habitat" column for each species where the categories are montane, lowland, and both.
 bird_habitat_montane <- all_habitat_birds[all_habitat_birds$habitat =="Forest - Subtropical/Tropical Moist Montane",]
 mam_habitat_montane <- all_habitat_mammals[all_habitat_mammals$habitat =="Forest - Subtropical/Tropical Moist Montane",]
