@@ -32,7 +32,7 @@ The L0 subfolder contains scripts for Level-0 (raw data) analysis, mainly pullin
 
 - L0_7_breadth_traits: derives habitat and diet breadth
 
-- L0_8_database_final_edits: final additions to the database. Merge in range size calculations and add column for presence of taxonomic disparities
+- L0_8_database_final_edits: adds column indicating presence of taxonomic disparities between data sources and creates subset of cross-taxa traits
 
 - workflow_diagram: diagram demonstrating all steps of building the Frugivoria database
 
