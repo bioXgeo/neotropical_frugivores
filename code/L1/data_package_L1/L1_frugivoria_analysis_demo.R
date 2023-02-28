@@ -8,7 +8,7 @@
 
 #Overview: To demonstrate ways to analyze and assess what is contained within the Frugivoria database. Uses final trait datasets that include those entered through exhaustive search of the literature and online sources. 
 
-#Data Input: Frugivoria_bird_database.csv, Frugivoria_mammal_database.csv
+#Data Input: Frugivoria_mammal_database_2023_full.csv, Frugivoria_bird_database_2023_full.csv
 
 #Data Output: trait counts, imputation counts, taxonomic stats, IUCN data deficient counts
 
@@ -363,7 +363,6 @@ length(bird[bird$IUCN_category=="DD",]) #89
 
 #Mammals
 #pantheria %
-
 pantheria_traits/all_mam_traits #55.34
 #elton %
 elton_traits_m/all_mam_traits #13.13
