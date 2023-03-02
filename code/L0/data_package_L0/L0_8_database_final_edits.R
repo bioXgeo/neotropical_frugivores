@@ -54,8 +54,8 @@ bird_subset <- bird %>% select(IUCN_species_name, common_name, family_e, genus, 
 
 #write subsets to file
 setwd("INSERT PATH HERE")
-write.csv(mam_subset, "Frugivoria_mammal_database_2023_subset.csv")
-write.csv(bird_subset, "Frugivoria_bird_database_2023_subset.csv")
+write_excel_csv(mam_subset, "Frugivoria_mammal_database_2023_subset.csv")
+write_excel_csv(bird_subset, "Frugivoria_bird_database_2023_subset.csv")
 
 
 

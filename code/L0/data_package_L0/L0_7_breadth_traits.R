@@ -7,7 +7,7 @@
 #Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
 #Overview: Derives breadth traits from different data sources and appends to full database for mammals and birds. 
-# The diet breadth trait was derived from % contribution of species diets (e.g., "diet_inv_e", "diet_vend_e", "diet_vect_e", etc.) based on traits from the EltonTraits dataset. 
+# The diet breadth trait was calculated using the Shannon Diversity index and was derived from % contribution of species diets (e.g., "diet_inv_e", "diet_vend_e", "diet_vect_e", etc.) based on traits from the EltonTraits dataset. 
 # Diet breadth here is defined as the number of diet categories consumed, with any category with a % value greater than 0 being counted. 
 # Habitat breadth was derived from the number of habitat types listed for each species in their formal IUCN assessment.
 # Note: Need to generate an IUCN Redlist token to be able to use this code (https://apiv3.iucnredlist.org/api/v3/token)
@@ -18,6 +18,8 @@
 
 #Date: January 24th, 2023
 
+#Load library
+library(vegan)
 
 #read in completed mammal database
 bird <- read.csv("INSERT DATABASE FILE PATH")
@@ -25,29 +27,27 @@ bird <- read.csv("INSERT DATABASE FILE PATH")
 #read in bird database
 mam <-read.csv("INSERT DATABASE FILE PATH")
 
+#subset mammal database to % diet traits
+new_mam <-mam[,12:21]
 
-#extract columns of interest from mammal database
-mam_sub <- mam[c("diet_inv_e", "diet_vend_e", "diet_vect_e","diet_vfish_e","diet_vunk_e" ,"diet_scav_e", "diet_nect_e","diet_seed_e","diet_plant_e",  "diet_fruit_e" )]
+#calculate Shannon Diversity index on % diet traits. Low values indicate specialization in diet. High values indicate diversity of the diet and are likely more omnivorous species.
+shannon_index_m <- diversity((new_mam), index="shannon")
 
-#count number of instances per row where % diet is greater than 0
-mam_sub$diet_breadth <- rowSums(mam_sub > 0)
+#insert diet breadth as a column
+mam$diet_breadth <- shannon_index_m
 
-#extract columns of interest from bird database
-bird_sub <- bird[c("diet_inv_e", "diet_vend_e", "diet_vect_e","diet_vfish_e","diet_vunk_e" ,"diet_scav_e", "diet_nect_e","diet_seed_e","diet_plant_e",  "diet_fruit_e" )]
 
-#count number of instances per row where % diet is greater than 0
-bird_sub$diet_breadth <- rowSums(bird_sub > 0)
+#subset bird database to % diet traits
+new_bird <- bird[,12:21]
 
-#create new diet_breadth column and insert mammal values in the new column
-mam$diet_breadth <- mam_sub$diet_breadth
+#calculate Shannon Diversity index on % diet traits. Low values indicate specialization in diet. High values indicate diversity of the diet and are likely more omnivorous species.
+shannon_index_b <- diversity((new_bird), index="shannon")
 
-#create new diet_breadth column and insert bird values in the new column
-bird$diet_breadth <-bird_sub$diet_breadth
-
+#insert diet breadth as a column
+bird$diet_breadth <- shannon_index_b
 
 #___________________________________________________________________________________________________
 # Calculate habitat breadth based on IUCN habitat data
-
 library(rredlist)
 library(dplyr)
 
