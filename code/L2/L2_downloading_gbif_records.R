@@ -29,6 +29,7 @@ library(magrittr) # for %T>% pipe
 library(rgbif) # for occ_download
 library(taxize) # for get_gbifid_
 
+# Mammals
 # Set path to mammal database.
 mammal_frug <- "INSERT PATH HERE"
 # Match the names 
