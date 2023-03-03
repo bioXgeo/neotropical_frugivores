@@ -64,14 +64,11 @@ avg_hf_2010_b <- length(which(!is.na(bird$mean_human_fp_range_2010)))
 avg_hf_2020_b <- length(which(!is.na(bird$mean_human_fp_range_2020)))
 hf_perc_change_b <- length(which(!is.na(bird$percent_change_hf_2010_2020)))
 
-
-
 # Total # of newly added traits
 new_bird_traits <-  longevity_b + habitat_special_b + gen_time_b + body_size_b + sexual_dim_b + range_1_b + range_2_b + habitat_breadth_b + diet_breadth_b +avg_precip_b + avg_temp_b + avg_hf_2010_b + avg_hf_2020_b + hf_perc_change_b #14998
 
 # Newly added geographic traits
 new_geo_traits_b <- habitat_breadth_b +avg_precip_b + avg_temp_b + avg_hf_2010_b + avg_hf_2020_b + hf_perc_change_b #6868
-
 
 # Total # of bird traits
 all_bird_traits <-  elton_traits_b + new_bird_traits #20,721
@@ -122,6 +119,9 @@ hf_perc_change_m <- length(which(!is.na(mam$percent_change_hf_2010_2020)))
 
 # All new traits added minus those within database from PanTHERIA
 new_mam_traits <- diet_categ_m + sexual_dim_m + longevity_m +home_range_m +range_1_m +range_2_m + habitat_special_m +gen_time_m +body_size_m + habitat_breadth_m + diet_breadth_m +avg_precip_m + avg_temp_m + avg_hf_2010_m + avg_hf_2020_m + hf_perc_change_m #8,709
+
+# Newly added geographic traits
+new_geo_traits_m <- habitat_breadth_m +avg_precip_m + avg_temp_m + avg_hf_2010_m + avg_hf_2020_m + hf_perc_change_m #3, 8585
 
 # Total number of traits in the database
 all_mam_traits <- new_mam_traits + pantheria_traits + elton_traits_m #27,629
@@ -199,15 +199,14 @@ mam_family_level_impute<-mam_levels%>%
 #sexual dimorphism 34
 #home range 55
 
-
 impute_mam_fam_new <-32+111+181+5+34+55  #418
 
+family_impute_m <-impute_mam_fam_new/new_mam_traits #4.8
 # total traits imputed
 total_mam_impute <-impute_mam_genus_new+impute_mam_fam_new #1207
 
 # %imputed for mammals
 total_mam_impute/new_mam_traits # 13.85% new traits imputed to family or genus
-
 
 # Bird imputations
 bird_levels <-  bird  %>% select(diet_level, for_strat_spec_level, body_mass_level_e, body_size_level, sexual_dimorphism_level, longevity_level, home_range_level, generation_time_level, habitat_level) 
@@ -243,7 +242,6 @@ bird_family_level_impute<-bird_levels%>%
 #sexual dim 1
 #diet_level 33
 
-
 #Total imputed for newly added traits to family
 impute_bird_family_new <-1+75+3+1+33 # 113
 
@@ -276,7 +274,6 @@ bird_phylo_level_impute <- bird_levels%>%
 length(bird$body_mass_level_e[bird$body_mass_level_e==0]) #134 
 # Total body mass imputes for birds 134
 
-
 #impute for bird diet
 #original imputations
 length(bird$diet_certainty_e[bird$diet_certainty_e=="D1"]) #genus level diet info, 170
@@ -290,7 +287,6 @@ length(bird$diet_level[bird$diet_level==-1]) #33
 #impute for forest strata
 length(bird$for_strat_spec_level[bird$for_strat_spec_level==0]) #140 genus or family level
 # Total forest strat imputes to genus or family 140
-
 
 ## Mammals
 # impute for EltonTraits - they include phylogenetically imputed data with a value of 2
@@ -324,7 +320,7 @@ length(mam$body_mass_level_e[mam$body_mass_level_e==2]) #9
 # Total body mass imputes 153
 
 # All imputations from EltonTraits (sums of totals above)
-all_elton_impute <-134 + (270*2) + 140 + 179 + 211 + 194 + 153 + 9 #Total Elton trait imputes 
+all_elton_impute <-134 + (270*2) + 140 + 179 + 211 + 194 + 153 + 9 #total EltonTrait imputes 
 
 ## PanTHERIA imputations
 
@@ -346,16 +342,81 @@ total_impute <- all_elton_impute + full_impute_b_m + pantheria_impute #5,418
 perc_impute_full_database <- total_impute/all_traits_b_m # 11.2%
 
 
-## IUCN Data Deficiency 
+## IUCN Metrics
+# Data Deficiency 
 #How many species in the database are data deficient
-length(mam[mam$IUCN_category=="DD",]) #144
-length(bird[bird$IUCN_category=="DD",]) #89
+dd_m_total <-nrow(mam[mam$IUCN_category=="DD",]) #88
+dd_b_total <-nrow(bird[bird$IUCN_category=="DD",]) #0
 
-#mammals with data deficiency
-144/605 #23.8
+# mammals with data deficiency
+dd_m_total/nrow(mam) #14.5%
 
-#birds with data deficiency
-89/1148 #7.75
+# birds with data deficiency
+0
+
+# montane species data deficiency
+DD_m <-nrow(mam[mam$habitat==1 & mam$IUCN_category=="DD" | mam$habitat==3 & mam$IUCN_category=="DD",]) #44
+DD_b <-nrow(bird[bird$habitat==1 & bird$IUCN_category=="DD" | bird$habitat==3 & bird$IUCN_category=="DD",]) #0
+
+# montane species critically endangered
+CR_m <-nrow(mam[mam$habitat==1 & mam$IUCN_category=="CR" | mam$habitat==3 & mam$IUCN_category=="CR",]) #15
+CR_b <-nrow(bird[bird$habitat==1 & bird$IUCN_category=="CR" | bird$habitat==3 & bird$IUCN_category=="CR",]) #9
+
+# montane species endangered
+EN_m <-nrow(mam[mam$habitat==1 & mam$IUCN_category=="EN" | mam$habitat==3 & mam$IUCN_category=="EN",]) #26
+EN_b <-nrow(bird[bird$habitat==1 & bird$IUCN_category=="EN" | bird$habitat==3 & bird$IUCN_category=="EN",]) #26
+
+# montane species vulnerable
+VU_m <-nrow(mam[mam$habitat==1 & mam$IUCN_category=="VU" | mam$habitat==3 & mam$IUCN_category=="VU",]) #33
+VU_b <-nrow(bird[bird$habitat==1 & bird$IUCN_category=="VU" | bird$habitat==3 & bird$IUCN_category=="VU",]) #58
+
+# all threatened mammals
+threatened_m <-CR_m + CR_b + EN_m + EN_b + VU_m + VU_b #167 species threatened
+
+# total number of montane species in the database
+mont_m <-nrow(mam[mam$habitat==1 | mam$habitat==3,]) #320
+mont_b<-nrow(bird[bird$habitat==1 | bird$habitat==3,]) #682
+all_montane <- mont_m + mont_b
+
+# % montane species threatened
+threatened_mont_perc <- threatened_m/all_montane #16.7% montane species threatened
+
+# % montane species data deficient
+DD_mont_perc<- DD_m/all_montane #4.4 of montane species data deficient
+
+
+# lowland species data deficiency
+DD_l_m <-nrow(mam[mam$habitat==2 & mam$IUCN_category=="DD" | mam$habitat==3 & mam$IUCN_category=="DD",]) #57
+DD_l_b <-nrow(bird[bird$habitat==2 & bird$IUCN_category=="DD" | bird$habitat==3 & bird$IUCN_category=="DD",]) #0
+
+# lowland species critically endangered
+CR_l_m <-nrow(mam[mam$habitat==2 & mam$IUCN_category=="CR" | mam$habitat==3 & mam$IUCN_category=="CR",]) #13
+CR_l_b <-nrow(bird[bird$habitat==2 & bird$IUCN_category=="CR" | bird$habitat==3 & bird$IUCN_category=="CR",]) #8
+
+# lowland species endangered
+EN_l_m <-nrow(mam[mam$habitat==2 & mam$IUCN_category=="EN" | mam$habitat==3 & mam$IUCN_category=="EN",]) #14
+EN_l_b <-nrow(bird[bird$habitat==2 & bird$IUCN_category=="EN" | bird$habitat==3 & bird$IUCN_category=="EN",]) #24
+
+# montane species vulnerable
+VU_l_m <-nrow(mam[mam$habitat==2 & mam$IUCN_category=="VU" | mam$habitat==3 & mam$IUCN_category=="VU",]) #28
+VU_l_b <-nrow(bird[bird$habitat==2 & bird$IUCN_category=="VU" | bird$habitat==3 & bird$IUCN_category=="VU",]) #47
+
+
+# total number of montane species in the database
+low_m <-nrow(mam[mam$habitat==2 | mam$habitat==3,]) #453
+low_b<-nrow(bird[bird$habitat==2 | bird$habitat==3,]) #846
+all_lowland <- low_m + low_b
+threatened_low <-CR_l_m + CR_l_b + EN_l_m + EN_l_b + VU_l_m + VU_l_b #134 species threatened
+
+# % lowland species threatened
+threatened_low_perc <- threatened_low/all_lowland #10.3% lowland species threatened
+
+# % lowland species data deficient
+DD_low_perc<- DD_l_m/all_lowland #4.38 of lowland species data deficient
+
+# %threatened for all species
+all_threatened_perc <-(threatened_low + threatened_m)/(nrow(mam)+nrow(bird)) #17.2%
+
 
 #_____________________________________________________________________
 
