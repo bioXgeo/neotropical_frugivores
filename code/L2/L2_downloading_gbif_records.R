@@ -1,12 +1,12 @@
 #Title: Download GBIF records
 
-#Project: Montane Frugivoria
+#Project: Frugivoria
 
 #Author: Beth E. Gerstner
 
 #Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
-#Data inputs: bird_frug_montane.csv, mam_frug_montane.csv
+#Data inputs: Frugivoria_mammal_database_2023_full.csv, Frugivoria_bird_database_2023_full.csv
 
 #Data outputs: GBIF occurrence record download on the GBIF website
 

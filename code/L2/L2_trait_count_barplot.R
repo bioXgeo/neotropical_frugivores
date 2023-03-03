@@ -1,6 +1,6 @@
 #Title: Trait count barplot
 
-#Project: Montane Frugivoria
+#Project: Frugivoria
 
 #Author: Beth E. Gerstner
 

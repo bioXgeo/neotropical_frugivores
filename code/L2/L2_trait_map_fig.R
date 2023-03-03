@@ -1,20 +1,20 @@
 #Title: Trait map figure
 
-#Project: Montane Frugivoria
+#Project: Frugivoria
 
 #Author: Beth E. Gerstner
 
 #Collaborators: Phoebe L. Zarnetske, Patrick Bills
 
-#Data Input: GBIF data for birds and mammals, Frugivoriae_bird_database.csv, Frugivoria_mammal_database.csv
+#Data Input: GBIF data for birds and mammals, Frugivoria_bird_database_2023_full.csv, Frugivoria_mammal_database_2023_full.csv
 
-#Data Output: density plots for two traits, trait distribution maps for those traits made in ggplot, final multipanel plot combining this information.
+#Data Output: Density plots for two traits, trait distribution maps for those traits made in ggplot, final multipanel plot combining this information.
 
 #Overview: Trait maps (mass and generation time) for birds and mammals. The final maps have a study region inset map and also a density plot showing the distribution of the trait in the dataset. 
 
 #Requires: Uses final outputs of script "L2_downloading_gbif_records.R". To retrieve the GBIF data obtained through that script, it must first be downloaded from the GBIF website.
 
-#Date: Oct 11th, 2021
+#Date: March 3rd, 2023
 
 # Libraries
 library(dplyr)

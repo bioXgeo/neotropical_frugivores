@@ -1,6 +1,6 @@
 #Title: Study region map fig
 
-#Project: Montane Frugivoria
+#Project: Frugivoria
 
 #Author: Beth E. Gerstner
 
