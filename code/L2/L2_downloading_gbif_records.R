@@ -14,7 +14,7 @@
 
 #Code modified from: John Waller and Marie Grosjean's blog post: https://data-blog.gbif.org/post/downloading-long-species-lists-on-gbif/
 
-#Requires: Uses output of "L0_3_montane_frugivore_subset", which must be run first to obtain species subset.
+#Requires: Uses output of "L0_3_frugivore_subset", which must be run first to obtain species subset.
 
 
 # fill in your gbif.org credentials 
