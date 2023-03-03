@@ -58,7 +58,7 @@ occ_download(
 #_______________________________________________________________________________________
 #Birds
 
-#Set path of bird database
+# Set path of bird database
 bird_frug <- "INSERT PATH HERE"
 # match the names 
 gbif_taxon_keys_birds <- 
@@ -75,6 +75,7 @@ gbif_taxon_keys_birds <-
 # !!very important here to use "type=in"!!
 # make the download request to GBIF 
 
+# Make the download request to GBIF. Will appear in your GBIF account under downloads
 occ_download(
   pred_in("taxonKey", gbif_taxon_keys_birds),
   pred_in("basisOfRecord", c('PRESERVED_SPECIMEN','HUMAN_OBSERVATION','OBSERVATION','MACHINE_OBSERVATION')),
