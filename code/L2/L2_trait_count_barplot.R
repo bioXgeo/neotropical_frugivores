@@ -62,14 +62,14 @@ body_size_m_p<- length(which(!is.na(mam$body_size_mm_p)))
 sexual_dim_m_p <- length(which(!is.na(mam$sexual_dimorphism_p)))
 range_1_m_p <- length(which(!is.na(mam$GR_area_km2_p)))
 range_2_m_p <-  length(which(!is.na(mam$inferred_range_sqkm_p)))
-diet_breadth_m_p <- length(which(!is.na(mam$diet_breadth_p))
+diet_breadth_m_p <- length(which(!is.na(mam$diet_breadth_p)))
 habitat_breadth_m_p <-length(which(!is.na(mam$habitat_breadth_p)))
 
 
 #Bird Traits 
 
 #Birds change names of traits
-bird_df <- data.frame(longevity_b,home_range_b,range_1_b, habitat_special_b, habitat_breadth_b, gen_time_b, body_size_b,sexual_dim_b, diet_breadth_b) #left out range_2 for visualization purposes because it will be the same values at range_1.
+bird_df <- data.frame(longevity_b,home_range_b,range_1_b, habitat_special_b, habitat_breadth_b, gen_time_b, body_size_b, sexual_dim_b, diet_breadth_b) #left out range_2 for visualization purposes because it will be the same values at range_1.
 
 #change names of traits
 oldnames = c("longevity_b", "home_range_b","range_1_b","habitat_special_b", "habitat_breadth_b", "gen_time_b", "body_size_b", "sexual_dim_b", "diet_breadth_b")
@@ -107,7 +107,7 @@ full_long_trait_db$taxa <-c("mammals", "birds", "PanTHERIA", "mammals", "birds",
 full_long_trait_db$trait <-as.factor(full_long_trait_db$trait)
 
 #plot traits
-all_new_traits <-ggplot(full_long_trait_db, aes(x=trait, y=species, fill=taxa, color)) + scale_fill_manual(values = c("birds" = "lightcoral", "mammals" = "lightseagreen","PanTHERIA" = "grey51"))+ labs(x = "New Frugivoria Traits", y = "# species with trait") + geom_bar(stat="identity", position=position_dodge()) +geom_hline(yintercept=605, color="lightseagreen") +  annotate("text", 6.1, y=620, label="total mammals")+ geom_hline(yintercept=1148, color="lightcoral", label="species") + annotate("text", x=6.1, y=1162, label="total birds") + theme(panel.background = element_rect(fill = "white"))
+all_new_traits <-ggplot(full_long_trait_db, aes(x=trait, y=species, fill=taxa, color)) + scale_fill_manual(values = c("birds" = "lightcoral", "mammals" = "lightseagreen","PanTHERIA" = "grey51"))+ labs(x = "New Frugivoria Traits", y = "# species with trait") + geom_bar(stat="identity", position=position_dodge()) +geom_hline(yintercept=602, color="lightseagreen") +  annotate("text", 6.1, y=620, label="total mammals")+ geom_hline(yintercept=1148, color="lightcoral", label="species") + annotate("text", x=6.1, y=1162, label="total birds") + theme(panel.background = element_rect(fill = "white"))
 
 #add trait labels
 all_new_traits + scale_x_discrete(labels = c("body size", "diet breadth","gen time", "habitat breadth", "habitat special","home range","longevity", "range size", "sexual dim")) + theme(axis.line = element_line(color="black", size = .2))
