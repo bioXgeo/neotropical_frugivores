@@ -52,7 +52,7 @@ colnames(mam_shp)[2] <- "IUCN_species_name"
 
 
 # Filter the mammal shapefile so that only species in the Frugivoria database remain; this was already done for birds on the HPC
-frug_mam <- mam_shp %>% filter(IUCN_species_name %in% mam_shp$IUCN_species_name)
+frug_mam <- mam_shp %>% filter(IUCN_species_name %in% mam$IUCN_species_name)
 frug_bird <- bird_shp
 
 # Remove all shapefiles that have a presence code above 3 (this removes parts of the range where the species is extinct or likely extinct; see spatial traits metadata for all codes)

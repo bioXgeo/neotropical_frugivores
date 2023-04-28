@@ -19,7 +19,7 @@ pdf("percent_comp.pdf")
 #create parameters for the stacked barplot
 category<- c("Mammals","Mammals","Mammals","Birds","Birds","Birds")
 condition<-c("PanTHERIA","EltonTraits","New Traits in Frugivoria","PanTHERIA","EltonTraits","New Traits in Frugivoria")
-  percent <- c(55.37,13.13,31.49,0,27.62,72.38) #% composition
+  percent <- c(49.8,14.7,35.36,0,27.62,72.38) #% composition
 data <- data.frame(category,condition,percent) #dataframe of composition
 
 # Stacked barplot + percent
