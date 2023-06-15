@@ -20,4 +20,4 @@ This code and workflow allows users to follow the construction of the Frugivoria
 See ./code/readme.md for more details.
 
 ## Dataset Repository
-The Frugivoria trait dataset, R scripts, and supporting information are hosted on EDI and can be viewed [here](https://portal.edirepository.org/nis/mapbrowse?packageid=edi.1035.1). However, the full data package is embargoed and will not be downloadable until after the review process. 
+The Frugivoria trait dataset, R scripts, and supporting information are hosted on EDI and can be viewed [here](https://doi.org/10.6073/pasta/168e95f04d4726d31d868bfe22d749a5). However, the full data package is embargoed and will not be downloadable until after the review process. 
