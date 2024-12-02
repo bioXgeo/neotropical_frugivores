@@ -15,11 +15,11 @@ NASA FINESST Grant #80NSSC19K1332
 ## Code & Workflow
 This repository contains code and the accompanying workflow for producing the Frugivoria functional trait database and evaluating its data. The data workflow follows the recommendations from the [Environmental Data Initiative](http://www.environmentaldatainitiative.org) and the database is hosted by EDI. 
 
-- Gerstner, B.E., P.L. Zarnetske, and P. Bills. 2023. Frugivoria: A trait database for birds and mammals exhibiting frugivory across contiguous Neotropical moist forests ver 5. Environmental Data Initiative. https://doi.org/10.6073/pasta/168e95f04d4726d31d868bfe22d749a5.
-
 This code and workflow allows users to follow the construction of the Frugivoria montane database and also construct relevant outputs.
 
 See ./code/readme.md for more details.
 
 ## Dataset Repository
 The Frugivoria trait dataset, R scripts, and supporting information are hosted on EDI and can be viewed [here](https://doi.org/10.6073/pasta/168e95f04d4726d31d868bfe22d749a5).
+
+- Gerstner, B.E., P.L. Zarnetske, and P. Bills. 2023. Frugivoria: A trait database for birds and mammals exhibiting frugivory across contiguous Neotropical moist forests ver 5. Environmental Data Initiative. https://doi.org/10.6073/pasta/168e95f04d4726d31d868bfe22d749a5.
